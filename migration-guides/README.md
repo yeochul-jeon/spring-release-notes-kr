@@ -1,0 +1,80 @@
+# 마이그레이션 가이드
+
+Spring Framework와 Spring Boot의 메이저 버전을 업그레이드할 때 참고할 수 있는 가이드 모음입니다.
+
+---
+
+## 마이그레이션이란?
+
+**마이그레이션(Migration)**이란 소프트웨어의 버전을 업그레이드하는 과정을 말합니다.
+메이저 버전(예: 2.x → 3.x) 업그레이드 시에는 호환되지 않는 변경(Breaking Change)이 있을 수 있어,
+코드 수정이 필요합니다.
+
+---
+
+## Spring Framework 마이그레이션
+
+| 가이드 | 핵심 변경사항 | 난이도 |
+|--------|-------------|--------|
+| [4.x → 5.x](spring-framework-4to5.md) | Java 8 필수, 리액티브 스택 도입 | 중간 |
+| [5.x → 6.x](spring-framework-5to6.md) | Java 17 필수, Jakarta EE 전환 (`javax.*` → `jakarta.*`) | **높음** |
+| [6.x → 7.x](spring-framework-6to7.md) | 가상 스레드, 최신 Java 기능 활용 | 중간 |
+
+---
+
+## Spring Boot 마이그레이션
+
+| 가이드 | 핵심 변경사항 | 난이도 |
+|--------|-------------|--------|
+| [2.x → 3.x](spring-boot-2to3.md) | Jakarta EE 전환, Java 17 필수, 네이티브 이미지 | **높음** |
+| [3.x → 4.x](spring-boot-3to4.md) | Spring Framework 7 기반 전환 | 중간 |
+
+> **난이도 기준:**
+> - 낮음: 설정 변경 정도로 해결 가능
+> - 중간: 일부 코드 수정 필요 (주로 API 변경)
+> - 높음: 광범위한 코드 수정 필요 (패키지명 변경, 의존성 교체 등)
+
+---
+
+## 마이그레이션 일반 팁
+
+### 1. 단계적 업그레이드
+메이저 버전을 한 번에 여러 단계 건너뛰지 마세요.
+예를 들어, Spring Boot 2.3에서 3.0으로 가려면:
+
+```
+2.3 → 2.7 (최신 마이너) → 3.0
+```
+
+### 2. Deprecated 경고 먼저 해결
+업그레이드 전, 현재 버전에서 발생하는 모든 Deprecated 경고를 먼저 해결하세요.
+다음 메이저 버전에서는 해당 API가 제거될 수 있습니다.
+
+### 3. 테스트 코드 활용
+기존 테스트 코드가 있다면, 업그레이드 후 테스트를 실행하여 호환성 문제를 빠르게 발견할 수 있습니다.
+
+### 4. 공식 마이그레이션 도구 활용
+- **OpenRewrite**: 자동으로 코드를 마이그레이션해주는 도구
+  - Spring Boot 2→3 마이그레이션 레시피 제공
+- **Spring Boot Migrator**: Spring 팀에서 제공하는 마이그레이션 보조 도구
+
+```mermaid
+flowchart TD
+    A["현재 버전에서<br/>Deprecated 경고 해결"] --> B["최신 마이너 버전으로<br/>업그레이드"]
+    B --> C["테스트 실행 및<br/>문제 해결"]
+    C --> D["다음 메이저 버전으로<br/>업그레이드"]
+    D --> E["마이그레이션 도구 실행<br/>(OpenRewrite 등)"]
+    E --> F["테스트 실행 및<br/>수동 수정"]
+    F --> G["완료"]
+
+    style A fill:#FF9800,color:#fff
+    style D fill:#f44336,color:#fff
+    style G fill:#4CAF50,color:#fff
+```
+
+---
+
+## 참고 자료
+- [Spring Boot 마이그레이션 공식 가이드](https://github.com/spring-projects/spring-boot/wiki)
+- [OpenRewrite - Spring 레시피](https://docs.openrewrite.org/recipes/java/spring)
+- [Spring Boot Migrator](https://github.com/spring-projects-experimental/spring-boot-migrator)

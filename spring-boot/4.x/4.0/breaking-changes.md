@@ -1,0 +1,145 @@
+# Spring Boot 4.0 — 주요 변경사항 (Breaking Changes)
+
+> [← Spring Boot 4.0 릴리즈 노트로 돌아가기](../4.0.md)
+
+Spring Boot 4.0에서 기존 코드와 호환되지 않는 주요 변경사항을 정리합니다.
+
+---
+
+## 1. Jakarta EE 11 및 Servlet 6.1 기반
+
+Spring Boot 4.0은 Jakarta EE 11을 대상으로 하며, **Servlet 6.1 호환 컨테이너**가 필요합니다.
+
+```mermaid
+graph LR
+    subgraph "Spring Boot 3.x"
+        JEE10["Jakarta EE 9~10"]
+        S50["Servlet 5.0~6.0"]
+        T10["Tomcat 10"]
+    end
+
+    subgraph "Spring Boot 4.0"
+        JEE11["Jakarta EE 11"]
+        S61["Servlet 6.1"]
+        T11["Tomcat 11"]
+    end
+
+    JEE10 -->|업그레이드| JEE11
+    S50 -->|업그레이드| S61
+    T10 -->|업그레이드| T11
+
+    style JEE11 fill:#4CAF50,color:#fff
+    style S61 fill:#4CAF50,color:#fff
+    style T11 fill:#4CAF50,color:#fff
+```
+
+> **초보자를 위한 설명:**
+> - **Jakarta EE**: Java 웹 애플리케이션의 표준 규격 모음 (예전 이름: Java EE)
+> - **Servlet**: 웹 요청을 처리하는 Java 표준 인터페이스
+> - **Tomcat/Jetty**: Servlet을 실행하는 웹 서버(컨테이너)
+
+---
+
+## 2. Jackson 3.x 업그레이드
+
+JSON 처리 라이브러리인 Jackson이 **2.x에서 3.x로 메이저 업그레이드**되었습니다.
+이는 호환되지 않는 변경(Breaking Change)을 포함합니다.
+
+**주요 변경점:**
+- **Group ID 및 패키지명 변경**: `com.fasterxml.jackson` → `tools.jackson`
+  - 단, `jackson-annotations` 모듈은 기존 `com.fasterxml.jackson.core` Group ID 유지
+- Spring Boot 어노테이션 이름 변경: `@JsonComponent` → `@JacksonComponent`, `@JsonMixin` → `@JacksonMixin`
+- 더 엄격한 타입 처리 및 `ObjectMapper` 동작 변경
+- 설정 프로퍼티 경로 변경: `spring.jackson.read.*` → `spring.jackson.json.read.*`
+
+```java
+// Jackson 2.x (이전 방식)
+import com.fasterxml.jackson.databind.ObjectMapper;      // 패키지: com.fasterxml.jackson
+@JsonComponent  // Spring Boot 어노테이션 이름
+
+// Jackson 3.x (새로운 방식)
+import tools.jackson.databind.ObjectMapper;               // 패키지: tools.jackson
+@JacksonComponent  // 어노테이션 이름 변경
+```
+
+```yaml
+# Jackson 2.x 호환 모드 (임시 사용)
+spring:
+  jackson:
+    use-jackson2-defaults: true  # Jackson 2 호환 모드 활성화
+```
+
+> **참고:** Jackson 2.x 지원은 Deprecated 상태로 유지되며, `spring.jackson.use-jackson2-defaults=true`로
+> 임시 호환 모드를 사용할 수 있지만, 점진적으로 Jackson 3.x로 전환해야 합니다.
+
+---
+
+## 3. JSpecify 기반 Null 안전성
+
+Spring Boot 4.0은 **JSpecify**를 표준 Null 안전성(Null Safety) 어노테이션 라이브러리로 채택했습니다.
+
+```java
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
+@NullMarked // 이 클래스의 모든 메서드 파라미터와 반환값은 기본적으로 non-null
+public class UserService {
+
+    // name이 null일 수 있음을 명시적으로 표시
+    public User findByName(@Nullable String name) {
+        if (name == null) {
+            return User.anonymous();
+        }
+        return userRepository.findByName(name);
+    }
+
+    // 반환값은 절대 null이 아님 (@NullMarked 클래스이므로)
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+}
+```
+
+> **초보자를 위한 설명:**
+> - **Null Safety**: 코드에서 `null` 값이 어디에 허용되는지 명확히 표시하는 것
+> - `@NullMarked`: "이 범위에서는 기본적으로 null을 허용하지 않는다"는 선언
+> - `@Nullable`: "이 값은 null일 수 있다"는 예외 표시
+> - 이를 통해 `NullPointerException`을 컴파일 시점에 방지할 수 있습니다
+
+---
+
+## 4. `javax` 패키지 어노테이션 지원 종료
+
+`javax.annotation`, `javax.inject` 패키지의 어노테이션이 **더 이상 지원되지 않습니다**.
+
+```java
+// 이전 (더 이상 지원하지 않음)
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.inject.Inject;
+
+// 변경 후 (Jakarta 어노테이션 사용)
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
+import jakarta.inject.Inject;
+```
+
+> **참고:** Spring Boot 3.0에서 이미 `javax.*` → `jakarta.*` 전환이 시작되었지만,
+> 3.x에서는 일부 `javax` 어노테이션이 여전히 동작했습니다.
+> 4.0에서는 이 호환성 지원이 **완전히 제거**되었습니다.
+
+---
+
+## 5. Deprecated API 대량 제거
+
+Spring Boot 2.x~3.x에서 Deprecated로 표시되었던 **약 36개 클래스(전체 Deprecated의 약 88%)**가 제거되었습니다.
+
+대표적인 제거 항목:
+- `MockitoTestExecutionListener` → Mockito의 `MockitoExtension` 사용
+- `@AutoConfigureObservability` → `@AutoConfigureMetrics`와 `@AutoConfigureTracing`으로 세분화
+- Reactive Pulsar 자동 구성 (Spring Pulsar의 Reactor 지원 제거에 따라 제거)
+- `hibernate-jpamodelgen` → `hibernate-processor`로 대체
+- 여러 Auto-Configuration 클래스의 public 멤버
+- 일부 레거시 프로퍼티 및 생성자
+
+> **중요:** 이것이 바로 4.0 업그레이드 전에 3.5.x에서 모든 Deprecated 경고를 먼저 해결해야 하는 이유입니다.

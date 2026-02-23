@@ -1,0 +1,49 @@
+# Spring Boot 2.x 시리즈
+
+Spring Boot 2는 Spring Framework 5를 기반으로, 리액티브 웹(WebFlux)과 Actuator 개선을 포함한 장기 지원 버전입니다.
+2.7이 마지막 버전이며, 2023년 11월 OSS 지원이 종료되었습니다.
+
+---
+
+## 핵심 테마
+
+- **리액티브 웹 지원**: Spring WebFlux를 통한 비동기/논블로킹 웹 개발
+- **Actuator 재설계**: 운영 모니터링 엔드포인트 전면 개편
+- **Micrometer 통합**: 다양한 모니터링 시스템(Prometheus, Datadog 등)과의 메트릭 통합
+- **Auto-Configuration 발전**: 자동 설정의 지속적 확장 및 개선
+- **Kotlin 지원**: Kotlin 기반 Spring 개발 공식 지원
+
+---
+
+## 버전 목록
+
+| 버전 | 릴리즈 | Spring Framework | 주요 내용 |
+|------|--------|:---:|----------|
+| [2.0](2.0.md) | 2018-03 | 5.0 | WebFlux, Actuator 재설계, Micrometer |
+| [2.1](2.1.md) | 2018-10 | 5.1 | Java 11 지원, DataSize 타입, 빈 오버라이드 기본 비활성화 |
+| [2.2](2.2.md) | 2019-10 | 5.2 | Java 13 지원, 지연 초기화(Lazy Init), RSocket |
+| [2.3](2.3.md) | 2020-05 | 5.2 | Docker 이미지 빌드(Buildpacks), 우아한 종료(Graceful Shutdown) |
+| [2.4](2.4.md) | 2020-11 | 5.3 | 설정 파일 처리 변경, Docker 이미지 개선 |
+| [2.5](2.5.md) | 2021-05 | 5.3 | Java 16 지원, Gradle 7, 환경 변수 접두사 |
+| [2.6](2.6.md) | 2021-11 | 5.3 | 순환 참조 기본 금지, PathPattern 기반 매칭 |
+| [2.7](2.7.md) | 2022-05 | 5.3 | @AutoConfiguration, Jakarta EE 마이그레이션 준비 (마지막 2.x) |
+
+---
+
+## 요구사항
+
+- **Java**: 8+ (2.0~2.7 모두 Java 8을 최소 지원)
+- **Spring Framework**: 5.0 ~ 5.3
+- **Servlet API**: 3.1+ (`javax.*` 패키지)
+- **Gradle**: 4.0+ ~ 7.x (버전에 따라 상이)
+- **Maven**: 3.2+ ~ 3.5+
+
+> **주의:** 2.x 시리즈는 OSS 지원이 종료되었습니다.
+> 보안 패치를 받으려면 [3.x로 마이그레이션](../../migration-guides/spring-boot-2to3.md)해야 합니다.
+
+---
+
+## 관련 링크
+- [Spring Boot 전체 버전 히스토리](../README.md)
+- [2.x → 3.x 마이그레이션 가이드](../../migration-guides/spring-boot-2to3.md)
+- [Spring Framework 5.x](../../spring-framework/5.x/) (기반 프레임워크)

@@ -1,0 +1,41 @@
+# Spring Framework 4.x 시리즈
+
+Spring Framework 4는 Java 8 지원과 WebSocket을 도입하며 현대화의 발판을 마련한 버전입니다.
+
+---
+
+## 핵심 테마
+
+- **Java 8 지원**: 람다(Lambda) 표현식, `@Repeatable` 어노테이션 등 Java 8 기능 활용
+- **WebSocket**: 양방향 실시간 통신을 위한 WebSocket / STOMP 지원
+- **조건부 설정**: `@Conditional` 어노테이션 기반의 조건부 빈 등록
+- **테스트 개선**: `@SpringBootTest`의 전신인 테스트 프레임워크 개선
+- **Groovy DSL**: 빈 정의를 Groovy 스크립트로 작성하는 기능
+
+---
+
+## 버전 목록
+
+| 버전 | 릴리즈 | 주요 내용 |
+|------|--------|----------|
+| [4.0](4.0.md) | 2013-12 | Java 8 지원, WebSocket, @Conditional |
+| [4.1](4.1.md) | 2014-09 | JMS 개선, 캐시 어노테이션 강화 |
+| [4.2](4.2.md) | 2015-07 | HTTP Streaming, CORS 지원 |
+| [4.3](4.3.md) | 2016-06 | 암묵적 생성자 주입, 합성 어노테이션 (마지막 4.x) |
+
+---
+
+## 요구사항
+
+- **Java**: 6+ (4.0~4.2), 6+ (4.3에서도 6을 유지하나 Java 8 권장)
+- **Servlet API**: 2.5+ (4.3), 3.0+ (4.0~4.2)
+- **Java EE**: 6+ (`javax.*` 패키지)
+
+> **참고:** 4.x 시리즈는 2020년 12월 OSS 지원이 종료되었습니다(EOL).
+> 현재 운영 중인 4.x 프로젝트는 6.x로의 마이그레이션을 강력히 권장합니다.
+
+---
+
+## 관련 링크
+- [Spring Framework 전체 버전 히스토리](../README.md)
+- [4.x → 5.x 마이그레이션 가이드](../../migration-guides/spring-framework-4to5.md)

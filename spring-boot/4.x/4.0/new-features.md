@@ -1,0 +1,235 @@
+# Spring Boot 4.0 — 새로운 기능
+
+> [← Spring Boot 4.0 릴리즈 노트로 돌아가기](../4.0.md)
+
+Spring Boot 4.0에서 새로 추가된 기능들을 정리합니다.
+
+---
+
+## 1. HTTP Service Client 자동 설정
+
+인터페이스에 어노테이션만 붙이면 Spring이 자동으로 HTTP 클라이언트 구현체를 생성해줍니다.
+
+```java
+import org.springframework.web.service.annotation.GetExchange;
+import org.springframework.web.service.annotation.PostExchange;
+
+// 인터페이스만 정의하면 Spring이 구현체를 자동 생성
+public interface UserClient {
+
+    @GetExchange("/users/{id}")
+    User getUser(@PathVariable Long id);
+
+    @PostExchange("/users")
+    User createUser(@RequestBody User user);
+}
+```
+
+```yaml
+# application.yml에서 HTTP Service Client 설정
+spring:
+  http:
+    client:
+      user-service:
+        url: https://api.example.com
+        connect-timeout: 5s
+        read-timeout: 10s
+```
+
+> **초보자를 위한 설명:**
+> 이전에는 외부 API를 호출하려면 `RestTemplate`이나 `WebClient`를 직접 구성해야 했습니다.
+> 이제는 인터페이스와 어노테이션만으로 자동 설정됩니다.
+
+---
+
+## 2. API 버전 관리(API Versioning)
+
+Spring MVC와 WebFlux에서 **API 버전 관리**를 자동 설정으로 지원합니다.
+
+```yaml
+# application.yml
+spring:
+  mvc:
+    apiversion:
+      enabled: true
+      version-parameter: v  # ?v=2 형식으로 버전 지정
+```
+
+```java
+@RestController
+@RequestMapping("/api/users")
+public class UserController {
+
+    @GetMapping(version = "1")
+    public List<UserV1> getUsersV1() {
+        // API v1 응답
+        return userService.getUsersV1();
+    }
+
+    @GetMapping(version = "2")
+    public List<UserV2> getUsersV2() {
+        // API v2 응답 (더 상세한 정보 포함)
+        return userService.getUsersV2();
+    }
+}
+```
+
+---
+
+## 3. OpenTelemetry 스타터
+
+새로운 `spring-boot-starter-opentelemetry` 스타터가 추가되어, OTLP를 통한 메트릭과 트레이스 내보내기를
+간편하게 설정할 수 있습니다.
+
+```xml
+<!-- pom.xml -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-opentelemetry</artifactId>
+</dependency>
+```
+
+```yaml
+# application.yml - OTLP 설정
+management:
+  otlp:
+    metrics:
+      export:
+        url: http://otel-collector:4318/v1/metrics
+    tracing:
+      endpoint: http://otel-collector:4318/v1/traces
+```
+
+> **초보자를 위한 설명:**
+> - **OpenTelemetry(OTel)**: 애플리케이션의 성능 데이터(메트릭)와 요청 추적(트레이스)을 수집하는 표준
+> - **OTLP**: OpenTelemetry 데이터를 전송하는 프로토콜
+> - 이 스타터를 추가하면 별도 설정 없이 자동으로 OTel SDK가 구성됩니다
+
+---
+
+## 4. JmsClient API 지원
+
+기존 `JmsTemplate`과 함께 새로운 `JmsClient` API가 자동 설정됩니다.
+
+```java
+@Service
+@RequiredArgsConstructor
+public class OrderService {
+
+    private final JmsClient jmsClient; // 새로운 JmsClient 자동 주입
+
+    public void sendOrder(Order order) {
+        jmsClient.send("orders", order);
+    }
+}
+```
+
+---
+
+## 5. Kotlin Serialization 지원
+
+새로운 `spring-boot-starter-kotlin-serialization` 스타터를 통해 Kotlin Serialization을 공식 지원합니다.
+
+```kotlin
+@Serializable // Kotlin Serialization 어노테이션
+data class User(
+    val id: Long,
+    val name: String,
+    val email: String
+)
+
+// Json 빈이 자동 설정되며, HttpMessageConverter도 자동 등록됨
+```
+
+```yaml
+# application.yml
+spring:
+  kotlin:
+    serialization:
+      pretty-print: true
+```
+
+---
+
+## 6. RestTestClient
+
+Spring Framework 7.0에서 새로 도입된 `RestTestClient`를 테스트에서 사용할 수 있습니다.
+
+```java
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+class UserApiTest {
+
+    @Autowired
+    RestTestClient restTestClient; // 새로운 테스트 클라이언트
+
+    @Test
+    void 사용자_조회_테스트() {
+        restTestClient.get()
+            .uri("/api/users/1")
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody()
+            .jsonPath("$.name").isEqualTo("홍길동");
+    }
+}
+```
+
+---
+
+## 7. Redis Static Master/Replica 지원
+
+Lettuce를 사용하여 Redis 마스터/레플리카(읽기 전용 복제본) 구성을 설정할 수 있습니다.
+
+```yaml
+# application.yml
+spring:
+  data:
+    redis:
+      masterreplica:
+        nodes:
+          - redis://master:6379
+          - redis://replica1:6380
+          - redis://replica2:6381
+```
+
+---
+
+## 8. 다중 TaskDecorator 지원
+
+여러 개의 `TaskDecorator` 빈을 등록하고 `@Order`로 순서를 지정할 수 있습니다.
+
+```java
+@Bean
+@Order(1)
+public TaskDecorator mdcTaskDecorator() {
+    // MDC(로깅 컨텍스트)를 비동기 스레드로 전파
+    return runnable -> {
+        var contextMap = MDC.getCopyOfContextMap();
+        return () -> {
+            MDC.setContextMap(contextMap);
+            try {
+                runnable.run();
+            } finally {
+                MDC.clear();
+            }
+        };
+    };
+}
+
+@Bean
+@Order(2)
+public TaskDecorator securityTaskDecorator() {
+    // 보안 컨텍스트를 비동기 스레드로 전파
+    return runnable -> {
+        var context = SecurityContextHolder.getContext();
+        return () -> {
+            SecurityContextHolder.setContext(context);
+            try {
+                runnable.run();
+            } finally {
+                SecurityContextHolder.clearContext();
+            }
+        };
+    };
+}
+```

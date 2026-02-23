@@ -1,0 +1,35 @@
+# Spring Framework 7.x 시리즈
+
+Spring Framework 7은 차세대 Spring으로, 최신 Java 기능을 적극 활용하는 버전입니다.
+
+---
+
+## 핵심 테마
+
+- **가상 스레드(Virtual Threads)** 기반의 동시성 모델 강화
+- 최신 Java 기능 적극 활용
+- Spring Framework 6.x에서 Deprecated된 API 제거
+- 성능 최적화 및 개발자 경험(DX) 개선
+
+---
+
+## 버전 목록
+
+| 버전 | 릴리즈 | 주요 내용 |
+|------|--------|----------|
+| [7.0](7.0.md) | 2025 | 차세대 Spring Framework |
+
+---
+
+## 요구사항
+
+- **Java**: 17+
+- **Jakarta EE**: 9+
+- **Servlet API**: 5.0+
+
+---
+
+## 관련 링크
+- [Spring Framework 전체 버전 히스토리](../README.md)
+- [6.x → 7.x 마이그레이션 가이드](../../migration-guides/spring-framework-6to7.md)
+- [Spring Boot 4.x](../../spring-boot/4.x/) (Spring Framework 7 기반)

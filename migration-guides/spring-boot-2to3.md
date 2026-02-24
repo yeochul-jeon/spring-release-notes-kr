@@ -1,0 +1,230 @@
+# Spring Boot 2.x → 3.x 마이그레이션 가이드
+
+| 항목 | Spring Boot 2.x | Spring Boot 3.x |
+|------|-----------------|-----------------|
+| **Java 버전** | Java 8+ | **Java 17+** |
+| **Spring Framework** | 5.x | **6.0** |
+| **Jakarta EE** | Java EE (`javax.*`) | **Jakarta EE 10** (`jakarta.*`) |
+| **Servlet** | Servlet 3.1~4.0 | **Servlet 5.0~6.0** |
+| **Tomcat** | 9.x | **10+** |
+| **난이도** | | **높음** |
+
+---
+
+## 개요
+
+Spring Boot 2.x에서 3.x로의 마이그레이션은 **역대 가장 큰 변경**입니다. `javax.*`에서 `jakarta.*`로의 전면 패키지 전환, Java 17 필수, GraalVM 네이티브 이미지 정식 지원, Micrometer 기반 Observability 통합이 핵심입니다. 반드시 **2.7 최신 버전을 거쳐** 단계적으로 마이그레이션하세요.
+
+---
+
+## 사전 준비 체크리스트
+
+- [ ] Spring Boot **2.7 최신 버전**으로 먼저 업그레이드
+- [ ] Spring Security 사용 시 **5.8**로 중간 업그레이드
+- [ ] 모든 `@Deprecated` 경고 해결
+- [ ] Java 17 이상 설치 및 소스/타겟 레벨 변경
+- [ ] 자동 구성 등록을 새 방식(`.imports` 파일)으로 전환 (2.7에서 양쪽 지원)
+- [ ] 서드파티 라이브러리의 Jakarta EE 호환 버전 확인
+- [ ] 기존 테스트 코드가 모두 통과하는지 확인
+
+---
+
+## 호환되지 않는 변경사항
+
+### 1. `javax.*` → `jakarta.*` 패키지 전환 (가장 중요)
+
+Spring Framework 6.0 기반으로, 모든 Java EE 패키지가 Jakarta EE 네임스페이스로 변경됩니다.
+
+```java
+// Before (Boot 2.x)
+import javax.servlet.http.HttpServletRequest;
+import javax.persistence.Entity;
+import javax.validation.Valid;
+
+// After (Boot 3.x)
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.persistence.Entity;
+import jakarta.validation.Valid;
+```
+
+### 2. 자동 구성 등록 방식 변경
+
+```
+// Before (Boot 2.x) — META-INF/spring.factories
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.example.MyAutoConfiguration
+
+// After (Boot 3.x) — 새 파일 경로
+// META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports
+com.example.MyAutoConfiguration
+```
+
+### 3. `@ConstructorBinding` 변경
+
+```java
+// Before (Boot 2.x) — 클래스 레벨에 필수
+@ConfigurationProperties("app")
+@ConstructorBinding
+public class AppProperties {
+    public AppProperties(String name, int port) { ... }
+}
+
+// After (Boot 3.x) — 단일 생성자면 불필요
+@ConfigurationProperties("app")
+public class AppProperties {
+    public AppProperties(String name, int port) { ... }
+}
+```
+
+### 4. 후행 슬래시(Trailing Slash) 매칭 비활성화
+
+```java
+// Before: "/users/"도 매칭됨
+// After: "/users/"는 404 반환
+
+// 임시 복원 (deprecated)
+@Configuration
+public class WebConfig implements WebMvcConfigurer {
+    @Override
+    public void configurePathMatch(PathMatchConfigurer configurer) {
+        configurer.setUseTrailingSlashMatch(true);
+    }
+}
+```
+
+---
+
+## API 변경사항
+
+| 변경 항목 | 설명 |
+|----------|------|
+| Spring Batch | `@EnableBatchProcessing` 제거 — Boot 자동 구성 사용 |
+| Actuator `/httptrace` | `/httpexchanges`로 이름 변경 |
+| Actuator 값 마스킹 | `/env`, `/configprops`의 모든 값이 기본 마스킹됨 |
+| Observability | `WebMvcMetricsFilter` → `ServerHttpObservationFilter` |
+| `@AutoConfigureMetrics` | `@AutoConfigureObservability`로 변경 |
+| Elasticsearch | 고수준 REST 클라이언트 제거 → 새 Java 클라이언트 사용 |
+
+---
+
+## 설정 변경사항
+
+### 주요 프로퍼티 변경
+
+| 이전 프로퍼티 | 새 프로퍼티 |
+|-------------|-----------|
+| `spring.redis.*` | `spring.data.redis.*` |
+| `spring.data.cassandra.*` | `spring.cassandra.*` |
+| `management.metrics.export.<product>` | `management.<product>.metrics.export` |
+| `server.max-http-header-size` | `server.max-http-request-header-size` |
+
+> **팁:** `spring-boot-properties-migrator`를 추가하면 변경된 프로퍼티를 자동 진단합니다.
+
+```groovy
+// build.gradle — 마이그레이션 완료 후 반드시 제거
+runtimeOnly 'org.springframework.boot:spring-boot-properties-migrator'
+```
+
+### 의존성 좌표 변경
+
+```groovy
+// Before (Boot 2.x)
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web:2.7.x'
+    implementation 'mysql:mysql-connector-java'
+    implementation 'org.hibernate:hibernate-core'
+}
+
+// After (Boot 3.x)
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web:3.0.x'
+    implementation 'com.mysql:mysql-connector-j'              // 좌표 변경
+    implementation 'org.hibernate.orm:hibernate-core'         // 그룹 변경
+}
+```
+
+### 로깅 날짜 형식 변경
+
+```properties
+# Before: yyyy-MM-dd HH:mm:ss.SSS
+# After: yyyy-MM-dd'T'HH:mm:ss.SSSXXX (ISO-8601)
+
+# 이전 형식 복원
+logging.pattern.dateformat=yyyy-MM-dd HH:mm:ss.SSS
+```
+
+---
+
+## 폐기 및 제거 항목
+
+| 제거된 기능 | 대체 방안 |
+|------------|----------|
+| `spring.factories` 자동 구성 등록 | `.imports` 파일 방식 |
+| 이미지 배너 (`banner.gif/jpg/png`) | `banner.txt` 사용 |
+| `SecurityManager` 지원 | 제거 (JDK에서 폐기) |
+| `CommonsMultipartResolver` | Servlet 3.0+ 표준 멀티파트 |
+| 내장 MongoDB 자동 구성 (Flapdoodle) | Testcontainers 사용 |
+| Apache Johnzon | Eclipse Yasson |
+| RxJava 1.x / 2.x | RxJava 3.x |
+| Ehcache 2, Hazelcast 3 | Ehcache 3+, Hazelcast 5+ |
+| Apache ActiveMQ (Classic) | ActiveMQ Artemis |
+
+---
+
+## 단계별 마이그레이션 절차
+
+```mermaid
+flowchart TD
+    A["1단계: Boot 2.7 최신으로\n업그레이드"] --> B["2단계: Security 5.8로\n중간 업그레이드"]
+    B --> C["3단계: Java 17로\n업그레이드"]
+    C --> D["4단계: OpenRewrite 실행\njavax → jakarta 자동 변환"]
+    D --> E["5단계: spring.factories →\n.imports 파일 전환"]
+    E --> F["6단계: 의존성 좌표 업데이트\n서블릿 컨테이너 업그레이드"]
+    F --> G["7단계: properties-migrator로\n프로퍼티 진단"]
+    G --> H["8단계: Security 6.0\n설정 검증"]
+    H --> I["9단계: 테스트 실행 및\n수동 수정"]
+
+    style A fill:#FF9800,color:#fff
+    style D fill:#2196F3,color:#fff
+    style I fill:#4CAF50,color:#fff
+```
+
+1. **Boot 2.7 최신**: 2.7에서 새 자동 구성 방식을 미리 적용할 수 있습니다.
+2. **Security 5.8**: 6.0으로 바로 올리기보다 5.8을 거치면 점진적 전환이 가능합니다.
+3. **Java 17**: JDK 17 설치 후 소스/타겟 레벨을 17로 변경합니다.
+4. **OpenRewrite**: `javax.*` → `jakarta.*` 변환과 의존성 업데이트를 자동화합니다.
+5. **자동 구성 전환**: `spring.factories`에서 `.imports` 파일로 전환합니다.
+6. **의존성 업데이트**: MySQL 드라이버, Hibernate 등의 좌표를 변경합니다.
+7. **프로퍼티 진단**: `properties-migrator`로 변경된 프로퍼티를 확인하고 수정합니다.
+8. **Security 검증**: 디스패치 타입별 인가 설정 등 Security 6.0 변경사항을 확인합니다.
+9. **테스트 실행**: 전체 빌드 및 테스트로 나머지 문제를 해결합니다.
+
+---
+
+## 자주 발생하는 문제 및 해결
+
+**Q: `javax.*` import를 모두 수동으로 바꿔야 하나요?**
+A: OpenRewrite의 `UpgradeSpringBoot_3_0` 레시피를 사용하면 자동 변환됩니다. `javax` → `jakarta` 전용 레시피(`JavaxMigrationToJakarta`)도 별도 제공됩니다.
+
+**Q: `spring.factories` 방식은 완전히 사용할 수 없나요?**
+A: Boot 3.0에서 자동 구성 등록용 `spring.factories`는 완전히 제거되었습니다. 단, 자동 구성 외 다른 팩토리 키는 여전히 동작합니다.
+
+**Q: Actuator에서 민감 정보가 모두 마스킹됩니다.**
+A: 3.0부터 `/env`와 `/configprops`의 값이 기본 마스킹됩니다. `management.endpoint.env.show-values=ALWAYS` 또는 `WHEN_AUTHORIZED`로 설정하세요.
+
+**Q: 로그 날짜 형식이 바뀌었습니다.**
+A: ISO-8601 형식으로 변경되었습니다. 이전 형식이 필요하면 `logging.pattern.dateformat`을 설정하세요.
+
+**Q: Jetty를 사용하고 있는데 Servlet 6.0 호환 문제가 있습니다.**
+A: Jetty 11은 Servlet 6.0을 완전히 지원하지 않습니다. `jakarta-servlet.version` 프로퍼티로 5.0으로 다운그레이드하거나 Tomcat 10으로 전환하세요.
+
+---
+
+## 참고 자료
+
+- [Spring Boot 3.0 마이그레이션 가이드 (공식 위키)](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.0-Migration-Guide)
+- [Spring Boot 3.0 릴리즈 노트](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.0-Release-Notes)
+- [OpenRewrite - Spring Boot 3.0 레시피](https://docs.openrewrite.org/recipes/java/spring/boot3/upgradespringboot_3_0)
+- [Spring Framework 5→6 마이그레이션 가이드](spring-framework-5to6.md)
+- [Spring Boot 2.x 릴리즈 노트](../spring-boot/2.x/)
+- [Spring Boot 3.x 릴리즈 노트](../spring-boot/3.x/)

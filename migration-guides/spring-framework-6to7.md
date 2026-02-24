@@ -1,0 +1,233 @@
+# Spring Framework 6.x → 7.x 마이그레이션 가이드
+
+| 항목 | Spring Framework 6.x | Spring Framework 7.x |
+|------|----------------------|----------------------|
+| **Java 버전** | Java 17+ | **Java 17+** (JDK 25 권장) |
+| **Jakarta EE** | Jakarta EE 9+ | **Jakarta EE 11** |
+| **Servlet** | Servlet 5.0~6.0 | **Servlet 6.1** |
+| **Tomcat** | 10~10.1+ | **11.0+** |
+| **Jetty** | 11+ | **12.1+** |
+| **Undertow** | 2.2~2.3 | **지원 중단** |
+| **난이도** | | **중간** |
+
+---
+
+## 개요
+
+Spring Framework 7.0은 Jakarta EE 11 기준선 상향, **Undertow 지원 제거**, **Jackson 3.x 기본 전환** 등이 핵심입니다. 또한 `spring-jcl` 모듈이 제거되고 `HttpHeaders` API가 재설계되었습니다. 6.x에서 deprecated된 다수의 API가 제거되었으므로, 먼저 6.x 최신 버전에서 모든 deprecated 경고를 해결하는 것이 중요합니다.
+
+---
+
+## 사전 준비 체크리스트
+
+- [ ] 현재 프로젝트가 Spring Framework **6.2 최신 버전**인지 확인
+- [ ] 모든 `@Deprecated` 경고를 해결 (특히 `ListenableFuture`, `RestTemplate` 관련)
+- [ ] Undertow 사용 여부 확인 → Tomcat 11 또는 Jetty 12.1로 전환 계획
+- [ ] Jackson 2.x 사용 중인 코드에서 3.x 호환성 확인
+- [ ] `HttpHeaders`를 `MultiValueMap`으로 사용하는 코드 확인
+- [ ] Kotlin 프로젝트의 경우 Kotlin 2.2 이상으로 업그레이드
+- [ ] 기존 테스트 코드가 모두 통과하는지 확인
+
+---
+
+## 호환되지 않는 변경사항
+
+### 1. Jackson `ObjectMapper` → `JsonMapper` 전환
+
+Spring 7.0은 Jackson 3.x를 기본으로 사용합니다. Jackson 2.x는 deprecated 상태이며, 7.2에서 완전 제거 예정입니다.
+
+```java
+// Before (Jackson 2.x — deprecated)
+ObjectMapper mapper = Jackson2ObjectMapperBuilder.json()
+    .featuresToEnable(SerializationFeature.INDENT_OUTPUT)
+    .build();
+
+// After (Jackson 3.x)
+JsonMapper jsonMapper = JsonMapper.builder()
+    .findAndAddModules()
+    .enable(SerializationFeature.INDENT_OUTPUT)
+    .build();
+```
+
+> **참고:** Jackson 3.x는 패키지가 `com.fasterxml.jackson`에서 `tools.jackson`으로 변경됩니다. 단, `@JsonView`, `@JsonTypeInfo` 등 어노테이션은 마이그레이션 편의를 위해 기존 패키지에 유지됩니다.
+
+### 2. Undertow → Tomcat/Jetty 전환
+
+Undertow가 Servlet 6.1을 지원하지 않아 완전 제거되었습니다.
+
+```groovy
+// Before (Undertow)
+dependencies {
+    implementation 'io.undertow:undertow-servlet-jakarta:2.3.x'
+}
+
+// After (Tomcat 11)
+dependencies {
+    implementation 'org.apache.tomcat.embed:tomcat-embed-core:11.0+'
+}
+```
+
+### 3. `spring-jcl` → `commons-logging` 직접 의존
+
+```groovy
+// Before (Spring 6.x) — spring-jcl이 spring-core에 포함
+dependencies {
+    implementation 'org.springframework:spring-core:6.x'
+    // spring-jcl 자동 포함
+}
+
+// After (Spring 7.x) — commons-logging 1.3.0으로 대체
+dependencies {
+    implementation 'org.springframework:spring-core:7.0'
+    // commons-logging 1.3.0이 전이 의존성으로 포함
+    // 대부분의 경우 추가 설정 불필요
+}
+```
+
+### 4. `HttpHeaders` API 변경
+
+`HttpHeaders`가 더 이상 `MultiValueMap`을 확장하지 않습니다.
+
+```java
+// Before (Spring 6.x)
+HttpHeaders headers = new HttpHeaders();
+MultiValueMap<String, String> map = headers;  // 직접 할당 가능
+map.getFirst("Content-Type");
+
+// After (Spring 7.x)
+HttpHeaders headers = new HttpHeaders();
+// MultiValueMap으로 직접 할당 불가
+// 대안 1: HttpHeaders의 전용 메서드 사용
+String contentType = headers.getFirst("Content-Type");
+// 대안 2: 필요 시 변환 (deprecated이므로 최소한으로 사용)
+MultiValueMap<String, String> map = headers.asMultiValueMap();
+```
+
+---
+
+## API 변경사항
+
+| 변경 항목 | 설명 |
+|----------|------|
+| `javax.annotation.*` | `@Resource`, `@PostConstruct` 등 javax 어노테이션 완전 미지원, jakarta 필수 |
+| Hibernate ORM 패키지 | `orm.hibernate5` → `orm.jpa.hibernate`로 이동 |
+| JPA 3.2 EntityManager | `@Autowired`로 직접 주입 가능 (별도 Bean 정의 불필요) |
+| GraalVM 리소스 힌트 | `java.util.regex.Pattern` → glob 패턴 형식 변경 |
+| `SpringExtension` | test-method 범위 `ExtensionContext` 사용으로 변경 |
+| JMS `DestinationResolver` | 기본값이 `SimpleDestinationResolver`(캐싱)로 변경 |
+
+---
+
+## 설정 변경사항
+
+### build.gradle 의존성 변경
+
+```groovy
+// Before (Spring 6.x)
+dependencies {
+    implementation 'org.springframework:spring-webmvc:6.2.x'
+    implementation 'org.hibernate.orm:hibernate-core:6.x'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.x'
+}
+
+// After (Spring 7.x)
+dependencies {
+    implementation 'org.springframework:spring-webmvc:7.0.x'
+    implementation 'org.hibernate.orm:hibernate-core:7.1+'   // JPA 3.2
+    implementation 'tools.jackson:jackson-databind:3.x'      // Jackson 3.x
+}
+```
+
+### Kotlin 프로젝트 설정
+
+```groovy
+// Kotlin 2.2 이상 필수
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '2.2.0'
+}
+```
+
+---
+
+## 폐기 및 제거 항목
+
+| 제거된 기능 | 대체 방안 |
+|------------|----------|
+| `ListenableFuture` | `CompletableFuture` |
+| WebJars `webjars-locator-core` | `webjars-locator-lite` |
+| OkHttp3 지원 | 다른 HTTP 클라이언트 사용 |
+| `Theme` 지원 | 제거 (대체 없음) |
+| `trailingSlashMatch` 설정 | 제거 (6.0에서 deprecated) |
+| suffix pattern matching 관련 설정 | 제거 |
+| Undertow WebSocket/WebFlux 지원 | Tomcat 11 / Jetty 12.1 |
+
+### Deprecated 타임라인 (향후 제거 예정)
+
+```mermaid
+graph LR
+    A["7.0 Deprecated"] --> B["7.1 자동감지 비활성화"]
+    B --> C["7.2 완전 제거"]
+
+    A1["Jackson 2.x"] --> A
+    A2["RestTemplate"] --> A
+    A3["MVC XML 설정"] --> A
+    A4["JUnit 4 지원"] --> A
+    A5["PathMatcher"] --> A
+
+    style A fill:#FF9800,color:#fff
+    style B fill:#f44336,color:#fff
+    style C fill:#9E9E9E,color:#fff
+```
+
+---
+
+## 단계별 마이그레이션 절차
+
+```mermaid
+flowchart TD
+    A["1단계: Spring 6.2 최신으로\n업그레이드"] --> B["2단계: Deprecated 경고\n모두 해결"]
+    B --> C["3단계: Jakarta EE 11 호환\n라이브러리 확인"]
+    C --> D["4단계: Undertow 사용 시\nTomcat/Jetty로 전환"]
+    D --> E["5단계: Jackson 3.x\n마이그레이션"]
+    E --> F["6단계: HttpHeaders API\n사용 코드 수정"]
+    F --> G["7단계: Spring 7.0으로\n의존성 변경"]
+    G --> H["8단계: 컴파일 및\n테스트 실행"]
+
+    style A fill:#FF9800,color:#fff
+    style E fill:#2196F3,color:#fff
+    style H fill:#4CAF50,color:#fff
+```
+
+1. **Spring 6.2 최신 업그레이드**: 6.2에서 발생하는 deprecated 경고가 7.0 마이그레이션의 핵심 가이드입니다.
+2. **Deprecated 해결**: 특히 `ListenableFuture`, `RestTemplate`(`RestClient`로 전환), `webjars-locator-core` 등을 처리합니다.
+3. **Jakarta EE 11 확인**: Hibernate ORM 7.1+, Bean Validation 3.1 (Hibernate Validator 9.0+) 등 호환 버전을 확인합니다.
+4. **Undertow 전환**: Undertow를 사용 중이라면 Tomcat 11 또는 Jetty 12.1로 전환합니다.
+5. **Jackson 3.x 마이그레이션**: `ObjectMapper` → `JsonMapper`, 패키지 변경(`com.fasterxml` → `tools.jackson`)을 적용합니다.
+6. **HttpHeaders 수정**: `MultiValueMap`으로 캐스팅하는 코드를 HttpHeaders 전용 메서드로 변경합니다.
+7. **Spring 7.0 의존성 변경**: `build.gradle`/`pom.xml`에서 버전을 7.0으로 변경합니다.
+8. **테스트 실행**: 전체 빌드 및 테스트를 실행하여 문제를 확인합니다.
+
+---
+
+## 자주 발생하는 문제 및 해결
+
+**Q: Jackson 2.x와 3.x를 동시에 사용할 수 있나요?**
+A: 7.0에서는 Jackson 3.x가 기본이고 2.x로 폴백합니다. 하지만 2.x는 deprecated이므로, 7.1에서 자동 감지가 비활성화되기 전에 3.x로 완전 전환하는 것을 권장합니다.
+
+**Q: Undertow가 향후 Servlet 6.1을 지원하면 다시 사용할 수 있나요?**
+A: 네. Spring MVC는 표준 Servlet API 기반이므로, Undertow가 Servlet 6.1 호환 버전을 출시하면 표준 Servlet 컨테이너로 사용할 수 있습니다.
+
+**Q: `spring-jcl` 제거로 로깅 설정을 변경해야 하나요?**
+A: 대부분의 경우 변경이 필요 없습니다. `commons-logging` 1.3.0이 전이 의존성으로 포함되며, 기존과 동일하게 SLF4J/Log4j 2 자동 감지가 동작합니다.
+
+**Q: `RestTemplate`이 deprecated되었는데 즉시 바꿔야 하나요?**
+A: 7.0에서 deprecated, 7.1에서 공식 `@Deprecated` 표시됩니다. 즉시 제거되지는 않으므로 점진적으로 `RestClient`로 전환하세요.
+
+---
+
+## 참고 자료
+
+- [Spring Framework 7.0 릴리즈 노트 (공식 위키)](https://github.com/spring-projects/spring-framework/wiki/Spring-Framework-7.0-Release-Notes)
+- [Spring Framework 6.x 릴리즈 노트](../spring-framework/6.x/)
+- [Spring Framework 5→6 마이그레이션 가이드](spring-framework-5to6.md) (이전 단계)
+- [Spring Boot 3→4 마이그레이션 가이드](spring-boot-3to4.md) (Spring Framework 7 기반)

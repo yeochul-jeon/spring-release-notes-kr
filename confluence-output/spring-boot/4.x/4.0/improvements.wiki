@@ -1,0 +1,76 @@
+h1. Spring Boot 4.0 — 개선사항, 폐기/제거 항목, 프로퍼티 변경
+
+{quote}
+[← Spring Boot 4.0 릴리즈 노트로 돌아가기|../4.0.md]
+{quote}
+
+----
+
+h2. 개선사항
+
+h3. 성능 및 모듈화
+
+* **모듈 구조 개편**: 더 세분화된 모듈 구조로 메모리 사용량 감소
+* **MongoDB Health Indicator**: Spring Data MongoDB 의존성 없이도 동작하도록 개선
+
+h3. 관찰 가능성(Observability)
+
+* Redis 관찰 가능성이 `MicrometerTracing` 기반으로 개선
+* `management.tracing.enabled` → `management.tracing.export.enabled`로 프로퍼티 변경
+
+h3. 빌드 도구
+
+* **Gradle 9** 공식 지원 (Gradle 8.14+도 계속 호환)
+* Spring Boot 마일스톤이 Maven Central에도 게시
+
+h3. 콘솔 로깅
+
+* 새로운 `logging.console.enabled` 프로퍼티로 콘솔 출력 제어 가능
+
+----
+
+h2. 폐기(Deprecated) 및 제거(Removed) 항목
+
+h3. 제거된 항목
+
+|| 항목 || 대안 ||
+| {{MockitoTestExecutionListener}} | Mockito의 {{MockitoExtension}} 사용 |
+| 대량의 2.x-3.x Deprecated API (-36개 클래스) | 각 API의 대체 메서드/클래스 참고 |
+| Undertow 지원 | Tomcat 또는 Jetty 사용 |
+| {{@AutoConfigureObservability}} | {{@AutoConfigureMetrics}} + {{@AutoConfigureTracing}} |
+| Reactive Pulsar 자동 구성 | Spring Pulsar Reactor 지원 제거에 따름 |
+| {{hibernate-jpamodelgen}} | {{hibernate-processor}}로 대체 |
+| SSL 인증서 만료 임박 상태({{WILL_EXPIRE_SOON}}) | {{expiringChains}} 엔트리로 대체 |
+| {{OperationMethod(Method, OperationType)}} 생성자 | 새로운 생성자 사용 |
+| {{javax.annotation}} / {{javax.inject}} 지원 | {{jakarta.annotation}} / {{jakarta.inject}} 사용 |
+
+h3. Deprecated 항목 (향후 제거 예정)
+
+|| 항목 || 대안 ||
+| Jackson 2.x 지원 | Jackson 3.x로 전환 |
+| 일부 기존 Starter POM 이름 | 새로운 이름의 Starter 사용 |
+
+----
+
+h2. 프로퍼티 변경
+
+h3. 이름이 변경된 프로퍼티
+
+|| 이전 || 변경 후 ||
+| {{management.tracing.enabled}} | {{management.tracing.export.enabled}} |
+| {{spring.dao.exceptiontranslation.enabled}} | {{spring.persistence.exceptiontranslation.enabled}} |
+| {{spring.jackson.read.*}} | {{spring.jackson.json.read.*}} |
+| {{spring.jackson.write.*}} | {{spring.jackson.json.write.*}} |
+
+h3. 새로 추가된 프로퍼티
+
+|| 프로퍼티 || 설명 ||
+| {{spring.data.redis.masterreplica.nodes}} | Redis 마스터/레플리카 노드 목록 |
+| {{spring.data.mongodb.representation.big-decimal}} | MongoDB BigDecimal 표현 방식 |
+| {{server.tomcat.resource.cache-max-size}} | Tomcat 리소스 캐시 최대 크기 |
+| {{logging.console.enabled}} | 콘솔 로깅 활성화 여부 |
+| {{spring.elasticsearch.api-key}} | Elasticsearch API 키 |
+| {{spring.mvc.apiversion.*}} | MVC API 버전 관리 설정 |
+| {{spring.webflux.apiversion.*}} | WebFlux API 버전 관리 설정 |
+| {{spring.jackson.use-jackson2-defaults}} | Jackson 2 호환 모드 활성화 |
+| {{spring.kotlinx.serialization.json.*}} | Kotlin Serialization JSON 설정 |

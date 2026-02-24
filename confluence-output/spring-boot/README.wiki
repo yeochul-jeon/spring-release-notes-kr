@@ -1,0 +1,125 @@
+h1. Spring Boot 버전 히스토리
+
+Spring Boot는 Spring 기반 애플리케이션을 최소한의 설정으로 빠르게 만들 수 있게 해주는 프레임워크입니다.
+"Convention over Configuration(설정보다 관례)" 철학을 바탕으로, 복잡한 XML 설정 없이도 프로덕션급 애플리케이션을 구축할 수 있습니다.
+
+----
+
+h2. 버전 타임라인
+
+{code:language=text|title=mermaid|collapse=true}
+timeline
+    title Spring Boot 메이저 버전 타임라인
+    2018 : 2.0 - Spring Framework 5 기반, WebFlux 지원
+    2022 : 3.0 - Jakarta EE 전환 & 네이티브 이미지
+    2025 : 4.0 - Spring Framework 7 기반, 차세대
+{code}
+
+----
+
+h2. 호환성 매트릭스
+
+|| Spring Boot || Spring Framework || 최소 Java || Gradle || Maven || 릴리즈 ||
+| *2.0* | 5.0 | Java 8 | 4.0+ | 3.2+ | 2018-03 |
+| *2.1* | 5.1 | Java 8 | 4.4+ | 3.2+ | 2018-10 |
+| *2.2* | 5.2 | Java 8 | 5.4+/6.0+ | 3.2+ | 2019-10 |
+| *2.3* | 5.2 | Java 8 | 5.6+/6.3+ | 3.2+ | 2020-05 |
+| *2.4* | 5.3 | Java 8 | 6.3+ | 3.5+ | 2020-11 |
+| *2.5* | 5.3 | Java 8 | 6.8+ | 3.5+ | 2021-05 |
+| *2.6* | 5.3 | Java 8 | 6.8+ | 3.5+ | 2021-11 |
+| *2.7* | 5.3 | Java 8 | 6.8+/7.x | 3.5+ | 2022-05 |
+| *3.0* | 6.0 | Java 17 | 7.5+ | 3.5+ | 2022-11-24 |
+| *3.1* | 6.0 | Java 17 | 7.5+ | 3.6+ | 2023-05 |
+| *3.2* | 6.1 | Java 17 | 7.5+/8.x | 3.6+ | 2023-11 |
+| *3.3* | 6.1 | Java 17 | 7.5+/8.x | 3.6+ | 2024-05 |
+| *3.4* | 6.2 | Java 17 | 7.6+/8.x | 3.6+ | 2024-11 |
+| *3.5* | 6.2 | Java 17 | 7.6+/8.x | 3.6+ | 2025-05 |
+| *4.0* | 7.0 | Java 17 | 8.14+/9.x | 3.6+ | 2025-11 |
+
+{quote}
+*용어 설명:*
+
+* **Spring Framework**: Spring Boot가 기반으로 사용하는 핵심 프레임워크
+* **Gradle/Maven**: Java 프로젝트의 빌드(컴파일, 패키징)와 의존성을 관리하는 도구
+{quote}
+
+----
+
+h2. 메이저 버전별 핵심 테마
+
+h3. [2.x 시리즈|2.x/] — 성숙과 안정
+
+Spring Boot 2는 Spring Framework 5를 기반으로, 리액티브 웹(WebFlux)과 Actuator 개선을 포함한 안정적인 장기 지원 버전입니다.
+2.7이 마지막 버전이며, 2023년 11월 OSS 지원이 종료되었습니다.
+
+* [2.0](2.x/2.0.md) | [2.1](2.x/2.1.md) | [2.2](2.x/2.2.md) | [2.3](2.x/2.3.md) | [2.4](2.x/2.4.md) | [2.5](2.x/2.5.md) | [2.6](2.x/2.6.md) | [2.7](2.x/2.7.md)
+
+h3. [3.x 시리즈|3.x/] — Jakarta EE와 네이티브 시대
+
+Spring Boot 3는 Jakarta EE 전환(패키지명 {{javax.*}} → {{jakarta.*}})과 GraalVM 네이티브 이미지 지원을 핵심으로 한 대격변 버전입니다.
+최소 Java 17이 필요합니다.
+
+* [3.0](3.x/3.0.md) | [3.1](3.x/3.1.md) | [3.2](3.x/3.2.md) | [3.3](3.x/3.3.md) | [3.4](3.x/3.4.md) | [3.5](3.x/3.5.md)
+
+h3. [4.x 시리즈|4.x/] — 차세대 Spring Boot
+
+Spring Boot 4는 Spring Framework 7을 기반으로 하는 차세대 버전입니다.
+
+* [4.0](4.x/4.0.md)
+
+----
+
+h2. Spring Boot와 Spring Framework의 관계
+
+{code:language=text|title=mermaid|collapse=true}
+graph TB
+    subgraph "당신의 애플리케이션"
+        APP["비즈니스 로직"]
+    end
+
+    subgraph "Spring Boot"
+        AUTO["자동 설정<br/>(Auto-Configuration)"]
+        STARTER["스타터 의존성<br/>(Starters)"]
+        ACTUATOR["운영 기능<br/>(Actuator)"]
+    end
+
+    subgraph "Spring Framework"
+        CORE["IoC 컨테이너<br/>(DI)"]
+        WEB["Spring MVC /<br/>WebFlux"]
+        DATA["데이터 접근<br/>(TX, JDBC)"]
+        SEC["Spring Security"]
+    end
+
+    APP --> AUTO
+    APP --> STARTER
+    AUTO --> CORE
+    AUTO --> WEB
+    AUTO --> DATA
+    STARTER --> SEC
+
+    style APP fill:#FF9800,color:#fff
+    style AUTO fill:#4CAF50,color:#fff
+    style CORE fill:#2196F3,color:#fff
+{code}
+
+{quote}
+Spring Boot는 Spring Framework 위에서 동작하며, 자동 설정(Auto-Configuration)으로 개발자가 직접 해야 할 설정을 대폭 줄여줍니다.
+{quote}
+
+----
+
+h2. 마이그레이션 가이드
+
+메이저 버전 업그레이드가 필요하다면 아래 가이드를 참고하세요:
+
+* [2.x → 3.x 마이그레이션](../migration-guides/spring-boot-2to3.md)
+* [3.x → 4.x 마이그레이션](../migration-guides/spring-boot-3to4.md)
+
+----
+
+h2. 참고 자료
+
+* [Spring Boot 공식 GitHub](https://github.com/spring-projects/spring-boot)
+* [Spring Boot 공식 문서](https://docs.spring.io/spring-boot/reference/)
+* [Spring Initializr](https://start.spring.io/) — Spring Boot 프로젝트 생성 도구
+* [Spring 블로그](https://spring.io/blog)

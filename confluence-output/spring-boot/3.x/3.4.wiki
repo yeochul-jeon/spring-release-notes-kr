@@ -1,0 +1,269 @@
+h1. Spring Boot 3.4 릴리즈 노트
+
+{quote}
+출시일: 2024-11 | Java 최소 버전: 17 | [공식 릴리즈 노트|https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.4-Release-Notes]
+{quote}
+
+h2. 개요
+
+Spring Boot 3.4는 *Spring Framework 6.2* 기반으로, *구조화된 로깅(Structured Logging)*, *@Fallback 빈 지원*, *MockMvcTester(AssertJ 통합)* 등 개발 생산성을 크게 높이는 기능이 추가된 버전입니다.
+Actuator 엔드포인트 접근 모델이 개편되고, 컨테이너 이미지 빌드가 개선되었으며, 기본 HTTP 클라이언트 우선순위가 변경되는 등 중요한 변경사항이 포함되어 있습니다.
+
+----
+
+h2. 플랫폼 요구사항
+
+|| 항목 || 요구 버전 ||
+| *Java* | 17 이상 |
+| *Spring Framework* | 6.2 |
+| *Gradle* | 7.6.4+ 또는 8.4+ |
+| *Maven* | 3.6+ |
+
+{quote}
+Gradle 7.5 이하 및 8.0~8.3 버전은 더 이상 지원되지 않습니다.
+{quote}
+
+----
+
+h2. 주요 변경사항
+
+h3. Graceful Shutdown 기본 활성화
+
+내장 웹 서버의 정상 종료(Graceful Shutdown)가 *기본값*으로 변경되었습니다. 이전처럼 즉시 종료하려면 설정을 변경해야 합니다.
+
+{code:language=yaml}
+# 즉시 종료로 되돌리기
+server:
+  shutdown: immediate
+{code}
+
+h3. HTTP 클라이언트 우선순위 변경
+
+{{RestClient}}와 {{RestTemplate}}이 사용하는 HTTP 클라이언트의 우선순위가 재정립되었습니다.
+
+{code:language=text|title=mermaid|collapse=true}
+graph LR
+    A["1. Apache HTTP Components"] --> B["2. Jetty Client"]
+    B --> C["3. Reactor Netty"]
+    C --> D["4. JDK HttpClient"]
+    D --> E["5. Simple HttpURLConnection"]
+    style A fill:#4CAF50,color:#fff
+    style D fill:#FF9800,color:#fff
+{code}
+
+{quote}
+별도의 HTTP 라이브러리가 없는 프로젝트에서는 기존 {{SimpleClientHttpRequestFactory}} 대신 *JDK HttpClient*가 기본으로 사용됩니다.
+{quote}
+
+{code:language=yaml}
+# 특정 클라이언트를 명시적으로 선택
+spring:
+  http:
+    client:
+      factory: jdk        # apache, jetty, reactor, jdk, simple 중 선택
+      redirects: dont-follow  # 리다이렉트 비활성화 (기본: 따라감)
+{code}
+
+h3. Actuator 엔드포인트 접근 모델 개편
+
+기존 enable/disable 방식이 *3단계 접근 레벨*로 변경되었습니다.
+
+|| 접근 레벨 || 설명 ||
+| {{none}} | 접근 불가 |
+| {{read-only}} | 읽기(GET)만 허용 |
+| {{unrestricted}} | 모든 작업 허용 |
+
+{code:language=yaml}
+# 기존 (deprecated)
+management:
+  endpoint:
+    health:
+      enabled: true
+
+# 신규 방식
+management:
+  endpoints:
+    access:
+      default: read-only    # 전체 기본값
+  endpoint:
+    health:
+      access: unrestricted  # 개별 엔드포인트 설정
+{code}
+
+h3. Bean Validation 동작 변경
+
+설정 프로퍼티({{@ConfigurationProperties}}) 검증 시, 중첩된 프로퍼티의 유효성 검사가 자동으로 전파되지 않습니다. 명시적으로 {{@Valid}}를 붙여야 합니다.
+
+{code:language=java}
+@ConfigurationProperties("app")
+public class AppProperties {
+
+    @Valid  // 이 어노테이션이 없으면 중첩 객체의 검증이 수행되지 않음
+    private ServerConfig server;
+}
+{code}
+
+h3. OCI 이미지 기본 빌더 변경
+
+기본 빌더가 {{paketobuildpacks/builder-jammy-base}}에서 **{{paketobuildpacks/builder-jammy-java-tiny}}**로 변경되었습니다. 이미지 크기가 줄어들지만 셸(shell)이 포함되지 않을 수 있습니다.
+
+h3. 기타 주요 변경사항
+
+* **HtmlUnit**: 패키지가 `com.gargoylesoftware.htmlunit`에서 `org.htmlunit`으로 변경
+* **WebJars**: `webjars-locator-core` 대신 `webjars-locator-lite` 사용 필요
+* **Testcontainers**: `DynamicPropertyRegistry`를 `@Bean`에 주입하는 방식이 폐기되어, `DynamicPropertyRegistrar`를 별도의 빈으로 반환하는 방식 권장
+
+----
+
+h2. 새로운 기능
+
+h3. 구조화된 로깅 (Structured Logging)
+
+JSON 형식의 로그를 표준 포맷으로 출력할 수 있습니다. 로그 수집 도구(ELK, Grafana 등)와의 통합이 간편해집니다.
+
+|| 포맷 || 설명 ||
+| {{ecs}} | Elastic Common Schema - Elasticsearch 연동에 적합 |
+| {{gelf}} | Graylog Extended Log Format - Graylog 연동에 적합 |
+| {{logstash}} | Logstash JSON 포맷 |
+
+{code:language=yaml}
+logging:
+  structured:
+    format:
+      console: ecs    # 콘솔에 ECS 포맷으로 출력
+      file: logstash  # 파일에 Logstash 포맷으로 출력
+{code}
+
+{quote}
+사용자 정의 포맷도 구현 가능합니다. 상세 사항은 [공식 레퍼런스 문서|https://docs.spring.io/spring-boot/reference/features/logging.html#features.logging.structured]를 참고하세요.
+{quote}
+
+h3. @Fallback 빈 지원
+
+[Spring Framework 6.2|../../spring-framework/6.x/6.2.md]에서 도입된 {{@Fallback}} 빈이 {{@ConditionalOnSingleCandidate}}와 통합되었습니다. 단일 primary 빈이 있거나, primary 빈이 없을 때 단일 비-fallback 빈이 있으면 조건이 충족됩니다.
+
+h3. Application Group
+
+관련 애플리케이션을 그룹으로 묶어 관리할 수 있는 {{spring.application.group}} 속성이 추가되었습니다. 로그 메시지와 OpenTelemetry 리소스에 표시됩니다.
+
+{code:language=yaml}
+spring:
+  application:
+    name: order-service
+    group: e-commerce    # 애플리케이션 그룹 설정
+{code}
+
+h3. MockMvcTester (AssertJ 통합)
+
+AssertJ가 클래스패스에 있으면 {{MockMvcTester}}가 자동 구성됩니다. 기존 {{MockMvc}}의 체이닝 방식 대신 *AssertJ 스타일의 유창한 검증*이 가능합니다.
+
+{code:language=java}
+@WebMvcTest(UserController.class)
+class UserControllerTest {
+
+    @Autowired
+    MockMvcTester mvc;  // MockMvc 대신 MockMvcTester 주입
+
+    @Test
+    void 사용자_목록_조회() {
+        assertThat(mvc.get().uri("/api/users"))
+            .hasStatusOk()
+            .body().json()
+            .isLenientlyEqualTo("""
+                [{"name": "홍길동"}, {"name": "김철수"}]
+                """);
+    }
+}
+{code}
+
+h3. ClientHttpRequestFactoryBuilder
+
+HTTP 클라이언트별로 세밀한 커스터마이징이 가능한 빌더 인터페이스가 추가되었습니다.
+
+{code:language=java}
+@Bean
+public ClientHttpRequestFactoryBuilder<?> httpClientBuilder() {
+    // Apache HTTP Components 클라이언트의 세부 설정
+    return ClientHttpRequestFactoryBuilder.httpComponents()
+        .withDefaultRequestConfigCustomizer(builder ->
+            builder.setProtocolUpgradeEnabled(false));
+}
+{code}
+
+h3. OTLP(OpenTelemetry) 개선
+
+* gRPC 전송 지원: `management.otlp.tracing.transport=grpc`
+* 로그 내보내기 설정: `management.otlp.logs.*` 속성 추가
+
+h3. SSL/TLS 인증서 모니터링
+
+* `/actuator/info`에서 SSL 인증서 유효기간 정보 표시
+* Health Check로 인증서 만료 경고 임계값 설정 가능
+* Couchbase에 클라이언트 인증서 인증 지원
+
+h3. Docker Compose & Testcontainers 확장
+
+Redis Stack, Grafana LGTM, Hazelcast, OTLP 로깅 등 추가 서비스가 지원됩니다. 다중 구성 파일 사용도 가능합니다.
+
+h3. Virtual Threads 확대 적용
+
+{{OtlpMeterRegistry}}와 Undertow가 가상 스레드 활성화 시 이를 활용합니다. Spring Integration의 {{TaskScheduler}}도 가상 스레드를 인식합니다.
+
+----
+
+h2. 개선사항
+
+|| 영역 || 개선 내용 ||
+| *Spring Pulsar* | 기본 tenant/namespace 설정, 동시성 속성 추가 |
+| *이미지 빌드* | {{trustBuilder}}, {{imagePlatform}} 옵션으로 보안 및 크로스 플랫폼 지원 |
+| *Actuator 스케줄링* | 스케줄 태스크 엔드포인트에 실행 메타데이터 노출 |
+| *프로세스 정보* | 힙/비힙 메모리 정보가 {{ProcessInfoContributor}}에 포함 |
+
+----
+
+h2. Deprecated 및 제거 항목
+
+h3. Deprecated
+
+|| 항목 || 대안 ||
+| {{@MockBean}} | Spring Framework의 {{@MockitoBean}} |
+| {{@SpyBean}} | Spring Framework의 {{@MockitoSpyBean}} |
+| {{spring.gson.lenient}} | {{spring.gson.strictness}} |
+| {{EndpointExposure.CLOUD_FOUNDRY}} | {{EndpointExposure.WEB}} |
+
+h3. 제거됨
+
+Spring Boot 3.2에서 deprecated되고 3.4에서 제거 예정이었던 클래스 및 메서드가 제거되었습니다. 업그레이드 전에 deprecated 경고를 모두 해결하세요.
+
+----
+
+h2. 호환성
+
+{code:language=text|title=mermaid|collapse=true}
+graph TD
+    SB34["Spring Boot 3.4"] --> SF62["Spring Framework 6.2"]
+    SB34 --> SS64["Spring Security 6.4"]
+    SB34 --> JDK["Java 17+"]
+
+    subgraph "빌드 도구"
+        G7["Gradle 7.6.4+"]
+        G8["Gradle 8.4+"]
+        MVN["Maven 3.6+"]
+    end
+
+    SB34 --> G7
+    SB34 --> G8
+    SB34 --> MVN
+
+    style SB34 fill:#4CAF50,color:#fff
+    style SF62 fill:#2196F3,color:#fff
+{code}
+
+----
+
+h2. 참고 자료
+
+* [Spring Boot 3.4 공식 릴리즈 노트](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.4-Release-Notes)
+* [Spring Framework 6.2 릴리즈 노트](../../spring-framework/6.x/6.2.md)
+* [Spring Boot 3.5 릴리즈 노트](3.5.md) (다음 버전)
+* [Spring Boot 4.0 릴리즈 노트](../../spring-boot/4.x/4.0.md) (메이저 업그레이드)

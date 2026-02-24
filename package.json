@@ -1,0 +1,12 @@
+{
+  "name": "spring-release-notes-tools",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Spring 릴리즈 노트 변환 도구",
+  "scripts": {
+    "convert": "node scripts/batch-convert.js"
+  },
+  "dependencies": {
+    "marked": "^15.0.0"
+  }
+}

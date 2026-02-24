@@ -1,0 +1,293 @@
+h1. Spring Boot 3.5 릴리즈 노트
+
+{quote}
+출시일: 2025-05 | Java 최소 버전: 17 | [공식 릴리즈 노트|https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.5-Release-Notes]
+{quote}
+
+h2. 개요
+
+Spring Boot 3.5는 *3.x 라인의 마지막 feature 릴리즈*로, [4.0|../../spring-boot/4.x/4.0.md] 업그레이드를 준비하기 위한 안정화와 함께 다수의 신규 기능이 추가되었습니다.
+{{@FilterRegistration}}/{{@ServletRegistration}} 어노테이션, 환경 변수에서 프로퍼티 로드, WebClient 글로벌 설정, 서비스 연결의 SSL 지원, 백그라운드 빈 초기화 자동 구성 등이 포함됩니다.
+
+{quote}
+*4.0으로 업그레이드를 계획 중이라면*, 먼저 3.5 최신 버전으로 업그레이드하고 모든 Deprecated 경고를 해결하는 것을 권장합니다.
+{quote}
+
+----
+
+h2. 플랫폼 요구사항
+
+[3.4|3.4.md] 대비 최소 요구사항 변경 사항은 *없습니다*.
+
+|| 항목 || 요구 버전 ||
+| *Java* | 17 이상 |
+| *Spring Framework* | 6.2 |
+| *Gradle* | 7.6.4+ 또는 8.4+ |
+| *Maven* | 3.6+ |
+
+----
+
+h2. 주요 변경사항
+
+h3. spring-boot-parent 모듈 제거
+
+{{spring-boot-parent}} 모듈이 더 이상 배포되지 않습니다. 이 모듈에 의존하고 있었다면 자체 의존성 관리로 대체해야 합니다.
+
+h3. Boolean 프로퍼티 엄격화
+
+{{.enabled}} 프로퍼티 값이 {{true}} 또는 {{false}}만 허용됩니다. 이전에는 {{false}}가 아닌 모든 값을 {{true}}로 처리했으나, 이제 엄격하게 검증됩니다.
+
+h3. Actuator Heapdump 보안 강화
+
+Heapdump 엔드포인트의 기본 접근 수준이 {{access=NONE}}으로 변경되었습니다. 사용하려면 노출과 접근 설정을 모두 명시해야 합니다.
+
+{code:language=yaml}
+management:
+  endpoint:
+    heapdump:
+      access: unrestricted
+  endpoints:
+    web:
+      exposure:
+        include: heapdump
+{code}
+
+h3. 기타 주요 변경사항
+
+|| 변경 항목 || 내용 ||
+| *Profile 이름 검증* | 문자, 숫자, 대시, 밑줄만 허용 (3.5.1부터 {{.}}, {{+}}, {{@}}도 허용) |
+| *TaskExecutor 빈 이름* | {{taskExecutor}} 별칭 제거, {{applicationTaskExecutor}}만 제공 |
+| *TestRestTemplate* | {{RestTemplate}}과 동일한 리다이렉트 설정 적용 |
+| *Redis URL* | {{spring.data.redis.url}} 설정 시 {{database}} 속성 무시 |
+| *Prometheus Pushgateway* | {{simpleclient_pushgateway}} 대신 {{prometheus-metrics-exporter-pushgateway}} 사용, {{base-url}} 대신 {{address}} |
+| *ECS 구조화된 로깅* | 중첩(nested) JSON 포맷으로 변경 |
+| *Apache Pulsar* | 기본 클라이언트 3.3.x에서 *4.0.x*(LTS)로 업그레이드 |
+| *Couchbase Capella SSL* | 내장 인증서 자동 감지 제거, SSL 번들 설정 필요 |
+
+----
+
+h2. 새로운 기능
+
+h3. @FilterRegistration / @ServletRegistration
+
+{{FilterRegistrationBean}}과 {{ServletRegistrationBean}}을 대체하는 *어노테이션 기반* 등록 방식입니다.
+
+{code:language=java}
+@Configuration(proxyBeanMethods = false)
+class WebConfig {
+
+    // 기존 방식: FilterRegistrationBean 사용
+    // @Bean
+    // public FilterRegistrationBean<MyFilter> myFilterRegistration() {
+    //     var reg = new FilterRegistrationBean<>(new MyFilter());
+    //     reg.addUrlPatterns("/api/*");
+    //     reg.setOrder(0);
+    //     return reg;
+    // }
+
+    // 3.5 신규 방식: 어노테이션으로 간단하게 등록
+    @Bean
+    @FilterRegistration(name = "my-filter", urlPatterns = "/api/*", order = 0)
+    MyFilter myFilter() {
+        return new MyFilter();
+    }
+}
+{code}
+
+h3. 환경 변수에서 프로퍼티 로드
+
+{{env:}} 접두사를 사용하여 멀티라인 환경 변수를 프로퍼티로 가져올 수 있습니다. Kubernetes ConfigMap이나 Docker 환경에서 유용합니다.
+
+{code:language=yaml}
+spring:
+  config:
+    import: "env:MY_APP_CONFIG"  # 환경 변수를 프로퍼티 소스로 가져옴
+{code}
+
+{code:language=bash}
+# 환경 변수에 여러 프로퍼티를 한 번에 설정
+export MY_APP_CONFIG="
+server.port=9090
+spring.datasource.url=jdbc:mysql://localhost/mydb
+"
+{code}
+
+{quote}
+properties 형식뿐 아니라 YAML 형식도 지원됩니다.
+{quote}
+
+h3. 구조화된 로깅 스택 트레이스 커스터마이징
+
+[3.4|3.4.md]에서 도입된 구조화된 로깅의 스택 트레이스 출력을 세밀하게 제어할 수 있습니다.
+
+{code:language=yaml}
+logging:
+  structured:
+    json:
+      stacktrace:
+        max-length: 2048     # 최대 길이 제한
+        root-cause-first: true  # 근본 원인을 먼저 표시
+{code}
+
+h3. WebClient 글로벌 설정
+
+[3.4|3.4.md]의 블로킹 클라이언트(RestClient/RestTemplate) 설정에 이어, *WebClient*(리액티브 클라이언트)도 프로퍼티 기반 글로벌 설정을 지원합니다.
+
+{code:language=yaml}
+spring:
+  http:
+    client:
+      redirects: follow     # 리다이렉트 따라가기 (기본값)
+{code}
+
+복잡한 커스터마이징은 {{ClientHttpConnectorBuilder}} 인터페이스를 사용합니다.
+
+h3. 서비스 연결 SSL 지원
+
+다양한 데이터 서비스에 대한 클라이언트 사이드 SSL 설정이 추가되었습니다.
+
+{code:language=text|title=mermaid|collapse=true}
+graph LR
+    SSL["SSL 번들 지원"]
+    SSL --> CASS["Cassandra"]
+    SSL --> COUCH["Couchbase"]
+    SSL --> ES["Elasticsearch"]
+    SSL --> KAFKA["Kafka"]
+    SSL --> MONGO["MongoDB"]
+    SSL --> RABBIT["RabbitMQ"]
+    SSL --> REDIS["Redis"]
+
+    style SSL fill:#4CAF50,color:#fff
+{code}
+
+Testcontainers와 Docker Compose 통합에서도 SSL 설정이 지원됩니다.
+
+h3. 백그라운드 빈 초기화 자동 구성
+
+[Spring Framework 6.2|../../spring-framework/6.x/6.2.md]의 {{@Bean(bootstrap = BACKGROUND)}} 기능을 활용하기 위한 {{bootstrapExecutor}} 빈이 자동 구성됩니다. 별도 설정 없이 백그라운드 초기화를 바로 사용할 수 있습니다.
+
+h3. @ConditionalOnBooleanProperty
+
+Boolean 프로퍼티를 검사하는 전용 어노테이션이 추가되었습니다. {{@Repeatable}}이므로 여러 조건을 한 번에 지정할 수 있습니다.
+
+{code:language=java}
+@Configuration
+@ConditionalOnBooleanProperty(name = "app.feature.enabled")
+@ConditionalOnBooleanProperty(name = "app.module.active")
+public class FeatureConfig {
+    // 두 프로퍼티가 모두 true일 때만 이 설정이 활성화됨
+}
+{code}
+
+h3. Quartz Job 트리거
+
+Actuator 엔드포인트를 통해 Quartz Job을 직접 실행할 수 있습니다.
+
+{code:language=bash}
+# POST 요청으로 Job 트리거
+curl -X POST http://localhost:8080/actuator/quartz/jobs/myGroup/myJob
+{code}
+
+h3. 기타 새로운 기능
+
+* **SSL 번들 메트릭**: `ssl.chains`(체인 수/상태), `ssl.chain.expiry`(만료까지 남은 시간) 메트릭 추가
+* **Redis ReadFrom**: `spring.data.redis.lettuce.read-from`으로 레플리카 읽기 설정 가능
+* **OAuth 2 Client 세분화**: 기존 단일 자동 구성이 서블릿/리액티브, 클라이언트/웹 보안 별로 4개로 분리
+* **Task Decoration**: `TaskDecorator` 빈이 있으면 스케줄 태스크에도 자동 적용
+* **OpenTelemetry**: `OTEL_RESOURCE_ATTRIBUTES`, `OTEL_SERVICE_NAME` 환경 변수 지원
+
+----
+
+h2. 개선사항
+
+|| 영역 || 개선 내용 ||
+| *Cloud Native Buildpacks* | 기본 빌더가 {{paketobuildpacks/builder-noble-java-tiny}}로 변경 (Ubuntu Noble 기반) |
+| *Docker 인증* | Maven/Gradle 플러그인이 docker {{config.json}} 인증 및 credential helper 지원 |
+| *Mappings 엔드포인트* | WebMvc.fn 라우터 함수 정보 포함 |
+| *Spring Batch* | {{JobParametersConverter}} 빈 정의로 커스터마이징 가능 |
+| *Liquibase* | 4.31.0 업그레이드, {{analytics-enabled}}/{{license-key}} 속성 추가 |
+| *Vibur DBCP* | {{DataSourceBuilder}}에서 Vibur 커넥션 풀 지원 |
+| *LLdap* | Docker Compose/Testcontainers에서 {{lldap/lldap}} 컨테이너 지원 |
+| *가상 스레드 메트릭* | {{micrometer-java21}}이 클래스패스에 있으면 {{VirtualThreadsMetrics}} 자동 구성 |
+
+----
+
+h2. 주요 의존성 업그레이드
+
+<details>
+<summary>전체 의존성 목록 펼치기</summary>
+
+|| 프로젝트 || 버전 ||
+| Spring Authorization Server | 1.5.0 |
+| Spring Data | 2025.0.0 |
+| Spring GraphQL | 1.4.0 |
+| Spring HATEOAS | 2.5.0 |
+| Spring Integration | 6.5.0 |
+| Spring LDAP | 3.3.0 |
+| Spring Security | 6.5.0 |
+| Spring Session | 3.5.0 |
+| Spring WS | 4.1.0 |
+| Micrometer | 1.15.0 |
+| Micrometer Tracing | 1.5.0 |
+| Flyway | 11.7 |
+| Liquibase | 4.31 |
+| Kafka | 3.9 |
+| Elasticsearch | 8.17 |
+| HikariCP | 6.3 |
+| Testcontainers | 1.21 |
+| OpenTelemetry | 1.49 |
+| Apache Pulsar | 4.0 |
+
+</details>
+
+----
+
+h2. Deprecated 및 제거 항목
+
+h3. Deprecated
+
+|| 항목 || 대안 ||
+| {{ConditionalOutcome.inverse()}} | 제거 예정 |
+| SignalFX 지원 | Micrometer에서 deprecated |
+| {{spring.mvc.converters.preferred-json-mapper}} | {{spring.http.converters.preferred-json-mapper}} |
+| {{spring.codec.log-request-details}} | {{spring.http.codecs.log-request-details}} |
+| {{spring.codec.max-in-memory-size}} | {{spring.http.codecs.max-in-memory-size}} |
+| {{HttpOption.ENABLE_REDIRECTS}} | RestTemplate 리다이렉트 설정 사용 |
+| {{spring.groovy.template.configuration.*}} | {{spring.groovy.template.*}} |
+
+h3. 제거됨
+
+Spring Boot 3.3에서 deprecated 처리되고 3.5에서 제거 예정이었던 항목들이 제거되었습니다.
+
+----
+
+h2. 호환성
+
+{code:language=text|title=mermaid|collapse=true}
+graph TD
+    SB35["Spring Boot 3.5"] --> SF62["Spring Framework 6.2"]
+    SB35 --> SS65["Spring Security 6.5"]
+    SB35 --> JDK["Java 17+"]
+
+    SB35 -.->|"다음 버전"| SB40["Spring Boot 4.0"]
+    SB40 --> SF70["Spring Framework 7.0"]
+
+    subgraph "3.x → 4.0 업그레이드 경로"
+        SB34["Spring Boot 3.4"] --> SB35
+        SB35 -->|"모든 deprecated 해결 후"| SB40
+    end
+
+    style SB35 fill:#4CAF50,color:#fff
+    style SB40 fill:#FF9800,color:#fff
+    style SF62 fill:#2196F3,color:#fff
+{code}
+
+----
+
+h2. 참고 자료
+
+* [Spring Boot 3.5 공식 릴리즈 노트](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.5-Release-Notes)
+* [Spring Boot 3.4 릴리즈 노트](3.4.md) (이전 버전)
+* [Spring Boot 4.0 릴리즈 노트](../../spring-boot/4.x/4.0.md) (다음 메이저 버전)
+* [Spring Framework 6.2 릴리즈 노트](../../spring-framework/6.x/6.2.md)
+* [3.x → 4.x 마이그레이션 가이드](../../migration-guides/spring-boot-3to4.md)

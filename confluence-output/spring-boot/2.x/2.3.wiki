@@ -1,0 +1,294 @@
+h1. Spring Boot 2.3 릴리즈 노트
+
+{quote}
+출시일: 2020-05 | Java 최소 버전: 8 | [공식 릴리즈 노트|https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.3-Release-Notes]
+{quote}
+
+h2. 개요
+
+Spring Boot 2.3은 **컨테이너 환경(Docker, Kubernetes)**에 대한 지원을 대폭 강화한 버전입니다.
+*Cloud Native Buildpacks*를 통한 Docker 이미지 빌드, *Layered JAR*을 이용한 효율적인 이미지 캐싱,
+*Graceful Shutdown(우아한 종료)*, 그리고 *Kubernetes Liveness/Readiness 프로브*가 핵심 기능으로 추가되었습니다.
+
+----
+
+h2. 플랫폼 요구사항
+
+|| 항목 || 요구 버전 ||
+| *Java* | 8, 11, 14 |
+| *Spring Framework* | 5.2 |
+| *Gradle* | 6.3+ |
+| *Maven* | 3.2+ |
+| *Tomcat* | 9.0 |
+| *Jetty* | 9.4 |
+| *Undertow* | 2.0 |
+
+----
+
+h2. 주요 변경사항
+
+h3. 1. Validation 스타터 분리
+
+{{spring-boot-starter-web}}과 {{spring-boot-starter-webflux}}에 더 이상 {{spring-boot-starter-validation}}이 포함되지 않습니다. Bean Validation({{@Valid}}, {{@NotNull}} 등)을 사용하려면 *명시적으로 의존성을 추가*해야 합니다.
+
+{code:language=xml}
+<!-- 유효성 검증이 필요한 경우 직접 추가 -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-validation</artifactId>
+</dependency>
+{code}
+
+{code:language=java}
+// @Valid를 사용하려면 validation 스타터가 필요
+@PostMapping("/users")
+public ResponseEntity<User> createUser(@Valid @RequestBody UserRequest request) {
+    // 유효성 검증은 validation 스타터 없이는 동작하지 않음
+    return ResponseEntity.ok(userService.create(request));
+}
+{code}
+
+h3. 2. DataSource 고유 이름 자동 생성
+
+자동 설정된 DataSource가 시작할 때마다 *고유한 이름*을 생성합니다. 이로 인해 H2 콘솔에서 사용하던 고정 URL이 달라질 수 있습니다.
+
+{code:language=properties}
+# 이전 동작(고정 이름)으로 되돌리려면
+spring.datasource.generate-unique-name=false
+{code}
+
+h3. 3. Spring Data Neumann 업그레이드
+
+여러 Spring Data 모듈에 큰 변경이 있습니다.
+
+|| 모듈 || 주요 변경 ||
+| *Cassandra* | SDK v4로 전환, 새 커스터마이저 인터페이스 |
+| *Couchbase* | SDK v3로 전환, 연결 문자열 형식 변경 |
+| *Elasticsearch* | Native Transport 및 Jest 지원 제거 |
+| *MongoDB* | 리액티브/명령형 드라이버 통합 |
+
+h3. 4. Spring Cloud Connectors 완전 제거
+
+2.2에서 Deprecated되었던 {{spring-boot-starter-cloud-connectors}}가 제거되었습니다.
+
+----
+
+h2. 새로운 기능
+
+h3. 1. Docker 이미지 빌드 (Cloud Native Buildpacks)
+
+Dockerfile 없이 Maven/Gradle 플러그인으로 *최적화된 Docker 이미지*를 빌드할 수 있습니다. Cloud Native Buildpacks(클라우드 네이티브 빌드팩)은 소스 코드를 분석하여 자동으로 컨테이너 이미지를 생성하는 기술입니다.
+
+{code:language=bash}
+# Maven으로 Docker 이미지 빌드
+./mvnw spring-boot:build-image
+
+# Gradle로 Docker 이미지 빌드
+./gradlew bootBuildImage
+{code}
+
+{code:language=text|title=mermaid|collapse=true}
+graph LR
+    SRC["소스 코드 / JAR"] --> BP["Cloud Native<br/>Buildpacks"]
+    BP --> DETECT["자동 감지<br/>(Java, 의존성)"]
+    DETECT --> BUILD["레이어 구성<br/>(JRE, 라이브러리, 앱)"]
+    BUILD --> IMG["최적화된<br/>Docker 이미지"]
+
+    style BP fill:#2196F3,color:#fff
+    style IMG fill:#4CAF50,color:#fff
+{code}
+
+h3. 2. Layered JAR (계층형 JAR)
+
+JAR 파일을 *변경 빈도에 따라 계층(Layer)으로 분리*하여, Docker 이미지 빌드 시 캐싱 효율을 극대화합니다.
+
+{code:language=text|title=mermaid|collapse=true}
+graph TB
+    subgraph "Layered JAR 구조"
+        L1["dependencies<br/>(외부 라이브러리 - 거의 안 바뀜)"]
+        L2["spring-boot-loader<br/>(Spring Boot 로더)"]
+        L3["snapshot-dependencies<br/>(스냅샷 의존성)"]
+        L4["application<br/>(내 코드 - 자주 바뀜)"]
+    end
+
+    L1 --> L2 --> L3 --> L4
+
+    style L1 fill:#4CAF50,color:#fff
+    style L4 fill:#FF9800,color:#fff
+{code}
+
+{code:language=dockerfile}
+# Layered JAR을 활용한 효율적인 Dockerfile
+FROM eclipse-temurin:11-jre as builder
+WORKDIR /app
+COPY target/*.jar app.jar
+# 계층별로 JAR 추출
+RUN java -Djarmode=layertools -jar app.jar extract
+
+FROM eclipse-temurin:11-jre
+WORKDIR /app
+# 변경 빈도가 낮은 순서대로 COPY (Docker 캐싱 최적화)
+COPY --from=builder /app/dependencies/ ./
+COPY --from=builder /app/spring-boot-loader/ ./
+COPY --from=builder /app/snapshot-dependencies/ ./
+COPY --from=builder /app/application/ ./
+ENTRYPOINT ["java", "org.springframework.boot.loader.JarLauncher"]
+{code}
+
+h3. 3. Graceful Shutdown (우아한 종료)
+
+4개의 내장 웹 서버(Tomcat, Jetty, Reactor Netty, Undertow) 모두 *우아한 종료*를 지원합니다. 종료 신호를 받으면 새 요청은 거부하고, 처리 중인 요청이 완료될 때까지 기다린 후 종료됩니다.
+
+{code:language=properties}
+# 우아한 종료 활성화
+server.shutdown=graceful
+
+# 대기 시간 설정 (기본값: 30초)
+spring.lifecycle.timeout-per-shutdown-phase=30s
+{code}
+
+{code:language=text|title=mermaid|collapse=true}
+sequenceDiagram
+    participant Client as 클라이언트
+    participant Server as 서버
+    participant App as 애플리케이션
+
+    Note over Server: SIGTERM 수신
+    Server->>Server: 새 요청 수락 중단
+    Client->>Server: 새 요청
+    Server-->>Client: 503 거부
+    Note over Server: 처리 중인 요청 완료 대기
+    App->>Server: 기존 요청 응답 완료
+    Note over Server: 정상 종료
+{code}
+
+h3. 4. Kubernetes Liveness / Readiness 프로브
+
+Kubernetes(컨테이너 오케스트레이션 플랫폼) 환경에서 애플리케이션의 **생존 상태(Liveness)**와 **요청 수신 준비 상태(Readiness)**를 자동으로 보고합니다. Kubernetes 환경에서 실행되면 자동으로 활성화됩니다.
+
+{code:language=properties}
+# Kubernetes가 아닌 환경에서 수동 활성화
+management.health.probes.enabled=true
+{code}
+
+|| 프로브 || 엔드포인트 || 용도 ||
+| *Liveness* | {{/actuator/health/liveness}} | 애플리케이션이 살아있는지 확인 (실패 시 재시작) |
+| *Readiness* | {{/actuator/health/readiness}} | 트래픽을 받을 준비가 되었는지 확인 (실패 시 트래픽 차단) |
+
+h3. 5. R2DBC 지원
+
+R2DBC(Reactive Relational Database Connectivity)는 관계형 DB를 *리액티브(비동기/논블로킹)* 방식으로 접근하는 기술입니다. {{ConnectionFactory}} 자동 설정, Repository 자동 설정, 헬스 인디케이터, {{@DataR2dbcTest}} 슬라이스 테스트를 지원합니다.
+
+{code:language=xml}
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-r2dbc</artifactId>
+</dependency>
+{code}
+
+h3. 6. 설정 파일 와일드카드 위치
+
+설정 파일 경로에 **와일드카드({{*}})**를 사용할 수 있습니다. Kubernetes에서 여러 ConfigMap/Secret을 마운트할 때 유용합니다.
+
+{code:language=properties}
+# Kubernetes에서 여러 설정 소스를 한 번에 로드
+spring.config.additional-location=config/*/
+{code}
+
+----
+
+h2. 개선사항
+
+* **WebFlux 기본 경로 설정**: `spring.webflux.base-path` 프로퍼티로 기본 경로 지정 가능
+* **설정 프로퍼티 출처 추적**: Actuator에서 설정값의 원본 정보(origin) 확인 가능
+* **DataSource 헬스 체크 개선**: `Connection#isValid` 사용으로 쿼리 없이 연결 확인
+* **메트릭 엔드포인트**: 메트릭 이름이 알파벳순 정렬로 표시
+
+----
+
+h2. Deprecated 및 제거 항목
+
+h3. Deprecated
+
+|| 항목 || 대체 방법 ||
+| {{spring.http.encoding.*}} | {{server.servlet.encoding.*}} |
+| {{spring.http.log-request-details}} | {{spring.mvc.log-request-details}} |
+| {{spring.codec.log-request-details}} | {{spring.codec.log-request-details}} (위치 변경) |
+| {{ON_TRACE_PARAM}} (에러 페이지 스택트레이스) | {{ON_PARAM}} |
+
+h3. 제거됨
+
+* `spring-boot-starter-cloud-connectors` (Spring Cloud Connectors)
+* Elasticsearch Native Transport 지원
+* Elasticsearch Jest 지원
+
+----
+
+h2. 호환성
+
+{code:language=text|title=mermaid|collapse=true}
+graph LR
+    SB23["Spring Boot 2.3"]
+
+    subgraph "Java 지원"
+        JAVA8["Java 8"]
+        JAVA11["Java 11"]
+        JAVA14["Java 14 (신규)"]
+    end
+
+    subgraph "핵심 프레임워크"
+        SF52["Spring Framework 5.2"]
+        SS53["Spring Security 5.3"]
+    end
+
+    subgraph "컨테이너 지원"
+        DOCKER["Docker 이미지 빌드<br/>(Buildpacks)"]
+        K8S["Kubernetes<br/>(Liveness/Readiness)"]
+        LAYERED["Layered JAR"]
+    end
+
+    subgraph "데이터"
+        SDN["Spring Data Neumann"]
+        R2DBC["R2DBC (신규)"]
+    end
+
+    SB23 --> JAVA8
+    SB23 --> JAVA11
+    SB23 --> JAVA14
+    SB23 --> SF52
+    SB23 --> SS53
+    SB23 --> DOCKER
+    SB23 --> K8S
+    SB23 --> LAYERED
+    SB23 --> SDN
+    SB23 --> R2DBC
+
+    style SB23 fill:#4CAF50,color:#fff
+    style JAVA14 fill:#FF9800,color:#fff
+    style DOCKER fill:#2196F3,color:#fff
+    style K8S fill:#2196F3,color:#fff
+    style R2DBC fill:#FF9800,color:#fff
+{code}
+
+h3. 주요 의존성 버전
+
+|| 프로젝트 || 버전 ||
+| Spring Framework | 5.2 |
+| Spring Security | 5.3 |
+| Spring Data | Neumann |
+| Spring HATEOAS | 1.1 |
+| Spring Integration | 5.3 |
+| Micrometer | 1.5 |
+| Jackson | 2.11 |
+| Kafka Client | 2.5 |
+| MongoDB Driver | 4.0 |
+| Kotlin | 1.3.72 |
+
+----
+
+h2. 참고 자료
+
+* [Spring Boot 2.3 공식 릴리즈 노트](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.3-Release-Notes)
+* [Spring Framework 5.2](../../spring-framework/5.x/5.2.md)
+* [Spring Boot 2.2 릴리즈 노트](2.2.md) (이전 버전)
+* [Spring Boot 2.4 릴리즈 노트](2.4.md) (다음 버전)

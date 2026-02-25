@@ -38,11 +38,11 @@ Spring Boot 2.4에서 가장 큰 변경사항입니다. {{application.properties
 
 *핵심 변경 내용:*
 
-* 외부 설정 파일을 `spring.config.import`로 가져올 수 있음
+* 외부 설정 파일을 \{\{spring.config.import\}\}로 가져올 수 있음
 * Kubernetes 스타일의 설정 트리(Config Tree, 개별 파일에 키/값 쌍 저장) 지원
 * 확장자 없는 설정 파일도 힌트를 통해 가져오기 가능
 
-{code:language=yaml}
+{code:language=yaml|theme=Emacs}
 # application.yml - 외부 설정 가져오기 예제
 spring:
   config:
@@ -53,19 +53,19 @@ spring:
 {code}
 
 {quote}
-*호환 모드:* 기존 방식이 필요하면 {{spring.config.use-legacy-processing=true}}를 설정하세요.
+*호환 모드:* 기존 방식이 필요하면 {{spring.config.use\-legacy\-processing=true}}를 설정하세요.
 {quote}
 
 *주의사항:*
 
-* `spring.config.location`과 `spring.config.import`로 지정한 파일이 없으면 **에러가 발생**합니다.
-* 선택적 로딩이 필요하면 `optional:` 접두사를 사용하세요.
+* \{\{spring.config.location\}\}과 \{\{spring.config.import\}\}로 지정한 파일이 없으면 *에러가 발생*합니다.
+* 선택적 로딩이 필요하면 \{\{optional:\}\} 접두사를 사용하세요.
 
 h3. 2. JUnit 5 Vintage 엔진 제거
 
-{{spring-boot-starter-test}}에서 JUnit 4 호환용 Vintage 엔진이 제거되었습니다.
+{{spring\-boot\-starter\-test}}에서 JUnit 4 호환용 Vintage 엔진이 제거되었습니다.
 
-{code:language=xml}
+{code:language=xml|theme=Emacs}
 <!-- JUnit 4를 계속 사용해야 한다면 직접 의존성 추가 필요 -->
 <dependency>
     <groupId>org.junit.vintage</groupId>
@@ -84,7 +84,7 @@ h3. 3. 내장 데이터베이스 감지 변경
 
 *인메모리(In-Memory)* 데이터베이스만 내장 DB로 인식합니다. H2, HSQL, Derby 등이 파일 모드나 서버 모드로 동작할 경우 더 이상 자동으로 {{sa}} 사용자명이 설정되지 않습니다.
 
-{code:language=properties}
+{code:language=properties|theme=Emacs}
 # 파일 기반 H2를 사용하는 경우 직접 설정 필요
 spring.datasource.username=sa
 spring.datasource.initialization-mode=always
@@ -94,18 +94,18 @@ h3. 4. DefaultServlet 등록 중단
 
 서블릿 컨테이너의 {{DefaultServlet}}이 더 이상 자동 등록되지 않습니다.
 
-{code:language=properties}
+{code:language=properties|theme=Emacs}
 # 이전 동작이 필요한 경우
 server.servlet.register-default-servlet=true
 {code}
 
 h3. 5. 기타 주요 변경
 
-* **Logback 프로퍼티 이름 변경:** `logging.file.*` -> `logging.logback.rollingpolicy.*`로 변경 (Logback 전용 명시)
-* **HTTP Trace 쿠키 제외:** 보안을 위해 `Cookie`/`Set-Cookie` 헤더가 기본 제외
-* **Neo4j 전면 개편:** Neo4j OGM 제거, 설정 네임스페이스 `spring.neo4j.*`로 변경
-* **Hazelcast 4 업그레이드:** 하위 호환은 3.2.x까지 지원
-* **Undertow 경로 보존:** 포워딩 요청 시 서블릿 스펙 준수로 변경
+* *Logback 프로퍼티 이름 변경:* \{\{logging.file.\*\}\} -> \{\{logging.logback.rollingpolicy.\*\}\}로 변경 (Logback 전용 명시)
+* *HTTP Trace 쿠키 제외:* 보안을 위해 \{\{Cookie\}\}/\{\{Set\-Cookie\}\} 헤더가 기본 제외
+* *Neo4j 전면 개편:* Neo4j OGM 제거, 설정 네임스페이스 \{\{spring.neo4j.\*\}\}로 변경
+* *Hazelcast 4 업그레이드:* 하위 호환은 3.2.x까지 지원
+* *Undertow 경로 보존:* 포워딩 요청 시 서블릿 스펙 준수로 변경
 
 ----
 
@@ -117,7 +117,7 @@ h3. 레이어드 JAR 기본 활성화
 
 h3. Docker 이미지 빌드 개선
 
-* Maven `spring-boot:build-image` / Gradle `bootBuildImage` 태스크로 Docker 레지스트리에 직접 퍼블리시 가능
+* Maven \{\{spring\-boot:build\-image\}\} / Gradle \{\{bootBuildImage\}\} 태스크로 Docker 레지스트리에 직접 퍼블리시 가능
 * 프라이빗 레지스트리 인증 (사용자명/비밀번호, 토큰 기반) 지원
 * Paketo Buildpack 업그레이드 및 Docker Hub 기본 레지스트리 설정
 
@@ -127,7 +127,7 @@ h3. Startup Endpoint (시작 추적 엔드포인트)
 
 h3. Redis 캐시 메트릭
 
-{code:language=properties}
+{code:language=properties|theme=Emacs}
 # Redis 캐시 통계를 Micrometer를 통해 노출
 spring.cache.redis.enable-statistics=true
 {code}
@@ -140,15 +140,15 @@ Spring MVC와 WebFlux 모두에서 사용 가능한 통합 프로퍼티가 추�
 
 || 새 프로퍼티 || 설명 ||
 | {{spring.web.locale}} | 로케일 설정 |
-| {{spring.web.locale-resolver}} | 로케일 리졸버 |
-| {{spring.web.resources.*}} | 정적 리소스 설정 |
-| {{management.server.base-path}} | 관리 서버 기본 경로 |
+| {{spring.web.locale\-resolver}} | 로케일 리졸버 |
+| {{spring.web.resources.\*}} | 정적 리소스 설정 |
+| {{management.server.base\-path}} | 관리 서버 기본 경로 |
 
 h3. Constructor Binding에 @Name 어노테이션
 
 생성자 바인딩에서 Java 예약어와 충돌하는 프로퍼티 이름을 {{@Name}}으로 지정할 수 있습니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // Java의 예약어 'import'를 프로퍼티 이름으로 사용하는 예제
 @ConstructorBinding
 public class MyProperties {
@@ -162,16 +162,16 @@ public class MyProperties {
 
 h3. 기타 새 기능
 
-* Java 15 지원, R2DBC용 `R2dbcEntityTemplate` 제공
-* `@DataCassandraTest` 슬라이스 테스트 및 `CassandraDriverHealthIndicator` 추가
+* Java 15 지원, R2DBC용 \{\{R2dbcEntityTemplate\}\} 제공
+* \{\{@DataCassandraTest\}\} 슬라이스 테스트 및 \{\{CassandraDriverHealthIndicator\}\} 추가
 * Flyway 7 업그레이드, Prometheus 엔드포인트 필터링
-* JVM 버전 시작 로그, Jedis 선택 (`spring.redis.client-type`), 로그 인코딩 설정
+* JVM 버전 시작 로그, Jedis 선택 (\{\{spring.redis.client\-type\}\}), 로그 인코딩 설정
 
 ----
 
 h2. 주요 의존성 업그레이드
 
-{code:language=text|title=mermaid|collapse=true}
+{code:language=text|title=mermaid|collapse=true|theme=Emacs}
 graph TB
     SB24["Spring Boot 2.4"]
 
@@ -249,22 +249,22 @@ h3. Deprecated
 || 항목 || 대체 방법 ||
 | {{ConfigFileApplicationListener}} | {{ConfigDataEnvironmentPostProcessor}} 사용 |
 | {{contextClass}} 메서드 (SpringApplication) | {{contextFactory}} 메서드 사용 |
-| Spring MVC 전용 리소스 프로퍼티 | {{spring.web.resources.*}} 사용 |
+| Spring MVC 전용 리소스 프로퍼티 | {{spring.web.resources.\*}} 사용 |
 | Cassandra Spring Data 기반 헬스 인디케이터 | 드라이버 기반 인디케이터 사용 |
 | Logback 관련 {{LoggingSystemProperties}} 상수 | {{LogbackLoggingSystemProperties}} 사용 |
 
 h3. 제거
 
-* **Neo4j OGM 지원** 완전 제거
-* **Elasticsearch 저수준 `RestClient`** 자동 설정 제거 (`RestHighLevelClient`는 유지)
+* *Neo4j OGM 지원* 완전 제거
+* *Elasticsearch 저수준 \{\{RestClient\}\}* 자동 설정 제거 (\{\{RestHighLevelClient\}\}는 유지)
 * Flatten Maven Plugin 관리 제거
-* `exec-maven-plugin` 버전 관리 제거
+* \{\{exec\-maven\-plugin\}\} 버전 관리 제거
 
 ----
 
 h2. 호환성
 
-{code:language=text|title=mermaid|collapse=true}
+{code:language=text|title=mermaid|collapse=true|theme=Emacs}
 graph LR
     subgraph "필수"
         JAVA["Java 8 ~ 15"]
@@ -298,7 +298,7 @@ graph LR
 
 h2. 참고 자료
 
-* [Spring Boot 2.4 공식 릴리즈 노트](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.4-Release-Notes)
-* [Spring Boot 2.4 Configuration Changelog](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.4-Configuration-Changelog)
-* [Spring Framework 5.3](../../spring-framework/5.x/5.3.md)
-* [Spring Boot 2.5 릴리즈 노트](2.5.md)
+* [Spring Boot 2.4 공식 릴리즈 노트|https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.4-Release-Notes]
+* [Spring Boot 2.4 Configuration Changelog|https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.4-Configuration-Changelog]
+* [Spring Framework 5.3|../../spring-framework/5.x/5.3.md]
+* [Spring Boot 2.5 릴리즈 노트|2.5.md]

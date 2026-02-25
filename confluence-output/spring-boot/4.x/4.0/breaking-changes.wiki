@@ -12,7 +12,7 @@ h2. 1. Jakarta EE 11 및 Servlet 6.1 기반
 
 Spring Boot 4.0은 Jakarta EE 11을 대상으로 하며, *Servlet 6.1 호환 컨테이너*가 필요합니다.
 
-{code:language=text|title=mermaid|collapse=true}
+{code:language=text|title=mermaid|collapse=true|theme=Emacs}
 graph LR
     subgraph "Spring Boot 3.x"
         JEE10["Jakarta EE 9~10"]
@@ -38,9 +38,9 @@ graph LR
 {quote}
 *초보자를 위한 설명:*
 
-* **Jakarta EE**: Java 웹 애플리케이션의 표준 규격 모음 (예전 이름: Java EE)
-* **Servlet**: 웹 요청을 처리하는 Java 표준 인터페이스
-* **Tomcat/Jetty**: Servlet을 실행하는 웹 서버(컨테이너)
+* *Jakarta EE*: Java 웹 애플리케이션의 표준 규격 모음 (예전 이름: Java EE)
+* *Servlet*: 웹 요청을 처리하는 Java 표준 인터페이스
+* *Tomcat/Jetty*: Servlet을 실행하는 웹 서버(컨테이너)
 {quote}
 
 ----
@@ -52,14 +52,14 @@ JSON 처리 라이브러리인 Jackson이 *2.x에서 3.x로 메이저 업그레�
 
 *주요 변경점:*
 
-* **Group ID 및 패키지명 변경**: `com.fasterxml.jackson` → `tools.jackson`
-** 단, `jackson-annotations` 모듈은 기존 `com.fasterxml.jackson.core` Group ID 유지
+* *Group ID 및 패키지명 변경*: \{\{com.fasterxml.jackson\}\} → \{\{tools.jackson\}\}
+** 단, \{\{jackson\-annotations\}\} 모듈은 기존 \{\{com.fasterxml.jackson.core\}\} Group ID 유지
 
-* Spring Boot 어노테이션 이름 변경: `@JsonComponent` → `@JacksonComponent`, `@JsonMixin` → `@JacksonMixin`
-* 더 엄격한 타입 처리 및 `ObjectMapper` 동작 변경
-* 설정 프로퍼티 경로 변경: `spring.jackson.read.*` → `spring.jackson.json.read.*`
+* Spring Boot 어노테이션 이름 변경: \{\{@JsonComponent\}\} → \{\{@JacksonComponent\}\}, \{\{@JsonMixin\}\} → \{\{@JacksonMixin\}\}
+* 더 엄격한 타입 처리 및 \{\{ObjectMapper\}\} 동작 변경
+* 설정 프로퍼티 경로 변경: \{\{spring.jackson.read.\*\}\} → \{\{spring.jackson.json.read.\*\}\}
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // Jackson 2.x (이전 방식)
 import com.fasterxml.jackson.databind.ObjectMapper;      // 패키지: com.fasterxml.jackson
 @JsonComponent  // Spring Boot 어노테이션 이름
@@ -69,7 +69,7 @@ import tools.jackson.databind.ObjectMapper;               // 패키지: tools.ja
 @JacksonComponent  // 어노테이션 이름 변경
 {code}
 
-{code:language=yaml}
+{code:language=yaml|theme=Emacs}
 # Jackson 2.x 호환 모드 (임시 사용)
 spring:
   jackson:
@@ -77,7 +77,7 @@ spring:
 {code}
 
 {quote}
-*참고:* Jackson 2.x 지원은 Deprecated 상태로 유지되며, {{spring.jackson.use-jackson2-defaults=true}}로
+*참고:* Jackson 2.x 지원은 Deprecated 상태로 유지되며, {{spring.jackson.use\-jackson2\-defaults=true}}로
 임시 호환 모드를 사용할 수 있지만, 점진적으로 Jackson 3.x로 전환해야 합니다.
 {quote}
 
@@ -87,7 +87,7 @@ h2. 3. JSpecify 기반 Null 안전성
 
 Spring Boot 4.0은 *JSpecify*를 표준 Null 안전성(Null Safety) 어노테이션 라이브러리로 채택했습니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
@@ -112,10 +112,10 @@ public class UserService {
 {quote}
 *초보자를 위한 설명:*
 
-* **Null Safety**: 코드에서 `null` 값이 어디에 허용되는지 명확히 표시하는 것
-* `@NullMarked`: "이 범위에서는 기본적으로 null을 허용하지 않는다"는 선언
-* `@Nullable`: "이 값은 null일 수 있다"는 예외 표시
-* 이를 통해 `NullPointerException`을 컴파일 시점에 방지할 수 있습니다
+* *Null Safety*: 코드에서 \{\{null\}\} 값이 어디에 허용되는지 명확히 표시하는 것
+* \{\{@NullMarked\}\}: "이 범위에서는 기본적으로 null을 허용하지 않는다"는 선언
+* \{\{@Nullable\}\}: "이 값은 null일 수 있다"는 예외 표시
+* 이를 통해 \{\{NullPointerException\}\}을 컴파일 시점에 방지할 수 있습니다
 {quote}
 
 ----
@@ -124,7 +124,7 @@ h2. 4. {{javax}} 패키지 어노테이션 지원 종료
 
 {{javax.annotation}}, {{javax.inject}} 패키지의 어노테이션이 *더 이상 지원되지 않습니다*.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // 이전 (더 이상 지원하지 않음)
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -137,7 +137,7 @@ import jakarta.inject.Inject;
 {code}
 
 {quote}
-*참고:* Spring Boot 3.0에서 이미 {{javax.*}} → {{jakarta.*}} 전환이 시작되었지만,
+*참고:* Spring Boot 3.0에서 이미 {{javax.\*}} → {{jakarta.\*}} 전환이 시작되었지만,
 3.x에서는 일부 {{javax}} 어노테이션이 여전히 동작했습니다.
 4.0에서는 이 호환성 지원이 *완전히 제거*되었습니다.
 {quote}
@@ -146,14 +146,14 @@ import jakarta.inject.Inject;
 
 h2. 5. Deprecated API 대량 제거
 
-Spring Boot 2.x~3.x에서 Deprecated로 표시되었던 **약 36개 클래스(전체 Deprecated의 약 88%)**가 제거되었습니다.
+Spring Boot 2.x~3.x에서 Deprecated로 표시되었던 *약 36개 클래스(전체 Deprecated의 약 88%)*가 제거되었습니다.
 
 대표적인 제거 항목:
 
-* `MockitoTestExecutionListener` → Mockito의 `MockitoExtension` 사용
-* `@AutoConfigureObservability` → `@AutoConfigureMetrics`와 `@AutoConfigureTracing`으로 세분화
+* \{\{MockitoTestExecutionListener\}\} → Mockito의 \{\{MockitoExtension\}\} 사용
+* \{\{@AutoConfigureObservability\}\} → \{\{@AutoConfigureMetrics\}\}와 \{\{@AutoConfigureTracing\}\}으로 세분화
 * Reactive Pulsar 자동 구성 (Spring Pulsar의 Reactor 지원 제거에 따라 제거)
-* `hibernate-jpamodelgen` → `hibernate-processor`로 대체
+* \{\{hibernate\-jpamodelgen\}\} → \{\{hibernate\-processor\}\}로 대체
 * 여러 Auto-Configuration 클래스의 public 멤버
 * 일부 레거시 프로퍼티 및 생성자
 

@@ -14,7 +14,7 @@ RSocket은 리액티브 스트림(Reactive Streams) 기반의 *바이너리 프�
 
 {{@MessageMapping}}은 RSocket 메시지를 처리하는 핸들러 메서드를 지정하는 어노테이션입니다. HTTP의 {{@RequestMapping}}과 유사한 역할을 합니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 @Controller
 public class MarketDataController {
 
@@ -43,7 +43,7 @@ public class MarketDataController {
 
 {{RSocketRequester}}는 RSocket 서버에 요청을 보내기 위한 클라이언트 객체입니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 @Service
 public class MarketDataClient {
 
@@ -71,7 +71,7 @@ Kotlin 코루틴은 비동기 프로그래밍을 *동기 코드처럼* 작성할
 
 *기존 방식 (Mono/Flux 직접 사용)*
 
-{code:language=kotlin}
+{code:language=kotlin|theme=Emacs}
 @GetMapping("/users/{id}")
 fun getUser(@PathVariable id: Long): Mono<User> {
     return userService.findById(id)  // Mono를 직접 반환해야 함
@@ -80,7 +80,7 @@ fun getUser(@PathVariable id: Long): Mono<User> {
 
 *코루틴 방식 (5.2부터 지원)*
 
-{code:language=kotlin}
+{code:language=kotlin|theme=Emacs}
 // suspend 키워드를 붙이면 비동기 함수가 됨
 // Mono 대신 일반 객체를 반환할 수 있어 코드가 훨씬 간결
 @GetMapping("/users/{id}")
@@ -96,7 +96,7 @@ fun getAllUsers(): Flow<User> {
 {code}
 
 {quote}
-*참고:* 코루틴을 사용하려면 프로젝트에 {{kotlinx-coroutines-reactor}} 의존성을 추가해야 합니다.
+*참고:* 코루틴을 사용하려면 프로젝트에 {{kotlinx\-coroutines\-reactor}} 의존성을 추가해야 합니다.
 {quote}
 
 ----
@@ -105,7 +105,7 @@ h3. 3. {{@Configuration}} 라이트 모드
 
 기존 {{@Configuration}} 클래스는 CGLIB 프록시를 사용하여 {{@Bean}} 메서드 간 호출 시 싱글톤을 보장했습니다. 5.2부터는 {{proxyBeanMethods = false}} 옵션으로 *라이트 모드*를 사용할 수 있습니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // 기존 방식: CGLIB 프록시 생성 (기본값)
 @Configuration
 public class FullModeConfig {
@@ -141,13 +141,13 @@ public class LiteModeConfig {
 
 *라이트 모드의 장점:*
 
-* CGLIB 프록시를 생성하지 않아 **애플리케이션 시작 시간이 단축**됨
-* **메모리 사용량 감소**
+* CGLIB 프록시를 생성하지 않아 *애플리케이션 시작 시간이 단축*됨
+* *메모리 사용량 감소*
 * GraalVM 네이티브 이미지 빌드에 유리
 
 *주의사항:*
 
-* `@Bean` 메서드를 직접 호출하면 매번 새 인스턴스가 생성되므로, 반드시 **파라미터 주입** 방식을 사용해야 합니다.
+* \{\{@Bean\}\} 메서드를 직접 호출하면 매번 새 인스턴스가 생성되므로, 반드시 *파라미터 주입* 방식을 사용해야 합니다.
 
 ----
 
@@ -155,7 +155,7 @@ h3. 4. WebMvc.fn - 서블릿 기반 함수형 엔드포인트
 
 기존에 WebFlux에서만 사용할 수 있던 함수형 엔드포인트 방식을 *서블릿(Spring MVC)* 환경에서도 사용할 수 있게 되었습니다. 어노테이션 없이 코드로 직접 라우팅을 정의합니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 @Configuration(proxyBeanMethods = false)
 public class RouterConfig {
 
@@ -205,7 +205,7 @@ h3. 5. ReactiveTransactionManager
 
 리액티브 환경에서 트랜잭션을 관리하기 위한 새로운 SPI(Service Provider Interface)입니다. 기존 {{PlatformTransactionManager}}의 리액티브 버전으로, R2DBC나 MongoDB Reactive 등에서 활용됩니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // 리액티브 트랜잭션 매니저 사용 예시
 @Service
 public class OrderService {
@@ -235,7 +235,7 @@ Spring 내부의 어노테이션 검색 및 처리 엔진이 완전히 재작성
 h2. 새로운 기능
 
 || 기능 || 설명 ||
-| *RSocket 메시징* | {{spring-messaging}} 모듈에서 RSocket 프로토콜 지원 |
+| *RSocket 메시징* | {{spring\-messaging}} 모듈에서 RSocket 프로토콜 지원 |
 | *Kotlin 코루틴* | WebFlux에서 {{suspend}} 함수와 {{Flow}} 타입 사용 가능 |
 | *WebMvc.fn* | 서블릿 환경에서의 함수형 엔드포인트 |
 | *ReactiveTransactionManager* | 리액티브 트랜잭션 관리 인터페이스 |
@@ -260,10 +260,10 @@ h2. 폐기(Deprecated) 및 제거(Removed) 항목
 h3. 폐기된 항목
 
 || 항목 || 설명 || 대안 ||
-| {{MediaType.APPLICATION_JSON_UTF8}} | JSON의 기본 인코딩이 UTF-8이므로 별도 지정 불필요 | {{MediaType.APPLICATION_JSON}} 사용 |
-| {{MediaType.APPLICATION_PROBLEM_JSON_UTF8}} | 위와 동일한 이유 | {{MediaType.APPLICATION_PROBLEM_JSON}} 사용 |
+| {{MediaType.APPLICATION\_JSON\_UTF8}} | JSON의 기본 인코딩이 UTF-8이므로 별도 지정 불필요 | {{MediaType.APPLICATION\_JSON}} 사용 |
+| {{MediaType.APPLICATION\_PROBLEM\_JSON\_UTF8}} | 위와 동일한 이유 | {{MediaType.APPLICATION\_PROBLEM\_JSON}} 사용 |
 | *Mock JNDI* | {{SimpleNamingContextBuilder}} 등 Mock JNDI 관련 클래스 | 직접 목(mock) 설정 또는 임베디드 데이터소스 사용 |
-| *접미사 패턴 매칭(Suffix Pattern Matching)* | {{/users.*}}와 같은 확장자 기반 매칭 | {{Accept}} 헤더 또는 쿼리 파라미터를 통한 콘텐츠 협상 사용 |
+| *접미사 패턴 매칭(Suffix Pattern Matching)* | {{/users.\*}}와 같은 확장자 기반 매칭 | {{Accept}} 헤더 또는 쿼리 파라미터를 통한 콘텐츠 협상 사용 |
 
 {quote}
 *참고:* 접미사 패턴 매칭은 보안 취약점(RFD 공격 등)의 원인이 될 수 있어 폐기되었습니다.
@@ -275,7 +275,7 @@ h2. 호환성
 
 h3. 최소 요구사항
 
-{code:language=text|title=mermaid|collapse=true}
+{code:language=text|title=mermaid|collapse=true|theme=Emacs}
 graph LR
     A[Spring Framework 5.2] --> B[Java 8+]
     A --> C[Java 11 지원]
@@ -297,5 +297,5 @@ graph LR
 
 h2. 참고 자료
 
-* [Spring Framework 5.2 What's New (GitHub Wiki)](https://github.com/spring-projects/spring-framework/wiki/What%27s-New-in-Spring-Framework-5.x#whats-new-in-version-52)
-* [Spring Framework 5.2 릴리즈 블로그](https://spring.io/blog/2019/09/30/spring-framework-5-2-goes-ga)
+* [Spring Framework 5.2 What's New (GitHub Wiki)|https://github.com/spring-projects/spring-framework/wiki/What%27s-New-in-Spring-Framework-5.x#whats-new-in-version-52]
+* [Spring Framework 5.2 릴리즈 블로그|https://spring.io/blog/2019/09/30/spring-framework-5-2-goes-ga]

@@ -29,7 +29,7 @@ h3. API 버전 관리 (네이티브 지원)
 
 Spring MVC와 WebFlux에서 REST API 버전 관리를 프레임워크 수준에서 지원합니다. {{@RequestMapping}} 계열 어노테이션에 {{version}} 속성이 추가되었습니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 @RestController
 @RequestMapping("/api/orders")
 public class OrderController {
@@ -50,7 +50,7 @@ public class OrderController {
 
 버전 전략 설정 (헤더, 경로, 쿼리 파라미터, 미디어 타입 중 선택):
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
     @Override
@@ -66,7 +66,7 @@ h3. 내장 복원력 (Resilience)
 
 외부 라이브러리 없이 재시도와 동시성 제한을 지원합니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 @Configuration
 @EnableResilientMethods
 public class AppConfig { }
@@ -83,9 +83,9 @@ class PaymentService {
 }
 {code}
 
-* `RetryTemplate`, `RetryPolicy` — `org.springframework.core.retry` 패키지
-* `@Retryable` — 리액티브 환경 자동 적응
-* `@ConcurrencyLimit` — 메서드 또는 클래스 단위 동시성 제한
+* \{\{RetryTemplate\}\}, \{\{RetryPolicy\}\} — \{\{org.springframework.core.retry\}\} 패키지
+* \{\{@Retryable\}\} — 리액티브 환경 자동 적응
+* \{\{@ConcurrencyLimit\}\} — 메서드 또는 클래스 단위 동시성 제한
 
 ----
 
@@ -95,7 +95,7 @@ h3. BeanRegistrar (프로그래밍 방식 빈 등록)
 
 {{BeanRegistrar}} 인터페이스로 환경 변수에 따른 동적 빈 등록이 가능합니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 @Configuration
 @Import(MyBeanRegistrar.class)
 public class AppConfig { }
@@ -120,14 +120,14 @@ h3. JSpecify 기반 Null Safety
 
 JSR 305에서 JSpecify 어노테이션으로 전면 전환했습니다.
 
-* 패키지 레벨 `@NullMarked`로 기본 non-null 선언
-* null 허용이 필요한 곳에만 `@Nullable` 명시
+* 패키지 레벨 \{\{@NullMarked\}\}로 기본 non-null 선언
+* null 허용이 필요한 곳에만 \{\{@Nullable\}\} 명시
 * 제네릭 타입, 배열, 가변 인자에도 적용 가능
 * Kotlin 2.2가 JSpecify 어노테이션을 자동으로 Kotlin null 안전성으로 변환
 
 h3. Jackson 3.x 지원
 
-* 기본 JSON 매퍼가 `ObjectMapper` → `JsonMapper`로 변경
+* 기본 JSON 매퍼가 \{\{ObjectMapper\}\} → \{\{JsonMapper\}\}로 변경
 * 속성 알파벳순 정렬 기본 활성화
 * 날짜를 ISO-8601 문자열로 기본 직렬화
 * Jackson 2.x는 폴백 지원 (7.2에서 제거 예정)
@@ -142,8 +142,8 @@ h3. HttpHeaders API 재설계
 
 h3. HTTP 인터페이스 클라이언트 향상
 
-* `@ImportHttpServices`로 그룹 기반 설정
-* 요청/응답 본문에 `InputStream`/`OutputStream` 지원
+* \{\{@ImportHttpServices\}\}로 그룹 기반 설정
+* 요청/응답 본문에 \{\{InputStream\}\}/\{\{OutputStream\}\} 지원
 
 h3. JmsClient 도입
 
@@ -151,12 +151,12 @@ h3. JmsClient 도입
 
 h3. 기타 신규 기능
 
-* **PathPattern 향상**: 경로 시작 부분에서 `"/**/pages/index.html"` 같은 다중 세그먼트 매칭 지원
-* **Class-File API**: Java 24+의 JEP 484를 활용한 바이트코드 분석
-* **WebFlux Gson 지원**: 새로운 `GsonEncoder`/`GsonDecoder` 코덱
-* **Optional SpEL 향상**: `java.util.Optional`에 대한 null-safe 연산자 지원
-* **Kotlin 코루틴 컨텍스트 전파**: `PropagationContextElement`를 통한 자동 전파
-* **프록시 설정 개선**: `@Proxyable` 어노테이션으로 빈별 프록시 설정
+* *PathPattern 향상*: 경로 시작 부분에서 \{\{"/\*\*/pages/index.html"\}\} 같은 다중 세그먼트 매칭 지원
+* *Class-File API*: Java 24+의 JEP 484를 활용한 바이트코드 분석
+* *WebFlux Gson 지원*: 새로운 \{\{GsonEncoder\}\}/\{\{GsonDecoder\}\} 코덱
+* *Optional SpEL 향상*: \{\{java.util.Optional\}\}에 대한 null-safe 연산자 지원
+* *Kotlin 코루틴 컨텍스트 전파*: \{\{PropagationContextElement\}\}를 통한 자동 전파
+* *프록시 설정 개선*: \{\{@Proxyable\}\} 어노테이션으로 빈별 프록시 설정
 
 ----
 
@@ -172,7 +172,7 @@ h3. 성능
 
 h3. 테스트
 
-* `@Nested` 테스트 클래스에서 생성자/필드 의존성 주입 일관 지원
+* \{\{@Nested\}\} 테스트 클래스에서 생성자/필드 의존성 주입 일관 지원
 * 비싱글톤 빈에 대한 빈 오버라이드 지원
 * JUnit 6 지원
 
@@ -183,7 +183,7 @@ h2. 폐기(Deprecated) 및 제거(Removed) 항목
 h3. 제거됨
 
 || 항목 || 대안 ||
-| {{spring-jcl}} 모듈 | Apache Commons Logging 1.3.0 |
+| {{spring\-jcl}} 모듈 | Apache Commons Logging 1.3.0 |
 | {{javax.annotation}} / {{javax.inject}} | {{jakarta.annotation}} / {{jakarta.inject}} |
 | Undertow 지원 | Tomcat 11.0 / Jetty 12.1 |
 | {{ListenableFuture}} | {{CompletableFuture}} |
@@ -196,7 +196,7 @@ h3. 폐기 예고
 
 || 항목 || 예정 ||
 | {{RestTemplate}} | 7.1에서 {{@Deprecated}} 예정 |
-| {{<mvc:*>}} XML 네임스페이스 | Java 설정 사용 권장 |
+| {{<mvc:\*>}} XML 네임스페이스 | Java 설정 사용 권장 |
 | Jackson 2.x | 7.1 deprecated → 7.2 제거 |
 | {{PathMatcher}} (AntPathMatcher) | {{PathPattern}} 사용 |
 | JUnit 4 지원 | JUnit Jupiter 사용 권장 |
@@ -206,7 +206,7 @@ h3. 폐기 예고
 
 h2. 호환성
 
-{code:language=text|title=mermaid|collapse=true}
+{code:language=text|title=mermaid|collapse=true|theme=Emacs}
 graph TD
     SF7[Spring Framework 7.0] --> JDK[JDK 17+]
     SF7 --> JEE[Jakarta EE 11]
@@ -237,8 +237,8 @@ h3. Spring 포트폴리오 호환
 
 h2. 참고 자료
 
-* [Spring Framework 7.0 Release Notes (GitHub Wiki)](https://github.com/spring-projects/spring-framework/wiki/Spring-Framework-7.0-Release-Notes)
-* [What's New in Spring Framework 7.x (GitHub Wiki)](https://github.com/spring-projects/spring-framework/wiki/What's-New-in-Spring-Framework-7.x)
-* [Spring Framework 7 and Spring Boot 4 - InfoQ](https://www.infoq.com/news/2025/11/spring-7-spring-boot-4/)
-* [Spring Boot 4 and Spring Framework 7 - Loiane](https://loiane.com/2025/08/spring-boot-4-spring-framework-7-key-features/)
-* [Spring Boot 4.0 Migration Guide (GitHub Wiki)](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.0-Migration-Guide)
+* [Spring Framework 7.0 Release Notes (GitHub Wiki)|https://github.com/spring-projects/spring-framework/wiki/Spring-Framework-7.0-Release-Notes]
+* [What's New in Spring Framework 7.x (GitHub Wiki)|https://github.com/spring-projects/spring-framework/wiki/What's-New-in-Spring-Framework-7.x]
+* [Spring Framework 7 and Spring Boot 4 - InfoQ|https://www.infoq.com/news/2025/11/spring-7-spring-boot-4/]
+* [Spring Boot 4 and Spring Framework 7 - Loiane|https://loiane.com/2025/08/spring-boot-4-spring-framework-7-key-features/]
+* [Spring Boot 4.0 Migration Guide (GitHub Wiki)|https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.0-Migration-Guide]

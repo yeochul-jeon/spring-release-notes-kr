@@ -40,7 +40,7 @@ h3. 1. 자동 설정 등록 방식 변경 ({{@AutoConfiguration}})
 자동 설정(Auto-Configuration)이란 클래스패스의 라이브러리를 감지해 자동으로 빈을 등록하는 Spring Boot의 핵심 기능입니다.
 2.7부터 등록 방식이 크게 변경되었습니다.
 
-{code:language=text|title=mermaid|collapse=true}
+{code:language=text|title=mermaid|collapse=true|theme=Emacs}
 graph TD
     subgraph "기존 방식 (2.6 이하)"
         SF["spring.factories"]
@@ -58,16 +58,16 @@ graph TD
     style IMPORTS fill:#4CAF50,color:#fff
 {code}
 
-*새 파일 경로:* {{META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports}}
+*새 파일 경로:* {{META\-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports}}
 
-{code:language=text}
+{code:language=text|theme=Emacs}
 # META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports
 # 한 줄에 하나의 자동 설정 클래스 FQCN(풀 클래스명)을 작성합니다
 com.example.MyAutoConfiguration
 com.example.AnotherAutoConfiguration
 {code}
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // @Configuration 대신 @AutoConfiguration을 사용
 // 순서를 어노테이션 속성으로 직접 지정 가능
 @AutoConfiguration(
@@ -102,7 +102,7 @@ Microsoft SQL Server JDBC 드라이버가 v10으로 업그레이드되어 *암�
 
 h3. 5. MySQL JDBC 드라이버 좌표 변경
 
-{code:language=xml}
+{code:language=xml|theme=Emacs}
 <!-- 이전 -->
 <dependency>
     <groupId>mysql</groupId>
@@ -125,7 +125,7 @@ h3. 7. 메트릭 태그 키 명명 규칙 변경
 메트릭 태그 키가 소문자 + 점({{.}}) 구분자 형식으로 통일되었습니다:
 
 || 이전 || 변경 후 ||
-| {{main-application-class}} | {{main.application.class}} |
+| {{main\-application\-class}} | {{main.application.class}} |
 | {{cacheManager}} | {{cache.manager}} |
 | {{clientName}} | {{client.name}} |
 
@@ -136,9 +136,9 @@ h2. 새로운 기능
 h3. Spring for GraphQL 스타터
 
 GraphQL(API 쿼리 언어)을 위한 공식 스타터가 추가되었습니다.
-기존의 {{graphql-spring-boot-starter}} 커뮤니티 프로젝트 대신 공식 지원을 사용할 수 있습니다:
+기존의 {{graphql\-spring\-boot\-starter}} 커뮤니티 프로젝트 대신 공식 지원을 사용할 수 있습니다:
 
-{code:language=xml}
+{code:language=xml|theme=Emacs}
 <!-- Spring for GraphQL 의존성 추가 -->
 <dependency>
     <groupId>org.springframework.boot</groupId>
@@ -160,7 +160,7 @@ h3. PEM 인증서로 SSL 설정
 
 키스토어(JKS, PKCS12) 대신 *PEM 형식의 인증서 파일*을 직접 사용할 수 있습니다:
 
-{code:language=properties}
+{code:language=properties|theme=Emacs}
 server.ssl.certificate=classpath:cert.pem
 server.ssl.certificate-private-key=classpath:key.pem
 {code}
@@ -169,7 +169,7 @@ h3. Jackson {{@JsonMixin}} 자동 감지
 
 {{@JsonMixin}} 어노테이션으로 Jackson 믹스인(직렬화/역직렬화 커스터마이징)을 자동 등록할 수 있습니다:
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 @JsonMixin(User.class)
 public abstract class UserMixin {
     @JsonIgnore
@@ -179,20 +179,20 @@ public abstract class UserMixin {
 
 h3. 기타 새로운 기능
 
-* **SAML2 로그아웃 자동 설정**: Spring Security의 SAML2 로그아웃이 자동으로 설정됩니다
-* **Actuator OS/Java 벤더 정보**: `/actuator/info`에서 운영체제와 Java 벤더 정보 확인 가능
-* **`@DataCouchbaseTest` / `@DataElasticsearchTest`**: 데이터 계층 슬라이스 테스트 어노테이션 추가
-* **Redis Sentinel 사용자 인증**: 사용자 이름 기반 인증 지원
-* **RabbitMQ Stream 자동 설정**: `RabbitStreamTemplate` 자동 설정 추가
+* *SAML2 로그아웃 자동 설정*: Spring Security의 SAML2 로그아웃이 자동으로 설정됩니다
+* *Actuator OS/Java 벤더 정보*: \{\{/actuator/info\}\}에서 운영체제와 Java 벤더 정보 확인 가능
+* *\{\{@DataCouchbaseTest\}\} / \{\{@DataElasticsearchTest\}\}*: 데이터 계층 슬라이스 테스트 어노테이션 추가
+* *Redis Sentinel 사용자 인증*: 사용자 이름 기반 인증 지원
+* *RabbitMQ Stream 자동 설정*: \{\{RabbitStreamTemplate\}\} 자동 설정 추가
 
 ----
 
 h2. 개선사항
 
-* **Hazelcast `@SpringAware` 지원**: `SpringManagedContext`를 통한 Hazelcast 빈의 Spring 의존성 주입
-* **Flyway 모듈 분리**: 데이터베이스별 Flyway 지원이 별도 모듈로 분리 (MySQL, SQL Server, Firebird 등)
-* **R2DBC PostgreSQL 드라이버**: 그룹 ID가 `io.r2dbc` → `org.postgresql`로 변경
-* **Elasticsearch RestHighLevelClient**: 저수준 `RestClient` 사용 권장으로 전환 시작
+* *Hazelcast \{\{@SpringAware\}\} 지원*: \{\{SpringManagedContext\}\}를 통한 Hazelcast 빈의 Spring 의존성 주입
+* *Flyway 모듈 분리*: 데이터베이스별 Flyway 지원이 별도 모듈로 분리 (MySQL, SQL Server, Firebird 등)
+* *R2DBC PostgreSQL 드라이버*: 그룹 ID가 \{\{io.r2dbc\}\} → \{\{org.postgresql\}\}로 변경
+* *Elasticsearch RestHighLevelClient*: 저수준 \{\{RestClient\}\} 사용 권장으로 전환 시작
 
 ----
 
@@ -207,12 +207,12 @@ h3. Deprecated (3.0에서 제거 예정)
 | {{WebSecurityConfigurerAdapter}} | {{SecurityFilterChain}} 빈 등록 방식 사용 |
 | Hazelcast 3.x 지원 | Hazelcast 4.x+ 사용 |
 | {{DatabaseDriver.GAE}} | - |
-| Maven 플러그인 {{spring-boot:run}}의 {{fork}} 속성 | - |
-| Mustache 서블릿 전용 프로퍼티 | {{spring.mustache.servlet.*}} 네임스페이스로 이동 |
+| Maven 플러그인 {{spring\-boot:run}}의 {{fork}} 속성 | - |
+| Mustache 서블릿 전용 프로퍼티 | {{spring.mustache.servlet.\*}} 네임스페이스로 이동 |
 
 {{WebSecurityConfigurerAdapter}} 변경은 특히 영향 범위가 넓습니다:
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // 이전 방식 (Deprecated) - WebSecurityConfigurerAdapter 상속
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -240,7 +240,7 @@ public class SecurityConfig {
 
 h2. 호환성
 
-{code:language=text|title=mermaid|collapse=true}
+{code:language=text|title=mermaid|collapse=true|theme=Emacs}
 graph LR
     SB27["Spring Boot 2.7<br/>(마지막 2.x)"]
 
@@ -284,7 +284,7 @@ graph LR
 {code}
 
 {quote}
-*3.0으로의 전환:* Spring Boot 3.0은 {{javax.*}} 패키지를 {{jakarta.*}}로 전면 교체하는 대규모 변경을 포함합니다.
+*3.0으로의 전환:* Spring Boot 3.0은 {{javax.\*}} 패키지를 {{jakarta.\*}}로 전면 교체하는 대규모 변경을 포함합니다.
 2.7에서 Deprecated 경고를 모두 해결한 후 3.0으로 업그레이드하는 것이 권장됩니다.
 자세한 내용은 [2.x -> 3.x 마이그레이션 가이드|../../migration-guides/spring-boot-2to3.md]를 참고하세요.
 {quote}
@@ -293,8 +293,8 @@ graph LR
 
 h2. 참고 자료
 
-* [Spring Boot 2.7 공식 릴리즈 노트](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.7-Release-Notes)
-* [Spring Framework 5.3](../../spring-framework/5.x/5.3.md)
-* [Spring Boot 2.6 릴리즈 노트](2.6.md) (이전 버전)
-* [2.x -> 3.x 마이그레이션 가이드](../../migration-guides/spring-boot-2to3.md)
-* [Spring Boot 3.0 공식 릴리즈 노트](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.0-Release-Notes)
+* [Spring Boot 2.7 공식 릴리즈 노트|https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.7-Release-Notes]
+* [Spring Framework 5.3|../../spring-framework/5.x/5.3.md]
+* [Spring Boot 2.6 릴리즈 노트|2.6.md] (이전 버전)
+* [2.x -> 3.x 마이그레이션 가이드|../../migration-guides/spring-boot-2to3.md]
+* [Spring Boot 3.0 공식 릴리즈 노트|https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.0-Release-Notes]

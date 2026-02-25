@@ -23,15 +23,15 @@ h3. JDK 11 공식 지원
 
 Spring Framework 5.1은 JDK 11 환경에서 완전히 검증된 첫 번째 릴리즈입니다.
 
-* 클래스패스(classpath)와 모듈 패스(module path) 모두에서 **경고 없는 실행** 보장
+* 클래스패스(classpath)와 모듈 패스(module path) 모두에서 *경고 없는 실행* 보장
 * ASM 7.0 포크를 통해 JDK 11/12 바이트코드 수준 지원
 * CGLIB 포크가 JDK 9+ API를 사용하여 런타임 클래스 정의 처리
 
 h3. Forwarded 헤더 처리 변경
 
-{{Forwarded}} 및 {{X-Forwarded-*}} 헤더가 CORS 검사와 URI 생성 시 더 이상 개별적으로 확인되지 않습니다.
+{{Forwarded}} 및 {{X\-Forwarded\-\*}} 헤더가 CORS 검사와 URI 생성 시 더 이상 개별적으로 확인되지 않습니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // 5.1부터는 ForwardedHeaderFilter를 명시적으로 등록해야 합니다
 @Bean
 FilterRegistrationBean<ForwardedHeaderFilter> forwardedHeaderFilter() {
@@ -53,7 +53,7 @@ h3. @Profile 논리 표현식
 
 {{@Profile}} 어노테이션에서 AND({{&}}), OR({{|}}), NOT({{!}}) 연산자를 사용한 논리 표현식을 지원합니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // 운영 환경이면서 클라우드 환경일 때만 활성화
 @Profile("production & cloud")
 @Configuration
@@ -84,7 +84,7 @@ h3. ObjectProvider 개선
 
 {{ObjectProvider}}에 {{stream()}} 메서드와 iterable 접근이 추가되어, 같은 타입의 빈 여러 개를 편리하게 조회할 수 있습니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 @Service
 public class PluginManager {
 
@@ -109,7 +109,7 @@ h3. RouterFunction DSL 빌더 개선
 
 WebFlux의 {{RouterFunction}} 빌더를 static import 없이 사용할 수 있게 개선되었습니다. Kotlin Router DSL도 함께 개선되었습니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // 5.1부터 빌더 패턴으로 라우터 정의 (static import 불필요)
 RouterFunction<ServerResponse> route = RouterFunctions.route()
         .GET("/users", request -> ServerResponse.ok()
@@ -135,7 +135,7 @@ h3. 세분화된 MVC 예외 클래스
 | {{MissingRequestCookieException}} | 필수 쿠키 누락 |
 | {{MissingPathVariableException}} | 경로 변수 누락 |
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -158,7 +158,7 @@ h3. 컨트롤러 인터페이스 매핑
 
 파라미터 어노테이션이 인터페이스에서도 감지되어, *인터페이스 기반 컨트롤러 계약(Contract)* 을 정의할 수 있게 되었습니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // 인터페이스에 매핑 정보를 정의
 public interface UserApi {
 
@@ -205,7 +205,7 @@ h3. 로깅 개선
 
 {{DispatcherServlet}}에 {{enableLoggingRequestDetails}} 옵션이 추가되어, 민감한 요청 데이터의 로깅 여부를 제어할 수 있습니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // application.properties에서 설정
 spring.mvc.log-request-details=true
 {code}
@@ -223,17 +223,17 @@ h3. 성능 최적화
 h3. Hibernate 5.3 지원
 
 * Hibernate의 새로운 SPI(Service Provider Interface)와 빈 컨테이너 통합
-* `LocalSessionFactoryBean`과 `HibernateTransactionManager`가 JPA 상호작용 지원 (네이티브 Hibernate와 JPA를 트랜잭션 내에서 혼용 가능)
-* **읽기 전용 트랜잭션 최적화**: `Session.setDefaultReadOnly(true)` 호출로 엔티티 스냅샷을 유지하지 않아 메모리 절감
-* SAP HANA가 `JpaVendorAdapter` 플랫폼으로 추가
+* \{\{LocalSessionFactoryBean\}\}과 \{\{HibernateTransactionManager\}\}가 JPA 상호작용 지원 (네이티브 Hibernate와 JPA를 트랜잭션 내에서 혼용 가능)
+* *읽기 전용 트랜잭션 최적화*: \{\{Session.setDefaultReadOnly(true)\}\} 호출로 엔티티 스냅샷을 유지하지 않아 메모리 절감
+* SAP HANA가 \{\{JpaVendorAdapter\}\} 플랫폼으로 추가
 
 h3. 기타 개선사항
 
-* **Brotli 압축 리소스**: 정적 리소스 서빙 시 GZip과 함께 Brotli 사전 인코딩 리소스 지원
-* **PUT/PATCH/DELETE 파라미터**: Servlet 요청 파라미터를 이 HTTP 메서드들에서도 접근 가능
-* **Protobuf 직렬화**: WebFlux에서 메시지 스트리밍과 함께 Protobuf 직렬화 지원
-* **WebSocket 세션 속성**: WebSocket 세션에서 속성(attribute) 지원
-* **테스트**: `WebTestClient`에 Hamcrest 및 XML 어설션 통합
+* *Brotli 압축 리소스*: 정적 리소스 서빙 시 GZip과 함께 Brotli 사전 인코딩 리소스 지원
+* *PUT/PATCH/DELETE 파라미터*: Servlet 요청 파라미터를 이 HTTP 메서드들에서도 접근 가능
+* *Protobuf 직렬화*: WebFlux에서 메시지 스트리밍과 함께 Protobuf 직렬화 지원
+* *WebSocket 세션 속성*: WebSocket 세션에서 속성(attribute) 지원
+* *테스트*: \{\{WebTestClient\}\}에 Hamcrest 및 XML 어설션 통합
 
 ----
 
@@ -251,7 +251,7 @@ h3. 주의가 필요한 변경
 
 h2. 호환성
 
-{code:language=text|title=mermaid|collapse=true}
+{code:language=text|title=mermaid|collapse=true|theme=Emacs}
 graph TD
     SF51[Spring Framework 5.1] --> JDK8[JDK 8+]
     SF51 --> JDK11[JDK 11 공식 지원]
@@ -279,7 +279,7 @@ h3. Spring 포트폴리오 호환
 
 h2. 참고 자료
 
-* [Spring Framework 5.1 Release Notes (GitHub Wiki)](https://github.com/spring-projects/spring-framework/wiki/Spring-Framework-5.1-Release-Notes)
-* [What's New in Spring Framework 5.x (GitHub Wiki)](https://github.com/spring-projects/spring-framework/wiki/What's-New-in-Spring-Framework-5.x)
-* [Spring Blog - Spring Framework 5.1 goes GA](https://spring.io/blog/2018/09/21/spring-framework-5-1-goes-ga)
-* [Spring Boot 2.1 Release Notes (GitHub Wiki)](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.1-Release-Notes)
+* [Spring Framework 5.1 Release Notes (GitHub Wiki)|https://github.com/spring-projects/spring-framework/wiki/Spring-Framework-5.1-Release-Notes]
+* [What's New in Spring Framework 5.x (GitHub Wiki)|https://github.com/spring-projects/spring-framework/wiki/What's-New-in-Spring-Framework-5.x]
+* [Spring Blog - Spring Framework 5.1 goes GA|https://spring.io/blog/2018/09/21/spring-framework-5-1-goes-ga]
+* [Spring Boot 2.1 Release Notes (GitHub Wiki)|https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.1-Release-Notes]

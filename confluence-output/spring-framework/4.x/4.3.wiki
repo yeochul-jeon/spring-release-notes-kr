@@ -25,7 +25,7 @@ h3. 암묵적 생성자 주입 (Implicit Constructor Injection)
 
 Spring 4.3의 가장 대표적인 변경사항입니다. *생성자가 하나만 있는 빈(Bean)은 {{@Autowired}}를 붙이지 않아도 자동으로 의존성이 주입*됩니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // Spring 4.2 이전: @Autowired가 반드시 필요
 @Service
 public class UserService {
@@ -55,7 +55,7 @@ public class UserService {
 *왜 중요한가요?* 이 기능 덕분에 Lombok의 {{@RequiredArgsConstructor}}와 조합하면 보일러플레이트 코드를 크게 줄일 수 있습니다. 현재 Spring 생태계에서 가장 널리 쓰이는 의존성 주입 패턴의 기반이 되었습니다.
 {quote}
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // Lombok과 조합한 최종 형태 (가장 권장되는 패턴)
 @Service
 @RequiredArgsConstructor
@@ -76,7 +76,7 @@ HTTP 메서드별로 축약된 어노테이션이 도입되었습니다. {{@Requ
 | {{@DeleteMapping}} | {{@RequestMapping(method = RequestMethod.DELETE)}} |
 | {{@PatchMapping}} | {{@RequestMapping(method = RequestMethod.PATCH)}} |
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // Spring 4.2 이전: method 속성을 매번 지정
 @RestController
 @RequestMapping("/users")
@@ -122,7 +122,7 @@ h3. ObjectProvider를 통한 유연한 의존성 해결
 
 {{ObjectProvider<T>}}는 특정 빈이 존재하지 않을 수도 있는 상황에서 *안전하게 의존성을 해결*할 수 있는 인터페이스입니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 @Service
 public class NotificationService {
 
@@ -153,7 +153,7 @@ h3. InjectionPoint - 주입 지점 메타데이터 접근
 
 {{@Bean}} 메서드에서 *어디에 주입되는지*에 대한 정보를 알 수 있는 {{InjectionPoint}} 파라미터가 도입되었습니다. 주로 로거(Logger) 팩토리 빈을 만들 때 활용됩니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 @Configuration
 public class LoggerConfig {
 
@@ -182,13 +182,13 @@ public class OrderService {
 
 h2. 새로운 기능
 
-* **암묵적 생성자 주입**: 단일 생성자 빈에서 `@Autowired` 생략 가능 (위 상세 설명 참고)
-* **합성 @RequestMapping 어노테이션**: `@GetMapping`, `@PostMapping`, `@PutMapping`, `@DeleteMapping`, `@PatchMapping` 도입
-* **ObjectProvider**: 선택적 의존성 및 지연(Lazy) 해결을 위한 프로그래밍 방식 API
-* **InjectionPoint**: `@Bean` 메서드에서 주입 대상의 메타데이터 접근
-* **HEAD/OPTIONS 기본 처리**: Spring MVC에서 HEAD와 OPTIONS HTTP 메서드를 자동 처리
-* **캐시 SpEL 개선**: `@Cacheable` 등 캐시 어노테이션에서 `@beanName.method()` 형태의 SpEL 표현식 지원
-* **@Scheduled 개선**: 더 유연한 스케줄링 구성 및 합성(Composed) 어노테이션 지원
+* *암묵적 생성자 주입*: 단일 생성자 빈에서 \{\{@Autowired\}\} 생략 가능 (위 상세 설명 참고)
+* *합성 @RequestMapping 어노테이션*: \{\{@GetMapping\}\}, \{\{@PostMapping\}\}, \{\{@PutMapping\}\}, \{\{@DeleteMapping\}\}, \{\{@PatchMapping\}\} 도입
+* *ObjectProvider*: 선택적 의존성 및 지연(Lazy) 해결을 위한 프로그래밍 방식 API
+* *InjectionPoint*: \{\{@Bean\}\} 메서드에서 주입 대상의 메타데이터 접근
+* *HEAD/OPTIONS 기본 처리*: Spring MVC에서 HEAD와 OPTIONS HTTP 메서드를 자동 처리
+* *캐시 SpEL 개선*: \{\{@Cacheable\}\} 등 캐시 어노테이션에서 \{\{@beanName.method()\}\} 형태의 SpEL 표현식 지원
+* *@Scheduled 개선*: 더 유연한 스케줄링 구성 및 합성(Composed) 어노테이션 지원
 
 ----
 
@@ -225,7 +225,7 @@ Spring 4.3은 4.x의 마지막 버전으로서, Spring 5.0에서 제거될 항�
 
 h2. 호환성
 
-{code:language=text|title=mermaid|collapse=true}
+{code:language=text|title=mermaid|collapse=true|theme=Emacs}
 graph TD
     SF43[Spring Framework 4.3] --> JDK[Java 6+]
     SF43 --> SV[Servlet 2.5+]
@@ -244,9 +244,9 @@ graph TD
 
 h3. Spring 포트폴리오 호환
 
-* **Spring Boot 1.4 / 1.5** - Spring Framework 4.3 기반
-* **Spring Security 4.1 / 4.2**
-* **Spring Data Hopper / Ingalls**
+* *Spring Boot 1.4 / 1.5* - Spring Framework 4.3 기반
+* *Spring Security 4.1 / 4.2*
+* *Spring Data Hopper / Ingalls*
 
 h3. 지원 기간
 
@@ -262,7 +262,7 @@ h3. 지원 기간
 
 h2. 참고 자료
 
-* [Spring Framework 4.3 Release Notes (GitHub Wiki)](https://github.com/spring-projects/spring-framework/wiki/Spring-Framework-4.3-Release-Notes)
-* [What's New in Spring Framework 4.x (GitHub Wiki)](https://github.com/spring-projects/spring-framework/wiki/What's-New-in-Spring-Framework-4.x)
-* [Spring Blog - Spring Framework 4.3 goes GA](https://spring.io/blog/2016/06/10/spring-framework-4-3-goes-ga)
-* [Upgrading to Spring Framework 5.x (GitHub Wiki)](https://github.com/spring-projects/spring-framework/wiki/Upgrading-to-Spring-Framework-5.x)
+* [Spring Framework 4.3 Release Notes (GitHub Wiki)|https://github.com/spring-projects/spring-framework/wiki/Spring-Framework-4.3-Release-Notes]
+* [What's New in Spring Framework 4.x (GitHub Wiki)|https://github.com/spring-projects/spring-framework/wiki/What's-New-in-Spring-Framework-4.x]
+* [Spring Blog - Spring Framework 4.3 goes GA|https://spring.io/blog/2016/06/10/spring-framework-4-3-goes-ga]
+* [Upgrading to Spring Framework 5.x (GitHub Wiki)|https://github.com/spring-projects/spring-framework/wiki/Upgrading-to-Spring-Framework-5.x]

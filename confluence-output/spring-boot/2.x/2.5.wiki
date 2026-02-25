@@ -32,12 +32,12 @@ h3. 1. SQL 스크립트 초기화 방식 재설계
 {{schema.sql}}과 {{data.sql}}을 이용한 데이터베이스 초기화 메커니즘이 *전면 재설계*되었습니다.
 
 || 이전 (Deprecated) || 변경 후 ||
-| {{spring.datasource.initialization-mode}} | {{spring.sql.init.mode}} |
-| {{spring.datasource.schema}} | {{spring.sql.init.schema-locations}} |
-| {{spring.datasource.data}} | {{spring.sql.init.data-locations}} |
+| {{spring.datasource.initialization\-mode}} | {{spring.sql.init.mode}} |
+| {{spring.datasource.schema}} | {{spring.sql.init.schema\-locations}} |
+| {{spring.datasource.data}} | {{spring.sql.init.data\-locations}} |
 | {{spring.datasource.platform}} | {{spring.sql.init.platform}} |
 
-{code:language=properties}
+{code:language=properties|theme=Emacs}
 # 인메모리 DB가 아닌 경우 SQL 초기화를 활성화하려면 직접 지정
 spring.sql.init.mode=always
 
@@ -45,8 +45,8 @@ spring.sql.init.mode=always
 spring.jpa.defer-datasource-initialization=true
 {code}
 
-* 기본적으로 **인메모리 DB에서만** SQL 초기화가 실행됩니다.
-* `data.sql`은 이제 Hibernate 초기화 **이전에** 실행됩니다 (Flyway/Liquibase와 동일한 순서).
+* 기본적으로 *인메모리 DB에서만* SQL 초기화가 실행됩니다.
+* \{\{data.sql\}\}은 이제 Hibernate 초기화 *이전에* 실행됩니다 (Flyway/Liquibase와 동일한 순서).
 * 새 프로퍼티는 JDBC와 R2DBC 모두에서 동작합니다.
 
 h3. 2. Spring Data JPA {{getById}} 메서드 변경
@@ -57,7 +57,7 @@ h3. 3. Actuator {{/info}} 엔드포인트 보안 강화
 
 {{/info}} 엔드포인트가 더 이상 웹으로 기본 노출되지 않습니다. Spring Security가 클래스패스에 있으면 인증이 필요합니다.
 
-{code:language=properties}
+{code:language=properties|theme=Emacs}
 # 이전처럼 노출하려면 직접 설정 필요
 management.endpoints.web.exposure.include=health,info
 {code}
@@ -68,12 +68,12 @@ Spring Integration이 자동 설정된 {{TaskScheduler}}를 재사용하여 기�
 
 h3. 5. 기타 주요 변경
 
-* **Gradle jar/war 태스크:** 표준 태스크를 비활성화하지 않고 분류자(classifier) 적용으로 변경
-* **로깅 종료 훅:** JAR 애플리케이션에서 기본 등록 (`logging.register-shutdown-hook=false`로 비활성화)
-* **에러 응답 message 필드:** 빈 문자열 대신 필드 자체가 생략됨
-* **Flyway/Liquibase JDBC URL:** `spring.flyway.url` 설정 시 `username`/`password`도 별도 지정 필요
-* **EL 구현체:** Glassfish에서 Tomcat 구현체(`tomcat-embed-el`)로 변경
-* **Groovy 3:** 기본 버전이 3.x로 업그레이드 (Spock 사용 시 2.0으로 업그레이드 필요)
+* *Gradle jar/war 태스크:* 표준 태스크를 비활성화하지 않고 분류자(classifier) 적용으로 변경
+* *로깅 종료 훅:* JAR 애플리케이션에서 기본 등록 (\{\{logging.register\-shutdown\-hook=false\}\}로 비활성화)
+* *에러 응답 message 필드:* 빈 문자열 대신 필드 자체가 생략됨
+* *Flyway/Liquibase JDBC URL:* \{\{spring.flyway.url\}\} 설정 시 \{\{username\}\}/\{\{password\}\}도 별도 지정 필요
+* *EL 구현체:* Glassfish에서 Tomcat 구현체(\{\{tomcat\-embed\-el\}\})로 변경
+* *Groovy 3:* 기본 버전이 3.x로 업그레이드 (Spock 사용 시 2.0으로 업그레이드 필요)
 
 ----
 
@@ -83,7 +83,7 @@ h3. 환경 변수 접두사 (Environment Variable Prefix)
 
 동일 환경에서 여러 Spring Boot 애플리케이션을 실행할 때, 환경 변수에 접두사를 지정할 수 있습니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // 메인 클래스에서 접두사 설정
 public static void main(String[] args) {
     SpringApplication application = new SpringApplication(MyApp.class);
@@ -97,14 +97,14 @@ h3. HTTP/2 over TCP (h2c) 지원
 
 4가지 내장 웹 서버 모두에서 SSL 없이 HTTP/2를 사용할 수 있습니다.
 
-{code:language=properties}
+{code:language=properties|theme=Emacs}
 # SSL 없이 HTTP/2 활성화 (h2c)
 server.http2.enabled=true
 {code}
 
 h3. Docker 이미지 빌드 개선
 
-{code:language=text|title=mermaid|collapse=true}
+{code:language=text|title=mermaid|collapse=true|theme=Emacs}
 graph TB
     SB25["Spring Boot 2.5 Docker 지원"]
     LWAR["레이어드 WAR 지원"]
@@ -139,8 +139,8 @@ h3. R2DBC 데이터베이스 초기화
 
 h3. Java 16 및 Gradle 7 지원
 
-* **Java 16:** 공식 지원 및 테스트 완료 (최소 버전은 Java 8 유지)
-* **Gradle 7:** Spring Boot Gradle 플러그인이 Gradle 7.0.x를 공식 지원
+* *Java 16:* 공식 지원 및 테스트 완료 (최소 버전은 Java 8 유지)
+* *Gradle 7:* Spring Boot Gradle 플러그인이 Gradle 7.0.x를 공식 지원
 
 h3. Jetty 10 지원
 
@@ -152,18 +152,18 @@ h3. Startup 엔드포인트 GET 요청 지원
 
 h3. 기타 새 기능
 
-* `management.endpoints.web.cors.allowed-origin-patterns` 프로퍼티 추가
-* Elasticsearch `Sniffer` 자동 설정
-* `DataSourceBuilder.derivedFrom(...)` 으로 기존 DataSource 기반 새 DataSource 생성
+* \{\{management.endpoints.web.cors.allowed\-origin\-patterns\}\} 프로퍼티 추가
+* Elasticsearch \{\{Sniffer\}\} 자동 설정
+* \{\{DataSourceBuilder.derivedFrom(...)\}\} 으로 기존 DataSource 기반 새 DataSource 생성
 * Azure App Service 자동 감지, Apache HttpClient 5 WebClient 자동 설정
-* Tomcat `keep-alive-timeout` 및 `max-keep-alive-requests` 설정 프로퍼티 추가
-* WebFlux SameSite 쿠키 정책 설정 (`spring.webflux.session.cookie.same-site`)
+* Tomcat \{\{keep\-alive\-timeout\}\} 및 \{\{max\-keep\-alive\-requests\}\} 설정 프로퍼티 추가
+* WebFlux SameSite 쿠키 정책 설정 (\{\{spring.webflux.session.cookie.same\-site\}\})
 
 ----
 
 h2. 주요 의존성 업그레이드
 
-{code:language=text|title=mermaid|collapse=true}
+{code:language=text|title=mermaid|collapse=true|theme=Emacs}
 graph TB
     SB25["Spring Boot 2.5"]
 
@@ -230,21 +230,21 @@ h3. Deprecated
 
 || 항목 || 대체 방법 ||
 | {{ActuatorMediaType}}, {{ApiVersion}} (endpoint.http 패키지) | {{endpoint}} 패키지의 동일 클래스 사용 |
-| jOOQ {{*Provider}} 빈, {{Settings}} 빈 | {{DefaultConfigurationCustomizer}} 사용 |
+| jOOQ {{\*Provider}} 빈, {{Settings}} 빈 | {{DefaultConfigurationCustomizer}} 사용 |
 | {{EntityManagerFactoryDependsOnPostProcessor}} (data.jpa) | {{orm.jpa}} 패키지 클래스 사용 |
-| {{spring.artemis.host}} / {{spring.artemis.port}} | {{spring.artemis.broker-url}} 사용 |
-| {{spring.datasource.*}} (초기화 관련) | {{spring.sql.init.*}} 사용 |
+| {{spring.artemis.host}} / {{spring.artemis.port}} | {{spring.artemis.broker\-url}} 사용 |
+| {{spring.datasource.\*}} (초기화 관련) | {{spring.sql.init.\*}} 사용 |
 
 h3. 제거
 
-* Spring Boot 2.3에서 Deprecated된 코드 **제거**
-* **Spring Data Solr** 자동 설정 제거 (Spring Data 2021.0에서 Solr 모듈 제거)
+* Spring Boot 2.3에서 Deprecated된 코드 *제거*
+* *Spring Data Solr* 자동 설정 제거 (Spring Data 2021.0에서 Solr 모듈 제거)
 
 ----
 
 h2. 호환성
 
-{code:language=text|title=mermaid|collapse=true}
+{code:language=text|title=mermaid|collapse=true|theme=Emacs}
 graph LR
     subgraph "필수"
         JAVA["Java 8 ~ 16"]
@@ -281,7 +281,7 @@ graph LR
 
 h2. 참고 자료
 
-* [Spring Boot 2.5 공식 릴리즈 노트](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.5-Release-Notes)
-* [Spring Boot 2.5 Configuration Changelog](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.5-Configuration-Changelog)
-* [Spring Framework 5.3](../../spring-framework/5.x/5.3.md)
-* [Spring Boot 2.4 릴리즈 노트](2.4.md)
+* [Spring Boot 2.5 공식 릴리즈 노트|https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.5-Release-Notes]
+* [Spring Boot 2.5 Configuration Changelog|https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.5-Configuration-Changelog]
+* [Spring Framework 5.3|../../spring-framework/5.x/5.3.md]
+* [Spring Boot 2.4 릴리즈 노트|2.4.md]

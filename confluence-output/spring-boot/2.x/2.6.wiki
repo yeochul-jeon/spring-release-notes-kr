@@ -33,7 +33,7 @@ h3. 1. 순환 참조(Circular Reference) 기본 금지
 순환 참조란 빈(Bean) A가 빈 B를 의존하고, 빈 B가 다시 빈 A를 의존하는 상황을 말합니다.
 이전까지는 Spring이 이를 자동으로 해결해주었지만, 2.6부터는 *기본적으로 금지*됩니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // 순환 참조 예시 - 2.6부터 애플리케이션 시작 시 오류 발생
 @Service
 public class ServiceA {
@@ -50,7 +50,7 @@ public class ServiceB {
 
 순환 참조가 반드시 필요한 경우, 아래 설정으로 허용할 수 있습니다:
 
-{code:language=properties}
+{code:language=properties|theme=Emacs}
 # application.properties
 spring.main.allow-circular-references=true
 {code}
@@ -64,7 +64,7 @@ h3. 2. PathPattern 기반 경로 매칭 (기본값 변경)
 Spring MVC의 요청 경로 매칭 전략이 기존 {{AntPathMatcher}}에서 {{PathPatternParser}}로 변경되었습니다.
 {{PathPatternParser}}는 성능이 더 뛰어나지만, 일부 호환성 문제가 있습니다.
 
-{code:language=properties}
+{code:language=properties|theme=Emacs}
 # 기존 방식으로 되돌리려면
 spring.mvc.pathmatch.matching-strategy=ant-path-matcher
 {code}
@@ -73,7 +73,7 @@ spring.mvc.pathmatch.matching-strategy=ant-path-matcher
 *주의:* Spring Security의 {{mvcMatchers()}}를 사용하는 경우, 경로 앞에 반드시 {{/}}(슬래시)를 붙여야 합니다.
 {quote}
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // 2.6 이전에는 동작했지만, 2.6부터 슬래시 필수
 http.authorizeRequests()
     .mvcMatchers("/api/**").authenticated()  // 슬래시 필수
@@ -88,7 +88,7 @@ h3. 4. Elasticsearch 프로퍼티 통합
 
 기존에 분산되어 있던 Elasticsearch 관련 프로퍼티가 {{spring.elasticsearch}} 아래로 통합되었습니다:
 
-{code:language=properties}
+{code:language=properties|theme=Emacs}
 # 이전 (2.5)
 spring.elasticsearch.rest.uris=http://localhost:9200
 spring.data.elasticsearch.client.reactive.endpoints=localhost:9200
@@ -102,7 +102,7 @@ h3. 5. Kafka 3.0 멱등성(Idempotence) 기본 활성화
 Kafka 3.0에서 프로듀서의 멱등성이 기본으로 활성화됩니다. 클러스터 권한이 부족하면
 {{ClusterAuthorizationException}}이 발생할 수 있습니다.
 
-{code:language=properties}
+{code:language=properties|theme=Emacs}
 # 문제 발생 시 비활성화
 spring.kafka.producer.properties.enable.idempotence=false
 {code}
@@ -120,7 +120,7 @@ h3. SameSite 쿠키 속성 지원
 SameSite는 쿠키의 Cross-Site(교차 사이트) 전송을 제어하는 보안 속성입니다.
 서블릿 애플리케이션에서 세션 쿠키의 SameSite 속성을 설정할 수 있습니다:
 
-{code:language=properties}
+{code:language=properties|theme=Emacs}
 # Strict: 같은 사이트에서만 쿠키 전송
 server.servlet.session.cookie.same-site=strict
 
@@ -138,7 +138,7 @@ h3. 리액티브 서버 세션 프로퍼티
 
 h3. Actuator {{/info}} 엔드포인트에 Java 런타임 정보
 
-{code:language=properties}
+{code:language=properties|theme=Emacs}
 # Java 런타임 정보 활성화
 management.info.java.enabled=true
 {code}
@@ -159,7 +159,7 @@ h3. record 클래스로 {{@ConfigurationProperties}} 지원
 
 Java 16+의 {{record}}를 {{@ConfigurationProperties}}에 사용할 수 있습니다:
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // record로 불변(immutable) 설정 클래스 정의
 @ConfigurationProperties(prefix = "app")
 public record AppProperties(
@@ -172,15 +172,15 @@ public record AppProperties(
 
 h2. 개선사항
 
-* **Spring Data Envers 자동 설정** 추가
-* **Redis 커넥션 풀**: `commons-pool2`가 클래스패스에 있으면 자동으로 커넥션 풀링 활성화
-* **Kafka SSL**: PEM 형식의 인증서를 직접 사용 가능
-* **Log4j2 복합 설정**: 여러 설정 파일을 조합하여 사용 가능
-* **`@WebServiceServerTest`**: Web Service 엔드포인트 슬라이스 테스트 어노테이션 추가
-* **MessageSource 기반 Bean Validation**: Bean Validation 메시지를 `MessageSource`에서 자동 조회
-* **WebTestClient로 Spring MVC 테스트**: `MockMvc` 외에 `WebTestClient`를 MVC 테스트에서도 사용 가능
-* **Jetty 커넥션/SSL 메트릭**, **디스크 공간 메트릭** 등 메트릭 자동 설정 확대
-* **Dynatrace v2 API 메트릭 내보내기** 지원
+* *Spring Data Envers 자동 설정* 추가
+* *Redis 커넥션 풀*: \{\{commons\-pool2\}\}가 클래스패스에 있으면 자동으로 커넥션 풀링 활성화
+* *Kafka SSL*: PEM 형식의 인증서를 직접 사용 가능
+* *Log4j2 복합 설정*: 여러 설정 파일을 조합하여 사용 가능
+* *\{\{@WebServiceServerTest\}\}*: Web Service 엔드포인트 슬라이스 테스트 어노테이션 추가
+* *MessageSource 기반 Bean Validation*: Bean Validation 메시지를 \{\{MessageSource\}\}에서 자동 조회
+* *WebTestClient로 Spring MVC 테스트*: \{\{MockMvc\}\} 외에 \{\{WebTestClient\}\}를 MVC 테스트에서도 사용 가능
+* *Jetty 커넥션/SSL 메트릭*, *디스크 공간 메트릭* 등 메트릭 자동 설정 확대
+* *Dynatrace v2 API 메트릭 내보내기* 지원
 
 ----
 
@@ -203,7 +203,7 @@ h3. 제거된 의존성 관리
 
 h2. 호환성
 
-{code:language=text|title=mermaid|collapse=true}
+{code:language=text|title=mermaid|collapse=true|theme=Emacs}
 graph LR
     SB26["Spring Boot 2.6"]
 
@@ -243,7 +243,7 @@ graph LR
 
 h2. 참고 자료
 
-* [Spring Boot 2.6 공식 릴리즈 노트](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.6-Release-Notes)
-* [Spring Framework 5.3](../../spring-framework/5.x/5.3.md)
-* [Spring Boot 2.7 릴리즈 노트](2.7.md) (다음 버전)
-* [2.x → 3.x 마이그레이션 가이드](../../migration-guides/spring-boot-2to3.md)
+* [Spring Boot 2.6 공식 릴리즈 노트|https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.6-Release-Notes]
+* [Spring Framework 5.3|../../spring-framework/5.x/5.3.md]
+* [Spring Boot 2.7 릴리즈 노트|2.7.md] (다음 버전)
+* [2.x → 3.x 마이그레이션 가이드|../../migration-guides/spring-boot-2to3.md]

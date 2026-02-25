@@ -30,9 +30,9 @@ h2. 주요 변경사항
 h3. 1. 파라미터 이름 추론 방식 변경
 
 Spring Framework 6.1부터 바이트코드 파싱을 통한 파라미터 이름 추론이 *제거*되었습니다.
-생성자 주입이나 {{@RequestParam}} 등에서 파라미터 이름이 필요한 경우, 컴파일 시 {{-parameters}} 옵션을 반드시 추가해야 합니다.
+생성자 주입이나 {{@RequestParam}} 등에서 파라미터 이름이 필요한 경우, 컴파일 시 {{\-parameters}} 옵션을 반드시 추가해야 합니다.
 
-{code:language=groovy}
+{code:language=groovy|theme=Emacs}
 // build.gradle - Java 컴파일러에 -parameters 옵션 추가
 tasks.withType(JavaCompile).configureEach {
     options.compilerArgs.add("-parameters")
@@ -43,12 +43,12 @@ h3. 2. 중첩 JAR(Nested Jar) 로더 재작성
 
 Uber Jar(실행 가능한 FAT JAR) 로딩 코드가 완전히 재작성되었습니다.
 
-* **URL 형식 변경:** `jar:file:/.../myjar.jar:BOOT-INF/lib/nested.jar!/` -> `jar:nested:/.../myjar.jar/!BOOT-INF/lib/nested.jar!/`
-* **런처 클래스명 변경:** `org.springframework.boot.loader.launch.JarLauncher`로 패키지가 이동
+* *URL 형식 변경:* \{\{jar:file:/.../myjar.jar:BOOT\-INF/lib/nested.jar!/\}\} -> \{\{jar:nested:/.../myjar.jar/!BOOT\-INF/lib/nested.jar!/\}\}
+* *런처 클래스명 변경:* \{\{org.springframework.boot.loader.launch.JarLauncher\}\}로 패키지가 이동
 
 기존 방식으로 되돌리려면 아래와 같이 설정합니다:
 
-{code:language=groovy}
+{code:language=groovy|theme=Emacs}
 // build.gradle - 기존(classic) 로더 사용
 bootJar {
     loaderImplementation = org.springframework.boot.loader.tools.LoaderImplementation.CLASSIC
@@ -70,7 +70,7 @@ h3. 5. OTLP 트레이싱 엔드포인트
 {{management.otlp.tracing.endpoint}}의 기본값이 제거되었습니다.
 OTLP(OpenTelemetry Protocol) 트레이싱을 사용하려면 명시적으로 설정해야 합니다:
 
-{code:language=yaml}
+{code:language=yaml|theme=Emacs}
 # application.yml
 management:
   otlp:
@@ -87,7 +87,7 @@ h3. 1. 가상 스레드(Virtual Threads) 지원
 Java 21에서 도입된 가상 스레드를 Spring Boot에서 쉽게 활성화할 수 있습니다.
 가상 스레드는 기존 플랫폼 스레드보다 훨씬 가벼워서, 동시 요청 처리량을 크게 높일 수 있습니다.
 
-{code:language=yaml}
+{code:language=yaml|theme=Emacs}
 # application.yml - 가상 스레드 활성화 (Java 21 필요)
 spring:
   threads:
@@ -97,17 +97,17 @@ spring:
 
 활성화 시 적용되는 영역:
 
-* **서블릿 웹 서버** (Tomcat, Jetty): 요청 처리를 가상 스레드로 수행
-* **비동기 작업 실행** (`@Async`): `TaskExecutor`가 가상 스레드 사용
-* **스케줄링** (`@Scheduled`): `TaskScheduler`가 가상 스레드 사용
-* **메시징** (RabbitMQ, Kafka, Redis): 리스너가 가상 스레드에서 동작
+* *서블릿 웹 서버* (Tomcat, Jetty): 요청 처리를 가상 스레드로 수행
+* *비동기 작업 실행* (\{\{@Async\}\}): \{\{TaskExecutor\}\}가 가상 스레드 사용
+* *스케줄링* (\{\{@Scheduled\}\}): \{\{TaskScheduler\}\}가 가상 스레드 사용
+* *메시징* (RabbitMQ, Kafka, Redis): 리스너가 가상 스레드에서 동작
 
 h3. 2. RestClient 지원
 
 Spring Framework 6.1에서 새로 도입된 {{RestClient}}는 {{WebClient}}와 유사한 함수형 스타일의 *동기식 HTTP 클라이언트*입니다.
 기존 {{RestTemplate}}보다 직관적이고, {{WebClient}}처럼 리액티브 스택 없이 사용할 수 있습니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 @Service
 public class UserService {
 
@@ -134,7 +134,7 @@ h3. 3. JdbcClient 자동 구성
 {{JdbcClient}}는 {{JdbcTemplate}}과 {{NamedParameterJdbcTemplate}}을 하나의 유연한 API로 통합한 클라이언트입니다.
 {{NamedParameterJdbcTemplate}} 빈이 존재하면 자동으로 {{JdbcClient}}가 구성됩니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 @Repository
 public class UserRepository {
 
@@ -163,7 +163,7 @@ Spring Boot 3.2에서 이 기능의 초기 지원이 포함되었습니다.
 h3. 5. Apache Pulsar 지원
 
 Apache Pulsar 메시징 시스템에 대한 완전한 자동 구성과 스타터 POM이 추가되었습니다.
-{{spring-boot-starter-pulsar}} 의존성을 추가하면 바로 사용할 수 있습니다.
+{{spring\-boot\-starter\-pulsar}} 의존성을 추가하면 바로 사용할 수 있습니다.
 
 h3. 6. SSL 번들 자동 리로드
 
@@ -176,34 +176,34 @@ h2. 개선사항
 
 h3. 관찰 가능성(Observability)
 
-* **Micrometer 어노테이션 자동 구성:** `@Timed`, `@Counted`, `@NewSpan`, `@ContinueSpan`, `@Observed` 어노테이션이 자동 구성됩니다
-* **상관 ID(Correlation ID) 로깅:** Micrometer Tracing과 연동하여 로그에 트레이스 ID를 자동 포함
-* **`@Scheduled` 메서드 관찰:** 스케줄 메서드에도 관찰 가능성이 자동 적용
-* **R2DBC 관찰 가능성:** `io.r2dbc:r2dbc-proxy`를 통한 리액티브 DB 관찰 지원
-* `spring.application.name`을 OpenTelemetry의 `service.name`으로 자동 사용
+* *Micrometer 어노테이션 자동 구성:* \{\{@Timed\}\}, \{\{@Counted\}\}, \{\{@NewSpan\}\}, \{\{@ContinueSpan\}\}, \{\{@Observed\}\} 어노테이션이 자동 구성됩니다
+* *상관 ID(Correlation ID) 로깅:* Micrometer Tracing과 연동하여 로그에 트레이스 ID를 자동 포함
+* *\{\{@Scheduled\}\} 메서드 관찰:* 스케줄 메서드에도 관찰 가능성이 자동 적용
+* *R2DBC 관찰 가능성:* \{\{io.r2dbc:r2dbc\-proxy\}\}를 통한 리액티브 DB 관찰 지원
+* \{\{spring.application.name\}\}을 OpenTelemetry의 \{\{service.name\}\}으로 자동 사용
 
 h3. 로깅 개선
 
-* `spring.application.name`이 설정되어 있으면 기본 로그 출력에 **애플리케이션 이름이 포함**됩니다
-* 비활성화하려면 `logging.include-application-name=false` 설정
+* \{\{spring.application.name\}\}이 설정되어 있으면 기본 로그 출력에 *애플리케이션 이름이 포함*됩니다
+* 비활성화하려면 \{\{logging.include\-application\-name=false\}\} 설정
 
 h3. 메시징 개선
 
-* **RabbitMQ:** SSL 번들 지원(`spring.rabbitmq.ssl.bundle`), 메시지 본문 크기 제한, 가상 호스트 지원
-* **Kafka:** SSL 번들 지원(`spring.kafka.ssl.bundle`), 관찰 가능성 지원(`spring.kafka.template.observation-enabled`)
+* *RabbitMQ:* SSL 번들 지원(\{\{spring.rabbitmq.ssl.bundle\}\}), 메시지 본문 크기 제한, 가상 호스트 지원
+* *Kafka:* SSL 번들 지원(\{\{spring.kafka.ssl.bundle\}\}), 관찰 가능성 지원(\{\{spring.kafka.template.observation\-enabled\}\})
 
 h3. Docker 이미지 빌드
 
-* CNB 빌더가 `paketobuildpacks:builder-jammy-tiny` (GraalVM 포함)로 업그레이드
+* CNB 빌더가 \{\{paketobuildpacks:builder\-jammy\-tiny\}\} (GraalVM 포함)로 업그레이드
 * Ubuntu 22.04 기반 이미지 (기존 18.04에서 업그레이드)
 * Docker CLI 설정을 통한 데몬 연결 지원
 
 h3. 테스트 개선
 
-* `spring-boot-starter-test`에 **Awaitility**가 기본 포함
-* `@JdbcTest`와 `@DataJpaTest`에서 `JdbcClient` 사용 가능
-* Testcontainers **병렬 초기화** 지원
-* Gradle의 새로운 `testAndDevelopmentOnly` 설정 추가
+* \{\{spring\-boot\-starter\-test\}\}에 *Awaitility*가 기본 포함
+* \{\{@JdbcTest\}\}와 \{\{@DataJpaTest\}\}에서 \{\{JdbcClient\}\} 사용 가능
+* Testcontainers *병렬 초기화* 지원
+* Gradle의 새로운 \{\{testAndDevelopmentOnly\}\} 설정 추가
 
 ----
 
@@ -215,21 +215,21 @@ h3. Deprecated (향후 제거 예정)
 | {{TaskExecutorBuilder}} | {{ThreadPoolTaskExecutorBuilder}} |
 | {{TaskSchedulerBuilder}} | {{ThreadPoolTaskSchedulerBuilder}} |
 | {{PlatformTransactionManagerCustomizer}} | {{TransactionManagerCustomizer}} |
-| {{spring.jms.listener.concurrency}} | {{spring.jms.listener.min-concurrency}} |
-| {{spring.jms.listener.acknowledge-mode}} | {{spring.jms.listener.session.acknowledge-mode}} |
+| {{spring.jms.listener.concurrency}} | {{spring.jms.listener.min\-concurrency}} |
+| {{spring.jms.listener.acknowledge\-mode}} | {{spring.jms.listener.session.acknowledge\-mode}} |
 | OkHttp 3 지원 | OkHttp 4 사용 |
 | Maven 플러그인 {{directories}} | {{additionalClasspathElements}} |
 | InfluxDB 지원 | 새로운 InfluxDB Java 클라이언트 사용 |
 
 h3. 자동 구성 변경
 
-* **UserDetailsService 백오프:** OAuth2 또는 SAML2 의존성이 있으면, 명시적 사용자 설정이 없을 때 `InMemoryUserDetailsManager`가 자동 구성되지 않습니다
+* *UserDetailsService 백오프:* OAuth2 또는 SAML2 의존성이 있으면, 명시적 사용자 설정이 없을 때 \{\{InMemoryUserDetailsManager\}\}가 자동 구성되지 않습니다
 
 ----
 
 h2. 호환성
 
-{code:language=text|title=mermaid|collapse=true}
+{code:language=text|title=mermaid|collapse=true|theme=Emacs}
 graph LR
     subgraph "필수 환경"
         JAVA["Java 17+\n(가상 스레드: 21+)"]
@@ -290,7 +290,7 @@ graph LR
 
 h2. 참고 자료
 
-* [Spring Boot 3.2 공식 릴리즈 노트](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.2-Release-Notes)
-* [Spring Framework 6.1 릴리즈 노트](../../spring-framework/6.x/6.1.md)
-* [Spring Boot 3.x 시리즈 개요](README.md)
-* [3.x -> 4.x 마이그레이션 가이드](../../migration-guides/spring-boot-3to4.md)
+* [Spring Boot 3.2 공식 릴리즈 노트|https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.2-Release-Notes]
+* [Spring Framework 6.1 릴리즈 노트|../../spring-framework/6.x/6.1.md]
+* [Spring Boot 3.x 시리즈 개요|README.md]
+* [3.x -> 4.x 마이그레이션 가이드|../../migration-guides/spring-boot-3to4.md]

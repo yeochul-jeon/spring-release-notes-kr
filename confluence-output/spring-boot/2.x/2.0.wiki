@@ -29,7 +29,7 @@ h3. 1. Spring WebFlux 자동 구성 (리액티브 웹)
 
 Spring WebFlux는 *논블로킹(Non-blocking) 방식*의 웹 프레임워크입니다. 적은 스레드로 많은 요청을 처리할 수 있어 높은 동시성이 필요한 서비스에 적합합니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // 어노테이션 기반 리액티브 컨트롤러
 @RestController
 public class UserController {
@@ -54,11 +54,11 @@ h3. 2. Actuator 전면 재설계
 
 Actuator(애플리케이션 모니터링/관리 도구)가 완전히 새로워졌습니다.
 
-* 모든 HTTP 엔드포인트가 `/actuator` 경로 아래로 이동
+* 모든 HTTP 엔드포인트가 \{\{/actuator\}\} 경로 아래로 이동
 * 기본 노출 엔드포인트가 축소됨 (보안 강화)
 * Spring MVC, WebFlux, Jersey, JMX 모두 지원하는 기술 독립적 모델
 
-{code:language=yaml}
+{code:language=yaml|theme=Emacs}
 # application.yml - 노출할 엔드포인트 설정
 management:
   endpoints:
@@ -67,7 +67,7 @@ management:
         include: health, info, metrics  # 원하는 엔드포인트만 노출
 {code}
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // 커스텀 엔드포인트 작성 예시
 @Endpoint(id = "custom")          // 기술에 독립적인 엔드포인트 정의
 public class CustomEndpoint {
@@ -83,7 +83,7 @@ h3. 3. Micrometer 메트릭 (차세대 메트릭 시스템)
 
 Micrometer는 애플리케이션의 성능 지표를 수집하는 라이브러리입니다. Prometheus, Datadog, Graphite 등 다양한 모니터링 시스템과 연동됩니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // Micrometer를 이용한 커스텀 메트릭 등록
 @Component
 public class OrderService {
@@ -122,7 +122,7 @@ h3. Configuration Properties 바인딩 개선
 
 설정 바인딩 메커니즘이 완전히 재설계되었습니다. {{Duration}} 타입을 직접 사용할 수 있습니다.
 
-{code:language=yaml}
+{code:language=yaml|theme=Emacs}
 # ISO-8601 형식 또는 간단한 표기법 사용 가능
 server:
   session:
@@ -134,7 +134,7 @@ h3. Kotlin 지원
 
 Kotlin 1.2.x를 공식 지원하며, {{runApplication}} 함수로 Spring Boot 앱을 관용적인 Kotlin 코드로 실행할 수 있습니다.
 
-{code:language=kotlin}
+{code:language=kotlin|theme=Emacs}
 // Kotlin으로 Spring Boot 앱 실행
 fun main(args: Array<String>) {
     runApplication<MyApplication>(*args)
@@ -151,23 +151,23 @@ Tomcat, Undertow, Jetty에서 HTTP/2 프로토콜을 사용할 수 있습니다.
 
 h3. JSON 지원 강화
 
-{{spring-boot-starter-json}} 스타터가 추가되어 Jackson + Java 8 모듈을 한 번에 가져올 수 있습니다. GSON, JSON-B도 지원합니다.
+{{spring\-boot\-starter\-json}} 스타터가 추가되어 Jackson + Java 8 모듈을 한 번에 가져올 수 있습니다. GSON, JSON-B도 지원합니다.
 
 h3. 테스트 개선
 
-* `@WebFluxTest`: WebFlux 슬라이스 테스트용 어노테이션
-* `ApplicationContextRunner`: 자동 구성 테스트를 간편하게 작성하는 유틸리티
+* \{\{@WebFluxTest\}\}: WebFlux 슬라이스 테스트용 어노테이션
+* \{\{ApplicationContextRunner\}\}: 자동 구성 테스트를 간편하게 작성하는 유틸리티
 
 ----
 
 h2. 개선사항
 
-* 내장 컨테이너가 시작 시 **컨텍스트 경로**를 함께 로깅
+* 내장 컨테이너가 시작 시 *컨텍스트 경로*를 함께 로깅
 * Gradle 플러그인 전면 재작성 (Gradle 4.x 필수)
 * 데이터베이스 초기화가 내장 DB에서만 기본 실행 (운영 환경 안전성 향상)
 * Hibernate 커스텀 네이밍 전략을 일반 빈으로 정의 가능
-* `loggers` 엔드포인트에서 로거 레벨 리셋 기능 추가
-* Spring Session 사용자를 위한 `sessions` 엔드포인트 추가
+* \{\{loggers\}\} 엔드포인트에서 로거 레벨 리셋 기능 추가
+* Spring Session 사용자를 위한 \{\{sessions\}\} 엔드포인트 추가
 * 애니메이션 GIF 배너 지원
 
 ----
@@ -175,14 +175,14 @@ h2. 개선사항
 h2. Deprecated 및 제거 항목
 
 * Spring Boot 자체 메트릭 API 제거 (Micrometer로 대체)
-* Actuator의 기존 엔드포인트 경로 변경 (`/info` -> `/actuator/info`)
-* 일부 속성명 변경 (예: `server.context-path` -> `server.servlet.context-path`)
+* Actuator의 기존 엔드포인트 경로 변경 (\{\{/info\}\} -> \{\{/actuator/info\}\})
+* 일부 속성명 변경 (예: \{\{server.context\-path\}\} -> \{\{server.servlet.context\-path\}\})
 
 ----
 
 h2. 호환성
 
-{code:language=text|title=mermaid|collapse=true}
+{code:language=text|title=mermaid|collapse=true|theme=Emacs}
 graph TD
     SB20["Spring Boot 2.0"] --> SF50["Spring Framework 5.0"]
     SB20 --> J8["Java 8 (최소)"]
@@ -202,7 +202,7 @@ graph TD
 
 h2. 참고 자료
 
-* [Spring Boot 2.0 공식 릴리즈 노트](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0-Release-Notes)
-* [Spring Boot 2.0 마이그레이션 가이드](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0-Migration-Guide)
-* [Spring Framework 5.0 릴리즈 노트](../../spring-framework/5.x/5.0.md)
-* [Micrometer 공식 문서](https://micrometer.io/docs)
+* [Spring Boot 2.0 공식 릴리즈 노트|https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0-Release-Notes]
+* [Spring Boot 2.0 마이그레이션 가이드|https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0-Migration-Guide]
+* [Spring Framework 5.0 릴리즈 노트|../../spring-framework/5.x/5.0.md]
+* [Micrometer 공식 문서|https://micrometer.io/docs]

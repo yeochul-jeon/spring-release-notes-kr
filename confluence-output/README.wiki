@@ -42,14 +42,14 @@ h2. 마이그레이션 가이드
 
 h3. Spring Framework
 
-* [4.x → 5.x 마이그레이션](migration-guides/spring-framework-4to5.md)
-* [5.x → 6.x 마이그레이션](migration-guides/spring-framework-5to6.md)
-* [6.x → 7.x 마이그레이션](migration-guides/spring-framework-6to7.md)
+* [4.x → 5.x 마이그레이션|migration-guides/spring-framework-4to5.md]
+* [5.x → 6.x 마이그레이션|migration-guides/spring-framework-5to6.md]
+* [6.x → 7.x 마이그레이션|migration-guides/spring-framework-6to7.md]
 
 h3. Spring Boot
 
-* [2.x → 3.x 마이그레이션](migration-guides/spring-boot-2to3.md)
-* [3.x → 4.x 마이그레이션](migration-guides/spring-boot-3to4.md)
+* [2.x → 3.x 마이그레이션|migration-guides/spring-boot-2to3.md]
+* [3.x → 4.x 마이그레이션|migration-guides/spring-boot-3to4.md]
 
 {quote}
 [마이그레이션 가이드 전체 목차|migration-guides/README.md]
@@ -59,7 +59,7 @@ h3. Spring Boot
 
 h2. 버전 호환성 요약
 
-{code:language=text|title=mermaid|collapse=true}
+{code:language=text|title=mermaid|collapse=true|theme=Emacs}
 graph LR
     subgraph "Spring Boot"
         SB2["Boot 2.x<br/>Java 8+"]

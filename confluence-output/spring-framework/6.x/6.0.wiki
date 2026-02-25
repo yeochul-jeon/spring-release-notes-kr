@@ -1,6 +1,6 @@
 h1. Spring Framework 6.0 릴리즈 노트
 
-Spring Framework 6.0은 2022년 11월에 릴리즈된 메이저 버전으로, Spring 역사상 가장 큰 변화를 담고 있습니다. {{javax.*}}에서 {{jakarta.*}}로의 네임스페이스 전환, Java 17 기준선 상향, GraalVM 네이티브 이미지를 위한 AOT 컴파일 지원이 핵심입니다. [Spring Boot 3.0|../../spring-boot/3.x/3.0.md]의 기반 프레임워크입니다.
+Spring Framework 6.0은 2022년 11월에 릴리즈된 메이저 버전으로, Spring 역사상 가장 큰 변화를 담고 있습니다. {{javax.\*}}에서 {{jakarta.\*}}로의 네임스페이스 전환, Java 17 기준선 상향, GraalVM 네이티브 이미지를 위한 AOT 컴파일 지원이 핵심입니다. [Spring Boot 3.0|../../spring-boot/3.x/3.0.md]의 기반 프레임워크입니다.
 
 ----
 
@@ -27,11 +27,11 @@ Spring Framework 6.0이 요구하는 최소 환경입니다.
 
 h3. Jakarta EE 네임스페이스 전환
 
-Spring Framework 6.0의 가장 핵심적인 변경사항입니다. Java EE가 Eclipse Foundation으로 이관되면서 패키지 이름이 {{javax.*}}에서 {{jakarta.*}}로 바뀌었고, Spring 6.0은 이 새로운 네임스페이스를 채택했습니다.
+Spring Framework 6.0의 가장 핵심적인 변경사항입니다. Java EE가 Eclipse Foundation으로 이관되면서 패키지 이름이 {{javax.\*}}에서 {{jakarta.\*}}로 바뀌었고, Spring 6.0은 이 새로운 네임스페이스를 채택했습니다.
 
 *변경 전 (Spring 5.x) → 변경 후 (Spring 6.0):*
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // Before                                  // After
 import javax.servlet.http.HttpServletRequest;  → import jakarta.servlet.http.HttpServletRequest;
 import javax.persistence.Entity;               → import jakarta.persistence.Entity;
@@ -40,10 +40,10 @@ import javax.validation.constraints.NotNull;   → import jakarta.validation.con
 {code}
 
 {quote}
-*주의:* {{javax.sql.*}}이나 {{javax.crypto.*}}처럼 Java SE에 포함된 패키지는 변경되지 않습니다. 변경 대상은 Java EE에서 관리하던 {{javax.servlet}}, {{javax.persistence}}, {{javax.validation}} 등입니다.
+*주의:* {{javax.sql.\*}}이나 {{javax.crypto.\*}}처럼 Java SE에 포함된 패키지는 변경되지 않습니다. 변경 대상은 Java EE에서 관리하던 {{javax.servlet}}, {{javax.persistence}}, {{javax.validation}} 등입니다.
 {quote}
 
-{code:language=text|title=mermaid|collapse=true}
+{code:language=text|title=mermaid|collapse=true|theme=Emacs}
 graph LR
     subgraph "Spring 5.x (이전)"
         A[javax.servlet]
@@ -76,7 +76,7 @@ AOT 컴파일이란 애플리케이션을 *실행하기 전에 미리 분석하�
 
 이를 통해 GraalVM 네이티브 이미지(JVM 없이 실행되는 독립 실행 파일)를 만들 수 있어 시작 시간이 수십 밀리초 수준으로 단축됩니다.
 
-{code:language=text|title=mermaid|collapse=true}
+{code:language=text|title=mermaid|collapse=true|theme=Emacs}
 graph TD
     subgraph "기존 JVM 방식"
         A1[애플리케이션 시작] --> A2[클래스 스캔]
@@ -98,7 +98,7 @@ graph TD
 
 핵심 API인 {{GenericApplicationContext.refreshForAotProcessing()}}은 빌드 시점에 애플리케이션 컨텍스트를 분석하여 필요한 빈 정의와 리플렉션 힌트를 미리 생성합니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // AOT 처리 과정 (빌드 시점에 실행됨)
 GenericApplicationContext context = new AnnotationConfigApplicationContext();
 context.register(MyAppConfig.class);
@@ -110,14 +110,14 @@ context.refreshForAotProcessing(new RuntimeHints());
 {code}
 
 {quote}
-*초보자 안내:* 일반적으로 AOT를 직접 호출할 필요는 없습니다. Spring Boot 3.0의 Gradle/Maven 플러그인이 {{./gradlew nativeCompile}} 또는 {{mvn -Pnative package}} 명령으로 자동 처리합니다.
+*초보자 안내:* 일반적으로 AOT를 직접 호출할 필요는 없습니다. Spring Boot 3.0의 Gradle/Maven 플러그인이 {{./gradlew nativeCompile}} 또는 {{mvn \-Pnative package}} 명령으로 자동 처리합니다.
 {quote}
 
 h3. HTTP Interface Client (@HttpExchange)
 
 외부 API 호출을 위한 *선언적 HTTP 클라이언트*입니다. 인터페이스와 어노테이션만으로 HTTP 요청을 정의할 수 있어 코드가 훨씬 간결해집니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // 1. HTTP 서비스 인터페이스 정의
 public interface UserService {
 
@@ -163,7 +163,7 @@ h3. RFC 7807 Problem Details 지원
 
 API에서 오류가 발생했을 때 *표준화된 형식*으로 에러 정보를 응답할 수 있습니다. RFC 7807은 HTTP API의 오류 응답 포맷을 정의한 국제 표준입니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -181,7 +181,7 @@ public class GlobalExceptionHandler {
 
 응답 예시:
 
-{code:language=json}
+{code:language=json|theme=Emacs}
 {
   "type": "about:blank",
   "title": "회원을 찾을 수 없습니다",
@@ -195,7 +195,7 @@ h3. PathPatternParser 기본 적용 및 후행 슬래시 매칭 변경
 
 URL 경로 매칭 파서가 기존 {{AntPathMatcher}}에서 {{PathPatternParser}}로 변경되어 성능과 정밀도가 향상되었습니다. 또한 *더 이상 {{/users/}}가 {{/users}}와 자동 매칭되지 않습니다.* 6.0부터는 후행 슬래시를 명시적으로 구분합니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 @GetMapping("/users")
 public List<User> getUsers() { ... }
 // /users  → 200 OK
@@ -208,11 +208,11 @@ h2. 새로운 기능 요약
 
 위에서 상세히 다룬 항목 외에 주요 신규 기능을 정리합니다.
 
-* `@HttpExchange` 기반 선언적 HTTP 클라이언트
+* \{\{@HttpExchange\}\} 기반 선언적 HTTP 클라이언트
 * Micrometer 기반 관찰 가능성 프레임워크 통합
-* `ProblemDetail` 클래스를 통한 RFC 7807 표준 에러 응답
+* \{\{ProblemDetail\}\} 클래스를 통한 RFC 7807 표준 에러 응답
 * GraalVM 네이티브 이미지를 위한 AOT 처리 엔진
-* `PathPatternParser` 기본 적용으로 빠르고 정밀한 URL 패턴 매칭
+* \{\{PathPatternParser\}\} 기본 적용으로 빠르고 정밀한 URL 패턴 매칭
 
 ----
 
@@ -233,13 +233,13 @@ h3. 폐기 예고 (Deprecated)
 
 || 항목 || 대안 ||
 | {{ListenableFuture}} | {{CompletableFuture}} (Java 8 표준) |
-| {{LocalVariableTableParameterNameDiscoverer}} | 컴파일 시 {{-parameters}} 플래그 사용 |
+| {{LocalVariableTableParameterNameDiscoverer}} | 컴파일 시 {{\-parameters}} 플래그 사용 |
 | 후행 슬래시 자동 매칭 | 명시적 경로 매핑 사용 |
 
 {quote}
-*{{-parameters}} 플래그 안내:* 메서드 파라미터 이름을 런타임에 알기 위해 이전에는 디버그 정보({{.class}} 파일의 로컬 변수 테이블)를 읽었지만, 이제는 컴파일 시 {{-parameters}} 옵션을 추가하는 것이 권장됩니다. Gradle에서는 다음과 같이 설정합니다.
+*{{\-parameters}} 플래그 안내:* 메서드 파라미터 이름을 런타임에 알기 위해 이전에는 디버그 정보({{.class}} 파일의 로컬 변수 테이블)를 읽었지만, 이제는 컴파일 시 {{\-parameters}} 옵션을 추가하는 것이 권장됩니다. Gradle에서는 다음과 같이 설정합니다.
 
-{code:language=groovy}
+{code:language=groovy|theme=Emacs}
 tasks.withType(JavaCompile).configureEach {
     options.compilerArgs.add("-parameters")
 }
@@ -261,7 +261,7 @@ h3. 제거됨 (Removed)
 
 h2. 호환성
 
-{code:language=text|title=mermaid|collapse=true}
+{code:language=text|title=mermaid|collapse=true|theme=Emacs}
 graph TD
     SF6[Spring Framework 6.0] --> JDK[JDK 17+]
     SF6 --> JEE[Jakarta EE 9+ / 10]
@@ -285,7 +285,7 @@ graph TD
 
 h3. Spring 포트폴리오 호환
 
-* [Spring Boot 3.0](../../spring-boot/3.x/3.0.md) — Spring Framework 6.0 기반
+* [Spring Boot 3.0|../../spring-boot/3.x/3.0.md] — Spring Framework 6.0 기반
 * Spring Security 6.0
 * Spring Data 2022.0 (Turing)
 * Spring Cloud 2022.0 (Kilburn)
@@ -294,8 +294,8 @@ h3. Spring 포트폴리오 호환
 
 h2. 참고 자료
 
-* [Spring Framework 6.0 Release Notes (GitHub Wiki)](https://github.com/spring-projects/spring-framework/wiki/Spring-Framework-6.0-Release-Notes)
-* [What's New in Spring Framework 6.x (GitHub Wiki)](https://github.com/spring-projects/spring-framework/wiki/What's-New-in-Spring-Framework-6.x)
-* [Upgrading to Spring Framework 6.x (GitHub Wiki)](https://github.com/spring-projects/spring-framework/wiki/Upgrading-to-Spring-Framework-6.x)
-* [Spring Boot 3.0 Migration Guide (GitHub Wiki)](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.0-Migration-Guide)
-* [Spring Blog - Spring Framework 6.0 goes GA](https://spring.io/blog/2022/11/16/spring-framework-6-0-goes-ga)
+* [Spring Framework 6.0 Release Notes (GitHub Wiki)|https://github.com/spring-projects/spring-framework/wiki/Spring-Framework-6.0-Release-Notes]
+* [What's New in Spring Framework 6.x (GitHub Wiki)|https://github.com/spring-projects/spring-framework/wiki/What's-New-in-Spring-Framework-6.x]
+* [Upgrading to Spring Framework 6.x (GitHub Wiki)|https://github.com/spring-projects/spring-framework/wiki/Upgrading-to-Spring-Framework-6.x]
+* [Spring Boot 3.0 Migration Guide (GitHub Wiki)|https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.0-Migration-Guide]
+* [Spring Blog - Spring Framework 6.0 goes GA|https://spring.io/blog/2022/11/16/spring-framework-6-0-goes-ga]

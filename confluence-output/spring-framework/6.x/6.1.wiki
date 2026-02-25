@@ -23,7 +23,7 @@ h3. RestClient - 새로운 동기 HTTP 클라이언트
 *플루언트 API란?* 메서드 체이닝({{.method1().method2().method3()}})으로 코드를 마치 문장처럼 읽을 수 있게 만드는 설계 방식입니다.
 {quote}
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // RestClient 생성
 RestClient restClient = RestClient.builder()
     .baseUrl("https://api.example.com")
@@ -45,7 +45,7 @@ User newUser = restClient.post()
     .body(User.class);
 {code}
 
-{code:language=text|title=mermaid|collapse=true}
+{code:language=text|title=mermaid|collapse=true|theme=Emacs}
 graph LR
     RT["RestTemplate<br/>(2009, Spring 3.0)<br/>동기 · 콜백 방식"] --> WC["WebClient<br/>(2017, Spring 5.0)<br/>비동기 · 리액티브"]
     WC --> RC["RestClient<br/>(2023, Spring 6.1)<br/>동기 · 플루언트 API"]
@@ -58,16 +58,16 @@ graph LR
 {quote}
 *어떤 것을 사용해야 할까?*
 
-* 새 프로젝트의 동기 HTTP 호출 → **RestClient** 권장
-* 리액티브/비동기 처리가 필요한 경우 → **WebClient** 사용
-* 기존 `RestTemplate` 코드 → 점진적으로 `RestClient`로 마이그레이션 권장
+* 새 프로젝트의 동기 HTTP 호출 → *RestClient* 권장
+* 리액티브/비동기 처리가 필요한 경우 → *WebClient* 사용
+* 기존 \{\{RestTemplate\}\} 코드 → 점진적으로 \{\{RestClient\}\}로 마이그레이션 권장
 {quote}
 
 h3. JdbcClient - 통합 JDBC 클라이언트
 
 {{JdbcClient}}는 {{JdbcTemplate}}과 {{NamedParameterJdbcTemplate}}을 하나로 통합한 *플루언트 API* 기반의 JDBC 클라이언트입니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // JdbcClient 생성 (JdbcTemplate 또는 DataSource로부터)
 JdbcClient jdbcClient = JdbcClient.create(dataSource);
 
@@ -94,7 +94,7 @@ h3. 가상 스레드(Virtual Threads) 지원
 
 JDK 21에서 정식 도입된 가상 스레드를 Spring에서 활용할 수 있습니다. 가상 스레드는 OS 스레드보다 훨씬 가볍고, 수십만 개를 동시에 생성할 수 있어 높은 동시성 처리에 유리합니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 @Configuration
 @EnableAsync
 public class AsyncConfig {
@@ -111,15 +111,15 @@ public class AsyncConfig {
 
 주요 지원 항목:
 
-* **`VirtualThreadTaskExecutor`** - 가상 스레드 전용 TaskExecutor
-* **`SimpleAsyncTaskExecutor`** - `setVirtualThreads(true)`로 가상 스레드 모드 전환
-* **`SimpleAsyncTaskScheduler`** - 스케줄링 작업에 가상 스레드 적용
+* *\{\{VirtualThreadTaskExecutor\}\}* - 가상 스레드 전용 TaskExecutor
+* *\{\{SimpleAsyncTaskExecutor\}\}* - \{\{setVirtualThreads(true)\}\}로 가상 스레드 모드 전환
+* *\{\{SimpleAsyncTaskScheduler\}\}* - 스케줄링 작업에 가상 스레드 적용
 
 h3. Project CRaC 통합 - JVM 체크포인트/복원
 
 Project CRaC(Coordinated Restore at Checkpoint)는 JVM의 상태를 스냅샷으로 저장(체크포인트)하고, 이후 빠르게 복원하는 기술입니다. 애플리케이션 시작 시간을 *밀리초 단위*로 줄일 수 있습니다.
 
-{code:language=bash}
+{code:language=bash|theme=Emacs}
 # 컨텍스트 새로고침(refresh) 시점에 체크포인트 생성
 java -Dspring.context.checkpoint=onRefresh -jar myapp.jar
 
@@ -135,7 +135,7 @@ h3. HTTP 인터페이스 클라이언트 확장
 
 {{RestClient}}와 {{RestTemplate}}을 위한 내장 어댑터가 추가되었습니다. 기존에는 {{WebClient}}만 지원했지만, 이제 동기 클라이언트에서도 선언적 HTTP 인터페이스를 사용할 수 있습니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // HTTP 인터페이스 정의
 public interface UserApi {
     @GetExchange("/users/{id}")
@@ -178,7 +178,7 @@ h3. 메서드 유효성 검증 내장
 
 Controller에서 {{@Validated}} 없이도 {{@Constraint}} 어노테이션(예: {{@NotBlank}}, {{@Min}})이 자동으로 유효성 검증됩니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -206,10 +206,10 @@ h3. 리액티브 캐싱 (@Cacheable)
 
 h3. 기타 신규 기능
 
-* **SpEL 개선**: `MethodHandle`을 SpEL 함수로 등록 가능
-* **생성자 바인딩**: `@BindParam` 커스텀 바인딩, 중첩 객체 지원
-* **`@HttpExchange`**: 서버 측에서도 `@RequestMapping` 대안으로 사용 가능
-* **Spring AOP Kotlin 코루틴 지원**
+* *SpEL 개선*: \{\{MethodHandle\}\}을 SpEL 함수로 등록 가능
+* *생성자 바인딩*: \{\{@BindParam\}\} 커스텀 바인딩, 중첩 객체 지원
+* *\{\{@HttpExchange\}\}*: 서버 측에서도 \{\{@RequestMapping\}\} 대안으로 사용 가능
+* *Spring AOP Kotlin 코루틴 지원*
 
 ----
 
@@ -224,18 +224,18 @@ h3. 성능
 
 h3. 테스트 프레임워크
 
-* **컨텍스트 실패 임계값**: 반복 실패하는 컨텍스트 로드를 방지 (기본값: 1회)
-* **`@TestPropertySource` 와일드카드**: 리소스 패턴/와일드카드 지원
-* **비동기 이벤트 기록**: `@RecordApplicationEvents`로 크로스 스레드 이벤트 검증 가능
-* **`MockRestServiceServer`**: 새로운 `RestClient` 지원
-* **`JdbcTestUtils`**: `JdbcClient`를 인자로 받는 오버로드 메서드 추가
-* **AOT 테스트**: 빌드 시 오류 기본 감지, `@DisabledInAotMode` 어노테이션
+* *컨텍스트 실패 임계값*: 반복 실패하는 컨텍스트 로드를 방지 (기본값: 1회)
+* *\{\{@TestPropertySource\}\} 와일드카드*: 리소스 패턴/와일드카드 지원
+* *비동기 이벤트 기록*: \{\{@RecordApplicationEvents\}\}로 크로스 스레드 이벤트 검증 가능
+* *\{\{MockRestServiceServer\}\}*: 새로운 \{\{RestClient\}\} 지원
+* *\{\{JdbcTestUtils\}\}*: \{\{JdbcClient\}\}를 인자로 받는 오버로드 메서드 추가
+* *AOT 테스트*: 빌드 시 오류 기본 감지, \{\{@DisabledInAotMode\}\} 어노테이션
 
 h3. 기타 개선
 
-* `ContextPropagatingTaskDecorator`로 `@Async`/`@EventListener` 컨텍스트 전파
-* `TransactionExecutionListener` — 트랜잭션 전/후 콜백 계약 추가
-* R2DBC에서 `BeanPropertyRowMapper`, `DataClassRowMapper` 지원
+* \{\{ContextPropagatingTaskDecorator\}\}로 \{\{@Async\}\}/\{\{@EventListener\}\} 컨텍스트 전파
+* \{\{TransactionExecutionListener\}\} — 트랜잭션 전/후 콜백 계약 추가
+* R2DBC에서 \{\{BeanPropertyRowMapper\}\}, \{\{DataClassRowMapper\}\} 지원
 
 ----
 
@@ -251,20 +251,20 @@ h3. 폐기 예고
 h3. 제거 및 동작 변경
 
 || 항목 || 설명 ||
-| {{LocalVariableTableParameterNameDiscoverer}} | 제거됨. {{-parameters}} 컴파일러 플래그 필수 |
+| {{LocalVariableTableParameterNameDiscoverer}} | 제거됨. {{\-parameters}} 컴파일러 플래그 필수 |
 | URL 해석 방식 | {{URL}} 생성자 대신 {{URI}}를 통한 일관된 해석 |
 | WebSocket SpEL selector | 보안상 기본 비활성화, 명시적 활성화 필요 |
 | {{Jackson ParameterNamesModule}} | {{Jackson2ObjectMapperBuilder}}에서 자동 등록 |
 
 {quote}
-*주의:* {{-parameters}} 컴파일러 플래그를 추가하지 않으면 매개변수 이름 기반 주입이나 바인딩이 동작하지 않습니다. Gradle: {{tasks.withType(JavaCompile) \{ options.compilerArgs.add("-parameters") \}}}, Maven: {{<compilerArgs><arg>-parameters</arg></compilerArgs>}} 설정을 확인하세요.
+*주의:* {{\-parameters}} 컴파일러 플래그를 추가하지 않으면 매개변수 이름 기반 주입이나 바인딩이 동작하지 않습니다. Gradle: {{tasks.withType(JavaCompile) \{ options.compilerArgs.add("\-parameters") \}}}, Maven: {{<compilerArgs><arg>\-parameters</arg></compilerArgs>}} 설정을 확인하세요.
 {quote}
 
 ----
 
 h2. 호환성
 
-{code:language=text|title=mermaid|collapse=true}
+{code:language=text|title=mermaid|collapse=true|theme=Emacs}
 graph TD
     SF61[Spring Framework 6.1] --> JDK17[JDK 17+]
     SF61 --> JDK21[JDK 21 공식 지원]
@@ -283,17 +283,17 @@ graph TD
 
 h3. Spring 포트폴리오 호환
 
-* **Spring Boot** 3.2.x
-* **Spring Security** 6.2.x
-* **Spring Data** 2023.1 (2023.1.x)
-* **Spring Cloud** 2023.0.x
+* *Spring Boot* 3.2.x
+* *Spring Security* 6.2.x
+* *Spring Data* 2023.1 (2023.1.x)
+* *Spring Cloud* 2023.0.x
 
 ----
 
 h2. 참고 자료
 
-* [Spring Framework 6.1 Release Notes (GitHub Wiki)](https://github.com/spring-projects/spring-framework/wiki/Spring-Framework-6.1-Release-Notes)
-* [What's New in Spring Framework 6.x (GitHub Wiki)](https://github.com/spring-projects/spring-framework/wiki/What's-New-in-Spring-Framework-6.x)
-* [Spring Blog - Spring Framework 6.1 GA](https://spring.io/blog/2023/11/16/spring-framework-6-1-goes-ga)
-* [Spring Boot 3.2 Release Notes](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.2-Release-Notes)
-* [Spring Framework 6.0 릴리즈 노트](6.0.md)
+* [Spring Framework 6.1 Release Notes (GitHub Wiki)|https://github.com/spring-projects/spring-framework/wiki/Spring-Framework-6.1-Release-Notes]
+* [What's New in Spring Framework 6.x (GitHub Wiki)|https://github.com/spring-projects/spring-framework/wiki/What's-New-in-Spring-Framework-6.x]
+* [Spring Blog - Spring Framework 6.1 GA|https://spring.io/blog/2023/11/16/spring-framework-6-1-goes-ga]
+* [Spring Boot 3.2 Release Notes|https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.2-Release-Notes]
+* [Spring Framework 6.0 릴리즈 노트|6.0.md]

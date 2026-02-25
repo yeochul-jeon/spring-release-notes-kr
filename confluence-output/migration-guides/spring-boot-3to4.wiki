@@ -20,11 +20,11 @@ Spring Boot 4.0은 *Spring Framework 7.0* 기반으로, Jakarta EE 11 기준선 
 
 h2. 사전 준비 체크리스트
 
-* Spring Boot **3.x 최신 버전**으로 먼저 업그레이드
-* 모든 `@Deprecated` 경고 해결 (특히 `@MockBean` → `@MockitoBean`)
+* Spring Boot *3.x 최신 버전*으로 먼저 업그레이드
+* 모든 \{\{@Deprecated\}\} 경고 해결 (특히 \{\{@MockBean\}\} → \{\{@MockitoBean\}\})
 * Undertow 사용 여부 확인 → Tomcat 11 또는 Jetty 12.1로 전환 계획
 * Jackson 2.x → 3.x 호환성 확인
-* `javax.annotation`/`javax.inject` 잔존 사용 여부 확인 (완전 제거됨)
+* \{\{javax.annotation\}\}/\{\{javax.inject\}\} 잔존 사용 여부 확인 (완전 제거됨)
 * 모듈/스타터 이름 변경 사항 확인
 * 기존 테스트 코드가 모두 통과하는지 확인
 
@@ -36,7 +36,7 @@ h3. 1. Jackson 3.x 전환 (가장 광범위한 변경)
 
 Jackson 3.x가 기본이며, 2.x는 deprecated 상태입니다 (7.2에서 제거 예정).
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // Before (Jackson 2.x — deprecated)
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -65,7 +65,7 @@ JsonMapper mapper = JsonMapper.builder()
 
 h3. 2. Undertow 지원 제거
 
-{code:language=groovy}
+{code:language=groovy|theme=Emacs}
 // Before (Boot 3.x — Undertow)
 dependencies {
     implementation('org.springframework.boot:spring-boot-starter-web') {
@@ -82,7 +82,7 @@ dependencies {
 
 h3. 3. 스타터 이름 변경
 
-{code:language=groovy}
+{code:language=groovy|theme=Emacs}
 // Before (Boot 3.x)
 implementation 'org.springframework.boot:spring-boot-starter-web'
 
@@ -95,7 +95,7 @@ implementation 'org.springframework.boot:spring-boot-starter-classic'
 
 h3. 4. {{@MockBean}} / {{@SpyBean}} 제거
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // Before (Boot 3.x — deprecated)
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -132,15 +132,15 @@ h2. 설정 변경사항
 h3. 주요 프로퍼티 변경
 
 || 이전 프로퍼티 || 새 프로퍼티 ||
-| {{spring.data.mongodb.*}} | {{spring.mongodb.*}} |
-| {{server.error.*}} | {{spring.web.error.*}} |
-| {{server.servlet.encoding.*}} | {{spring.servlet.encoding.*}} |
-| {{spring.jackson.read/write.*}} | {{spring.jackson.json.read/write.*}} |
+| {{spring.data.mongodb.\*}} | {{spring.mongodb.\*}} |
+| {{server.error.\*}} | {{spring.web.error.\*}} |
+| {{server.servlet.encoding.\*}} | {{spring.servlet.encoding.\*}} |
+| {{spring.jackson.read/write.\*}} | {{spring.jackson.json.read/write.\*}} |
 | {{management.endpoint.\{name\}.enabled}} | {{management.endpoint.\{name\}.access}} |
 
 h3. 의존성 좌표 변경
 
-{code:language=groovy}
+{code:language=groovy|theme=Emacs}
 // Before (Boot 3.x)
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web:3.x'
@@ -160,7 +160,7 @@ dependencies {
 
 h3. 기타 설정 변경
 
-{code:language=properties}
+{code:language=properties|theme=Emacs}
 # Logback charset 기본값이 UTF-8로 변경
 # DevTools LiveReload 기본 비활성화
 spring.devtools.livereload.enabled=true
@@ -177,16 +177,16 @@ h2. 폐기 및 제거 항목
 | {{@MockBean}} / {{@SpyBean}} | {{@MockitoBean}} / {{@MockitoSpyBean}} |
 | {{@AutoConfigureObservability}} | {{@AutoConfigureMetrics}} + {{@AutoConfigureTracing}} |
 | Undertow 스타터/임베디드 서버 | Tomcat 11 / Jetty 12.1 |
-| Embedded launch scripts | {{java -jar}} 실행 |
+| Embedded launch scripts | {{java \-jar}} 실행 |
 | Spring Session Hazelcast/MongoDB | 별도 라이브러리 |
 | Spock 통합 | Groovy 5 비호환으로 제거 |
 | Wavefront/SignalFx 지원 | OpenTelemetry 사용 |
 | Spring Retry 의존성 관리 | Spring Framework 7의 {{@Retryable}} |
-| {{hibernate-jpamodelgen}} | {{hibernate-processor}} |
+| {{hibernate\-jpamodelgen}} | {{hibernate\-processor}} |
 
 h3. Deprecated 타임라인 (향후 제거 예정)
 
-{code:language=text|title=mermaid|collapse=true}
+{code:language=text|title=mermaid|collapse=true|theme=Emacs}
 graph LR
     A["4.0 Deprecated"] --> B["향후 제거"]
 
@@ -203,7 +203,7 @@ graph LR
 
 h2. 단계별 마이그레이션 절차
 
-{code:language=text|title=mermaid|collapse=true}
+{code:language=text|title=mermaid|collapse=true|theme=Emacs}
 flowchart TD
     A["1단계: Boot 3.x 최신으로\n업그레이드"] --> B["2단계: Deprecated 경고\n모두 해결"]
     B --> C["3단계: Undertow 사용 시\nTomcat/Jetty로 전환"]
@@ -218,24 +218,24 @@ flowchart TD
     style H fill:#4CAF50,color:#fff
 {code}
 
-# **Boot 3.x 최신**: 3.x에서 deprecated 경고가 4.0 마이그레이션의 핵심 가이드입니다.
-# **Deprecated 해결**: `@MockBean` → `@MockitoBean`, `ListenableFuture` → `CompletableFuture` 등을 처리합니다.
-# **Undertow 전환**: Tomcat 11(기본값) 또는 Jetty 12.1로 전환합니다.
-# **OpenRewrite**: `UpgradeSpringBoot_4_0` 레시피로 Jackson 3.x, 스타터 변경, 프로퍼티 등을 자동 변환합니다.
-# **프로퍼티 변경**: `server.error.*` → `spring.web.error.*`, `spring.jackson.*` 등을 수정합니다.
-# **테스트 수정**: `@MockitoBean` 전환, `@AutoConfigureMockMvc` 명시 추가 등을 적용합니다.
-# **Boot 4.0 의존성**: `build.gradle`/`pom.xml`에서 버전을 4.0으로 변경합니다.
-# **테스트 실행**: 전체 빌드 및 테스트로 나머지 문제를 해결합니다.
+# *Boot 3.x 최신*: 3.x에서 deprecated 경고가 4.0 마이그레이션의 핵심 가이드입니다.
+# *Deprecated 해결*: \{\{@MockBean\}\} → \{\{@MockitoBean\}\}, \{\{ListenableFuture\}\} → \{\{CompletableFuture\}\} 등을 처리합니다.
+# *Undertow 전환*: Tomcat 11(기본값) 또는 Jetty 12.1로 전환합니다.
+# *OpenRewrite*: \{\{UpgradeSpringBoot\_4\_0\}\} 레시피로 Jackson 3.x, 스타터 변경, 프로퍼티 등을 자동 변환합니다.
+# *프로퍼티 변경*: \{\{server.error.\*\}\} → \{\{spring.web.error.\*\}\}, \{\{spring.jackson.\*\}\} 등을 수정합니다.
+# *테스트 수정*: \{\{@MockitoBean\}\} 전환, \{\{@AutoConfigureMockMvc\}\} 명시 추가 등을 적용합니다.
+# *Boot 4.0 의존성*: \{\{build.gradle\}\}/\{\{pom.xml\}\}에서 버전을 4.0으로 변경합니다.
+# *테스트 실행*: 전체 빌드 및 테스트로 나머지 문제를 해결합니다.
 
 ----
 
 h2. 자주 발생하는 문제 및 해결
 
-*Q: {{spring-boot-starter-web}}을 그대로 쓸 수 없나요?*
-A: {{spring-boot-starter-webmvc}}로 이름이 변경되었습니다. 빠른 마이그레이션을 위해 {{spring-boot-starter-classic}}을 임시로 사용할 수 있지만, 정식 스타터로 전환하는 것을 권장합니다.
+*Q: {{spring\-boot\-starter\-web}}을 그대로 쓸 수 없나요?*
+A: {{spring\-boot\-starter\-webmvc}}로 이름이 변경되었습니다. 빠른 마이그레이션을 위해 {{spring\-boot\-starter\-classic}}을 임시로 사용할 수 있지만, 정식 스타터로 전환하는 것을 권장합니다.
 
 *Q: Jackson 2.x에서 {{IOException}}을 catch하던 코드가 문제됩니다.*
-A: Jackson 3.x의 {{JacksonException}}은 {{RuntimeException}}을 상속합니다. 기존 {{try-catch (IOException)}}에서 Jackson 예외를 처리하던 코드를 {{JacksonException}} 또는 상위 타입으로 수정하세요.
+A: Jackson 3.x의 {{JacksonException}}은 {{RuntimeException}}을 상속합니다. 기존 {{try\-catch (IOException)}}에서 Jackson 예외를 처리하던 코드를 {{JacksonException}} 또는 상위 타입으로 수정하세요.
 
 *Q: {{@SpringBootTest}}에서 MockMVC가 동작하지 않습니다.*
 A: 4.0부터 MockMVC 자동 구성이 제거되었습니다. {{@AutoConfigureMockMvc}}를 테스트 클래스에 명시적으로 추가하세요.
@@ -244,15 +244,15 @@ A: 4.0부터 MockMVC 자동 구성이 제거되었습니다. {{@AutoConfigureMoc
 A: Spring Framework 7의 {{@Retryable}} 어노테이션({{org.springframework.core.retry}})이 대체합니다. 지수 백오프, 지터 등을 기본 지원합니다.
 
 *Q: OpenRewrite로 자동 마이그레이션이 가능한가요?*
-A: {{org.openrewrite.java.spring.boot4.UpgradeSpringBoot_4_0}} 복합 레시피로 Jackson, 스타터, 프로퍼티, deprecated API 등을 일괄 변환할 수 있습니다.
+A: {{org.openrewrite.java.spring.boot4.UpgradeSpringBoot\_4\_0}} 복합 레시피로 Jackson, 스타터, 프로퍼티, deprecated API 등을 일괄 변환할 수 있습니다.
 
 ----
 
 h2. 참고 자료
 
-* [Spring Boot 4.0 마이그레이션 가이드 (공식 위키)](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.0-Migration-Guide)
-* [Spring Boot 4.0 릴리즈 노트](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.0-Release-Notes)
-* [OpenRewrite - Spring Boot 4.0 레시피](https://docs.openrewrite.org/recipes/java/spring/boot4/upgradespringboot_4_0)
-* [Spring Framework 6→7 마이그레이션 가이드](spring-framework-6to7.md)
-* [Spring Boot 3.x 릴리즈 노트](../spring-boot/3.x/)
-* [Spring Boot 4.x 릴리즈 노트](../spring-boot/4.x/)
+* [Spring Boot 4.0 마이그레이션 가이드 (공식 위키)|https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.0-Migration-Guide]
+* [Spring Boot 4.0 릴리즈 노트|https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.0-Release-Notes]
+* [OpenRewrite - Spring Boot 4.0 레시피|https://docs.openrewrite.org/recipes/java/spring/boot4/upgradespringboot_4_0]
+* [Spring Framework 6→7 마이그레이션 가이드|spring-framework-6to7.md]
+* [Spring Boot 3.x 릴리즈 노트|../spring-boot/3.x/]
+* [Spring Boot 4.x 릴리즈 노트|../spring-boot/4.x/]

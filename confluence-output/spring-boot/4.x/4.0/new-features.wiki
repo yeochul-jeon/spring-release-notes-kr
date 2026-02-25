@@ -12,7 +12,7 @@ h2. 1. HTTP Service Client 자동 설정
 
 인터페이스에 어노테이션만 붙이면 Spring이 자동으로 HTTP 클라이언트 구현체를 생성해줍니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.annotation.PostExchange;
 
@@ -27,7 +27,7 @@ public interface UserClient {
 }
 {code}
 
-{code:language=yaml}
+{code:language=yaml|theme=Emacs}
 # application.yml에서 HTTP Service Client 설정
 spring:
   http:
@@ -50,7 +50,7 @@ h2. 2. API 버전 관리(API Versioning)
 
 Spring MVC와 WebFlux에서 *API 버전 관리*를 자동 설정으로 지원합니다.
 
-{code:language=yaml}
+{code:language=yaml|theme=Emacs}
 # application.yml
 spring:
   mvc:
@@ -59,7 +59,7 @@ spring:
       version-parameter: v  # ?v=2 형식으로 버전 지정
 {code}
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -82,10 +82,10 @@ public class UserController {
 
 h2. 3. OpenTelemetry 스타터
 
-새로운 {{spring-boot-starter-opentelemetry}} 스타터가 추가되어, OTLP를 통한 메트릭과 트레이스 내보내기를
+새로운 {{spring\-boot\-starter\-opentelemetry}} 스타터가 추가되어, OTLP를 통한 메트릭과 트레이스 내보내기를
 간편하게 설정할 수 있습니다.
 
-{code:language=xml}
+{code:language=xml|theme=Emacs}
 <!-- pom.xml -->
 <dependency>
     <groupId>org.springframework.boot</groupId>
@@ -93,7 +93,7 @@ h2. 3. OpenTelemetry 스타터
 </dependency>
 {code}
 
-{code:language=yaml}
+{code:language=yaml|theme=Emacs}
 # application.yml - OTLP 설정
 management:
   otlp:
@@ -107,8 +107,8 @@ management:
 {quote}
 *초보자를 위한 설명:*
 
-* **OpenTelemetry(OTel)**: 애플리케이션의 성능 데이터(메트릭)와 요청 추적(트레이스)을 수집하는 표준
-* **OTLP**: OpenTelemetry 데이터를 전송하는 프로토콜
+* *OpenTelemetry(OTel)*: 애플리케이션의 성능 데이터(메트릭)와 요청 추적(트레이스)을 수집하는 표준
+* *OTLP*: OpenTelemetry 데이터를 전송하는 프로토콜
 * 이 스타터를 추가하면 별도 설정 없이 자동으로 OTel SDK가 구성됩니다
 {quote}
 
@@ -118,7 +118,7 @@ h2. 4. JmsClient API 지원
 
 기존 {{JmsTemplate}}과 함께 새로운 {{JmsClient}} API가 자동 설정됩니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 @Service
 @RequiredArgsConstructor
 public class OrderService {
@@ -135,9 +135,9 @@ public class OrderService {
 
 h2. 5. Kotlin Serialization 지원
 
-새로운 {{spring-boot-starter-kotlin-serialization}} 스타터를 통해 Kotlin Serialization을 공식 지원합니다.
+새로운 {{spring\-boot\-starter\-kotlin\-serialization}} 스타터를 통해 Kotlin Serialization을 공식 지원합니다.
 
-{code:language=kotlin}
+{code:language=kotlin|theme=Emacs}
 @Serializable // Kotlin Serialization 어노테이션
 data class User(
     val id: Long,
@@ -148,7 +148,7 @@ data class User(
 // Json 빈이 자동 설정되며, HttpMessageConverter도 자동 등록됨
 {code}
 
-{code:language=yaml}
+{code:language=yaml|theme=Emacs}
 # application.yml
 spring:
   kotlin:
@@ -162,7 +162,7 @@ h2. 6. RestTestClient
 
 Spring Framework 7.0에서 새로 도입된 {{RestTestClient}}를 테스트에서 사용할 수 있습니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 class UserApiTest {
 
@@ -187,7 +187,7 @@ h2. 7. Redis Static Master/Replica 지원
 
 Lettuce를 사용하여 Redis 마스터/레플리카(읽기 전용 복제본) 구성을 설정할 수 있습니다.
 
-{code:language=yaml}
+{code:language=yaml|theme=Emacs}
 # application.yml
 spring:
   data:
@@ -205,7 +205,7 @@ h2. 8. 다중 TaskDecorator 지원
 
 여러 개의 {{TaskDecorator}} 빈을 등록하고 {{@Order}}로 순서를 지정할 수 있습니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 @Bean
 @Order(1)
 public TaskDecorator mdcTaskDecorator() {

@@ -31,7 +31,7 @@ h3. 1. JMX 기본 비활성화
 
 JMX(Java Management Extensions, Java 애플리케이션을 원격으로 모니터링/관리하는 기술)가 더 이상 기본으로 활성화되지 않습니다. 필요한 경우 명시적으로 설정해야 합니다.
 
-{code:language=properties}
+{code:language=properties|theme=Emacs}
 # application.properties
 # JMX를 사용하려면 명시적으로 활성화
 spring.jmx.enabled=true
@@ -39,9 +39,9 @@ spring.jmx.enabled=true
 
 h3. 2. JUnit 5 기본 테스트 프레임워크
 
-{{spring-boot-starter-test}}에 *JUnit 5*가 기본으로 포함됩니다. 기존 JUnit 4 테스트도 {{vintage-engine}}이 함께 포함되어 호환됩니다.
+{{spring\-boot\-starter\-test}}에 *JUnit 5*가 기본으로 포함됩니다. 기존 JUnit 4 테스트도 {{vintage\-engine}}이 함께 포함되어 호환됩니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // JUnit 5 스타일 테스트 (기본)
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -66,7 +66,7 @@ h3. 3. Jakarta EE 의존성 이름 변경
 
 h3. 4. 로깅 프로퍼티 변경
 
-{code:language=properties}
+{code:language=properties|theme=Emacs}
 # 변경 전 (deprecated)
 logging.file=myapp.log
 logging.path=/var/log
@@ -78,7 +78,7 @@ logging.file.path=/var/log
 
 h3. 5. Maven 플러그인 포크(Fork) 방식 변경
 
-Maven 플러그인으로 애플리케이션을 실행할 때 기본적으로 **별도 프로세스(forked)**로 실행됩니다. 따라서 {{-D}} 플래그로 시스템 프로퍼티를 전달하려면 추가 설정이 필요합니다.
+Maven 플러그인으로 애플리케이션을 실행할 때 기본적으로 *별도 프로세스(forked)*로 실행됩니다. 따라서 {{\-D}} 플래그로 시스템 프로퍼티를 전달하려면 추가 설정이 필요합니다.
 
 ----
 
@@ -88,12 +88,12 @@ h3. 1. 지연 초기화 (Lazy Initialization)
 
 모든 빈(Bean)의 초기화를 애플리케이션 시작 시가 아닌 *실제 사용 시점으로 미루는* 기능입니다. 기동 시간이 크게 단축됩니다.
 
-{code:language=properties}
+{code:language=properties|theme=Emacs}
 # 전역 지연 초기화 활성화
 spring.main.lazy-initialization=true
 {code}
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // 특정 빈은 지연 초기화에서 제외하고 싶을 때
 @Component
 @Lazy(false)  // 이 빈은 즉시 초기화됨
@@ -109,9 +109,9 @@ public class EagerBean {
 
 h3. 2. 불변 @ConfigurationProperties 바인딩
 
-{{@ConstructorBinding}}을 사용하여 설정 값을 **불변 객체(Immutable Object)**로 바인딩할 수 있습니다.
+{{@ConstructorBinding}}을 사용하여 설정 값을 *불변 객체(Immutable Object)*로 바인딩할 수 있습니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // 생성자를 통한 불변 설정 바인딩
 @ConfigurationProperties("app.mail")
 @ConstructorBinding  // 생성자 기반 바인딩 활성화
@@ -139,7 +139,7 @@ h3. 3. RSocket 지원
 
 RSocket(리액티브 스트리밍 프로토콜)을 위한 자동 설정과 스타터가 추가되었습니다.
 
-{code:language=xml}
+{code:language=xml|theme=Emacs}
 <!-- RSocket 스타터 추가 -->
 <dependency>
     <groupId>org.springframework.boot</groupId>
@@ -153,7 +153,7 @@ h3. 4. Health Indicator 그룹
 
 헬스 인디케이터(상태 체크 기능)를 그룹으로 묶어 관리할 수 있습니다. 쿠버네티스의 Liveness/Readiness 프로브 구성에 유용합니다.
 
-{code:language=properties}
+{code:language=properties|theme=Emacs}
 # 헬스 인디케이터 그룹 설정
 management.endpoint.health.group.liveness.include=livenessState
 management.endpoint.health.group.readiness.include=readinessState,db
@@ -165,7 +165,7 @@ management.endpoint.health.group.readiness.include=readinessState,db
 
 h3. 5. SAML 2.0 자동 설정
 
-{{spring-security-saml2-service-provider}} 의존성이 있으면 *SAML 2.0 기반 인증*이 자동 설정됩니다.
+{{spring\-security\-saml2\-service\-provider}} 의존성이 있으면 *SAML 2.0 기반 인증*이 자동 설정됩니다.
 
 ----
 
@@ -175,7 +175,7 @@ h3. 성능 최적화
 
 이 버전의 핵심 테마는 *성능 개선*입니다.
 
-{code:language=text|title=mermaid|collapse=true}
+{code:language=text|title=mermaid|collapse=true|theme=Emacs}
 graph LR
     subgraph "기동 시간 단축 요인"
         A["proxyBeanMethods=false<br/>프록시 생성 최소화"]
@@ -196,11 +196,11 @@ graph LR
 
 h3. 기타 개선
 
-* **Kubernetes 감지**: `@ConditionalOnCloudPlatform`에서 쿠버네티스 환경을 감지 가능
-* **H2 콘솔 URL 로깅**: 시작 시 H2 데이터베이스 콘솔의 JDBC 연결 URL이 로그에 출력
-* **ASCII 배너**: ANSI 256 색상 코드 지원
-* **Thread Dump 엔드포인트**: 일반 텍스트 형식 지원
-* **`@SpringBootTest`**: 애플리케이션 인수(arguments) 전달 지원
+* *Kubernetes 감지*: \{\{@ConditionalOnCloudPlatform\}\}에서 쿠버네티스 환경을 감지 가능
+* *H2 콘솔 URL 로깅*: 시작 시 H2 데이터베이스 콘솔의 JDBC 연결 URL이 로그에 출력
+* *ASCII 배너*: ANSI 256 색상 코드 지원
+* *Thread Dump 엔드포인트*: 일반 텍스트 형식 지원
+* *\{\{@SpringBootTest\}\}*: 애플리케이션 인수(arguments) 전달 지원
 
 ----
 
@@ -208,14 +208,14 @@ h2. Deprecated 및 제거 항목
 
 h3. 제거됨
 
-* Spring Boot 2.1에서 Deprecated되었던 모든 클래스와 메서드가 **제거**되었습니다.
+* Spring Boot 2.1에서 Deprecated되었던 모든 클래스와 메서드가 *제거*되었습니다.
 * 2.1에서 2.2로 업그레이드 전에 반드시 Deprecated 경고를 먼저 해결하세요.
 
 h3. Deprecated
 
 || 항목 || 대체 방법 ||
-| {{server.connection-timeout}} | 서버별 전용 프로퍼티 사용 |
-| {{server.use-forward-headers}} | {{server.forward-headers-strategy}} 사용 |
+| {{server.connection\-timeout}} | 서버별 전용 프로퍼티 사용 |
+| {{server.use\-forward\-headers}} | {{server.forward\-headers\-strategy}} 사용 |
 | FreeMarker 확장자 {{.ftl}} | {{.ftlh}} 사용 (HTML 자동 이스케이핑) |
 
 h3. 기본값 변경 (주의 필요)
@@ -223,14 +223,14 @@ h3. 기본값 변경 (주의 필요)
 || 항목 || 변경 내용 ||
 | HTTP Trace Actuator | 명시적 빈 등록 필요 |
 | Auditing Actuator | 명시적 빈 등록 필요 |
-| {{HttpHiddenMethodFilter}} | 기본 비활성화 ({{_method}} 파라미터 처리) |
+| {{HttpHiddenMethodFilter}} | 기본 비활성화 ({{\_method}} 파라미터 처리) |
 | DevTools 설정 | 통합 테스트에서 DevTools 설정 미적용 |
 
 ----
 
 h2. 호환성
 
-{code:language=text|title=mermaid|collapse=true}
+{code:language=text|title=mermaid|collapse=true|theme=Emacs}
 graph LR
     SB22["Spring Boot 2.2"]
 
@@ -290,7 +290,7 @@ h3. 주요 의존성 버전
 
 h2. 참고 자료
 
-* [Spring Boot 2.2 공식 릴리즈 노트](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.2-Release-Notes)
-* [Spring Framework 5.2](../../spring-framework/5.x/5.2.md)
-* [Spring Boot 2.1 릴리즈 노트](2.1.md) (이전 버전)
-* [Spring Boot 2.3 릴리즈 노트](2.3.md) (다음 버전)
+* [Spring Boot 2.2 공식 릴리즈 노트|https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.2-Release-Notes]
+* [Spring Framework 5.2|../../spring-framework/5.x/5.2.md]
+* [Spring Boot 2.1 릴리즈 노트|2.1.md] (이전 버전)
+* [Spring Boot 2.3 릴리즈 노트|2.3.md] (다음 버전)

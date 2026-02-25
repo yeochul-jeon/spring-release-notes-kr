@@ -30,7 +30,7 @@ h4. 어노테이션 기반 모델 (MVC와 유사)
 
 기존 Spring MVC와 거의 동일한 어노테이션을 사용하되, 반환 타입이 리액티브 타입({{Mono}}, {{Flux}})입니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // Mono: 0~1개의 결과를 비동기로 반환
 // Flux: 0~N개의 결과를 비동기 스트림으로 반환
 @RestController
@@ -66,7 +66,7 @@ h4. 함수형 엔드포인트 (RouterFunction / HandlerFunction)
 
 어노테이션 없이 *함수형 스타일*로 라우팅을 정의하는 새로운 방식입니다. 경량 애플리케이션이나 마이크로서비스에 적합합니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // RouterFunction으로 URL과 핸들러를 매핑
 @Bean
 public RouterFunction<ServerResponse> routes(UserHandler handler) {
@@ -90,7 +90,7 @@ h4. WebClient - 리액티브 HTTP 클라이언트
 
 기존 {{RestTemplate}}을 대체하는 논블로킹 HTTP 클라이언트입니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // WebClient: 비동기/논블로킹 HTTP 요청을 수행하는 클라이언트
 WebClient client = WebClient.create("http://api.example.com");
 
@@ -126,7 +126,7 @@ h3. MVC vs WebFlux 비교
 | *학습 곡선* | 낮음 | 높음 (리액티브 사고 필요) |
 | *데이터 접근* | JPA, MyBatis, JDBC | R2DBC, Reactive MongoDB |
 
-{code:language=text|title=mermaid|collapse=true}
+{code:language=text|title=mermaid|collapse=true|theme=Emacs}
 graph TB
     subgraph "Spring MVC (동기/블로킹)"
         REQ1[HTTP 요청] --> DS[DispatcherServlet]
@@ -160,16 +160,16 @@ h3. Kotlin 공식 지원
 
 Kotlin이 *일급 시민(first-class citizen)* 으로 지원됩니다. Spring 프레임워크 자체 코드에 Kotlin 확장 함수와 null 안전성이 적용되었습니다.
 
-* **Bean Definition DSL**: Kotlin DSL로 빈을 등록하는 함수형 방식
-* **Routing DSL**: WebFlux 라우팅을 Kotlin 스타일로 간결하게 정의
-* **Null-safe API**: Kotlin 컴파일러가 Spring API의 null 가능성을 인식
-* **Reified 타입 파라미터**: 제네릭 타입 정보를 런타임에 유지하여 API를 간결하게 사용
+* *Bean Definition DSL*: Kotlin DSL로 빈을 등록하는 함수형 방식
+* *Routing DSL*: WebFlux 라우팅을 Kotlin 스타일로 간결하게 정의
+* *Null-safe API*: Kotlin 컴파일러가 Spring API의 null 가능성을 인식
+* *Reified 타입 파라미터*: 제네릭 타입 정보를 런타임에 유지하여 API를 간결하게 사용
 
 h3. JUnit 5 통합
 
 {{SpringExtension}}을 통해 JUnit Jupiter(JUnit 5)와 완전히 통합됩니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // @SpringJUnitConfig = @ExtendWith(SpringExtension.class) + @ContextConfiguration
 @SpringJUnitConfig(AppConfig.class)
 class UserServiceTest {
@@ -204,7 +204,7 @@ class UserControllerTest {
 
 h3. spring-jcl 로깅 브릿지
 
-새로운 {{spring-jcl}} 모듈이 도입되어, 별도 설정 없이 로깅 프레임워크를 자동 감지합니다.
+새로운 {{spring\-jcl}} 모듈이 도입되어, 별도 설정 없이 로깅 프레임워크를 자동 감지합니다.
 
 || 우선순위 || 로깅 프레임워크 || 설명 ||
 | 1 | Log4j 2 | 있으면 자동 사용 |
@@ -212,7 +212,7 @@ h3. spring-jcl 로깅 브릿지
 | 3 | JUL (java.util.logging) | 위 두 개가 없으면 기본 사용 |
 
 {quote}
-*참고:* 기존 {{commons-logging}} 의존성을 수동으로 제외({{exclude}})할 필요가 없어졌습니다.
+*참고:* 기존 {{commons\-logging}} 의존성을 수동으로 제외({{exclude}})할 필요가 없어졌습니다.
 {quote}
 
 h3. Null Safety (Null 안전성)
@@ -221,7 +221,7 @@ h3. Null Safety (Null 안전성)
 
 * IDE(IntelliJ 등)가 null 가능성 경고를 표시
 * Kotlin과 연동 시 자동으로 nullable/non-null 타입으로 변환
-* `@Nullable`로 개별 파라미터나 반환값에 null 허용 명시
+* \{\{@Nullable\}\}로 개별 파라미터나 반환값에 null 허용 명시
 
 ----
 
@@ -243,7 +243,7 @@ h3. 제거됨
 Spring 5.0에서 오래된 기술과 모듈이 대량 정리되었습니다.
 
 || 제거 항목 || 설명 ||
-| *Portlet* | {{spring-webmvc-portlet}} 모듈 전체 제거 |
+| *Portlet* | {{spring\-webmvc\-portlet}} 모듈 전체 제거 |
 | *Velocity* | 템플릿 엔진 지원 제거 (Thymeleaf, FreeMarker 사용) |
 | *JasperReports* | 리포트 뷰 지원 제거 |
 | *XMLBeans* | XML 바인딩 지원 제거 (JAXB 사용) |
@@ -254,13 +254,13 @@ h3. 폐기 예고
 
 || 항목 || 권장 대안 ||
 | {{RestTemplate}} (일부 기능) | {{WebClient}} 사용 권장 |
-| {{jackson-databind}} 1.x | Jackson 2.9+ 필수 |
+| {{jackson\-databind}} 1.x | Jackson 2.9+ 필수 |
 
 ----
 
 h2. 호환성
 
-{code:language=text|title=mermaid|collapse=true}
+{code:language=text|title=mermaid|collapse=true|theme=Emacs}
 graph TD
     SF5[Spring Framework 5.0] --> JDK8[JDK 8+]
     SF5 --> SV31[Servlet 3.1+]
@@ -293,8 +293,8 @@ h3. Spring 포트폴리오 호환
 
 h2. 참고 자료
 
-* [Spring Framework 5.0 Release Notes (GitHub Wiki)](https://github.com/spring-projects/spring-framework/wiki/Spring-Framework-5.0-Release-Notes)
-* [What's New in Spring Framework 5.x (GitHub Wiki)](https://github.com/spring-projects/spring-framework/wiki/What's-New-in-Spring-Framework-5.x)
-* [Spring Framework 5.0 - Spring Blog](https://spring.io/blog/2017/09/28/spring-framework-5-0-goes-ga)
-* [Web on Reactive Stack - Spring Docs](https://docs.spring.io/spring-framework/docs/5.0.x/spring-framework-reference/web-reactive.html)
-* [Kotlin Support - Spring Docs](https://docs.spring.io/spring-framework/docs/5.0.x/spring-framework-reference/kotlin.html)
+* [Spring Framework 5.0 Release Notes (GitHub Wiki)|https://github.com/spring-projects/spring-framework/wiki/Spring-Framework-5.0-Release-Notes]
+* [What's New in Spring Framework 5.x (GitHub Wiki)|https://github.com/spring-projects/spring-framework/wiki/What's-New-in-Spring-Framework-5.x]
+* [Spring Framework 5.0 - Spring Blog|https://spring.io/blog/2017/09/28/spring-framework-5-0-goes-ga]
+* [Web on Reactive Stack - Spring Docs|https://docs.spring.io/spring-framework/docs/5.0.x/spring-framework-reference/web-reactive.html]
+* [Kotlin Support - Spring Docs|https://docs.spring.io/spring-framework/docs/5.0.x/spring-framework-reference/kotlin.html]

@@ -56,7 +56,7 @@ function main() {
 
     try {
       const markdown = fs.readFileSync(srcPath, 'utf-8');
-      const wiki = ConfluenceConverter.convert(markdown);
+      const wiki = ConfluenceConverter.convert(markdown, { theme: 'Emacs' });
 
       // 출력 디렉토리 생성
       fs.mkdirSync(path.dirname(destPath), { recursive: true });

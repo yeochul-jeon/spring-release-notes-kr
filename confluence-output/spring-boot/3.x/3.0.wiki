@@ -35,12 +35,12 @@ h2. 플랫폼 요구사항
 
 h2. 주요 변경사항
 
-h3. 1. Jakarta EE 전환 ({{javax.*}} → {{jakarta.*}})
+h3. 1. Jakarta EE 전환 ({{javax.\*}} → {{jakarta.\*}})
 
-Spring Boot 3.0의 가장 큰 변화입니다. 기존 {{javax.*}} 패키지가 모두 {{jakarta.*}}로 변경되었습니다.
+Spring Boot 3.0의 가장 큰 변화입니다. 기존 {{javax.\*}} 패키지가 모두 {{jakarta.\*}}로 변경되었습니다.
 프로젝트의 *모든 import 문*을 수정해야 합니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // 변경 전 (Spring Boot 2.x)
 import javax.persistence.Entity;
 import javax.servlet.http.HttpServletRequest;
@@ -70,7 +70,7 @@ import jakarta.validation.constraints.NotNull;
 
 h3. 2. 주요 의존성 업그레이드
 
-{code:language=text|title=mermaid|collapse=true}
+{code:language=text|title=mermaid|collapse=true|theme=Emacs}
 graph TB
     SB3["Spring Boot 3.0"]
 
@@ -111,7 +111,7 @@ h3. 3. {{@ConstructorBinding}} 변경
 
 생성자가 하나뿐인 {{@ConfigurationProperties}} 클래스에서는 더 이상 {{@ConstructorBinding}}을 붙이지 않아도 됩니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // Spring Boot 3.0 — 단일 생성자면 어노테이션 불필요
 @ConfigurationProperties(prefix = "app")
 public record AppProperties(String name, int port) {
@@ -131,7 +131,7 @@ h3. 1. GraalVM 네이티브 이미지 공식 지원
 Spring Boot 애플리케이션을 GraalVM 네이티브 이미지로 컴파일할 수 있습니다.
 네이티브 이미지는 *시작 시간*과 *메모리 사용량*을 크게 줄여줍니다.
 
-{code:language=bash}
+{code:language=bash|theme=Emacs}
 # Maven으로 네이티브 이미지 빌드
 ./mvnw -Pnative native:compile
 
@@ -149,7 +149,7 @@ h3. 2. Micrometer Observation API (관찰 가능성 통합)
 메트릭(수치 측정)과 트레이싱(요청 추적)을 *하나의 API*로 통합했습니다.
 {{ObservationRegistry}}가 자동 설정되며, 하나의 {{Observation}}으로 타이머와 트레이스를 동시에 생성합니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 @Component
 @RequiredArgsConstructor
 public class MyService {
@@ -168,33 +168,33 @@ public class MyService {
 
 지원하는 트레이싱 시스템:
 
-* **Brave** (Zipkin)
-* **OpenTelemetry**
-* **Wavefront**
+* *Brave* (Zipkin)
+* *OpenTelemetry*
+* *Wavefront*
 
-설정 프로퍼티: {{management.tracing.*}}, {{management.zipkin.tracing.*}}
+설정 프로퍼티: {{management.tracing.\*}}, {{management.zipkin.tracing.\*}}
 
 h3. 3. OTLP Meter Registry 자동 설정
 
-{{micrometer-registry-otlp}}가 클래스패스에 있으면 {{OtlpMeterRegistry}}가 자동 설정됩니다.
-{{management.otlp.metrics.export.*}} 프로퍼티로 구성합니다.
+{{micrometer\-registry\-otlp}}가 클래스패스에 있으면 {{OtlpMeterRegistry}}가 자동 설정됩니다.
+{{management.otlp.metrics.export.\*}} 프로퍼티로 구성합니다.
 
 h3. 4. Log4j2 개선
 
-* **프로필별 설정**: Spring 프로필에 따라 Log4j2 설정을 분기할 수 있습니다.
-* **환경 변수 조회**: Log4j2 설정 파일에서 Spring 환경 프로퍼티를 참조할 수 있습니다.
-* **JUL 라우팅 개선**: `Log4jBridgeHandler`를 사용하여 JUL(Java Util Logging)을 SLF4J 대신 Log4j2로 직접 라우팅합니다.
+* *프로필별 설정*: Spring 프로필에 따라 Log4j2 설정을 분기할 수 있습니다.
+* *환경 변수 조회*: Log4j2 설정 파일에서 Spring 환경 프로퍼티를 참조할 수 있습니다.
+* *JUL 라우팅 개선*: \{\{Log4jBridgeHandler\}\}를 사용하여 JUL(Java Util Logging)을 SLF4J 대신 Log4j2로 직접 라우팅합니다.
 
 h3. 5. Elasticsearch Java Client 자동 설정
 
 공식 Elasticsearch Java Client에 대한 자동 설정이 추가되었습니다.
-{{spring.elasticsearch.*}} 프로퍼티로 구성합니다.
+{{spring.elasticsearch.\*}} 프로퍼티로 구성합니다.
 
 h3. 6. {{@SpringBootTest}} 개선
 
 테스트에서 {{@SpringBootConfiguration}} 클래스의 {{main()}} 메서드를 활용할 수 있습니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 @SpringBootTest(useMainMethod = UseMainMethod.ALWAYS)
 class MyApplicationTests {
     // main() 메서드를 사용하여 애플리케이션 컨텍스트 시작
@@ -211,12 +211,12 @@ h3. 7. Spring Data JDBC 유연성 향상
 
 h2. 개선사항
 
-* **시작 로그 간소화**: 호스트 이름(hostname)이 더 이상 시작 시 로깅되지 않아 시작 성능이 향상됩니다.
-* **Bean Validation 커스터마이징**: `ValidationConfigurationCustomizer` 빈으로 Validation `Configuration`을 커스터마이징할 수 있습니다.
-* **JdkClientHttpConnector 자동 설정**: Reactor Netty, Jetty, Apache 클라이언트가 없을 때 JDK 내장 HTTP 클라이언트를 자동으로 사용합니다.
-* **MongoDB 다중 호스트**: `spring.data.mongodb.additional-hosts`로 여러 호스트를 설정할 수 있습니다.
-* **Kafka 비동기 확인**: `spring.kafka.listener.async-acks` 프로퍼티가 추가되었습니다.
-* **Tomcat 신뢰 프록시**: `server.tomcat.remoteip.trusted-proxies` 프로퍼티가 추가되었습니다.
+* *시작 로그 간소화*: 호스트 이름(hostname)이 더 이상 시작 시 로깅되지 않아 시작 성능이 향상됩니다.
+* *Bean Validation 커스터마이징*: \{\{ValidationConfigurationCustomizer\}\} 빈으로 Validation \{\{Configuration\}\}을 커스터마이징할 수 있습니다.
+* *JdkClientHttpConnector 자동 설정*: Reactor Netty, Jetty, Apache 클라이언트가 없을 때 JDK 내장 HTTP 클라이언트를 자동으로 사용합니다.
+* *MongoDB 다중 호스트*: \{\{spring.data.mongodb.additional\-hosts\}\}로 여러 호스트를 설정할 수 있습니다.
+* *Kafka 비동기 확인*: \{\{spring.kafka.listener.async\-acks\}\} 프로퍼티가 추가되었습니다.
+* *Tomcat 신뢰 프록시*: \{\{server.tomcat.remoteip.trusted\-proxies\}\} 프로퍼티가 추가되었습니다.
 
 ----
 
@@ -243,7 +243,7 @@ h3. Deprecated 항목
 
 h2. 호환성
 
-{code:language=text|title=mermaid|collapse=true}
+{code:language=text|title=mermaid|collapse=true|theme=Emacs}
 graph LR
     subgraph "필수 환경"
         JAVA["Java 17+"]
@@ -281,9 +281,9 @@ graph LR
 
 h2. 참고 자료
 
-* [Spring Boot 3.0 공식 릴리즈 노트](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.0-Release-Notes)
-* [Spring Boot 3.0 마이그레이션 가이드](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.0-Migration-Guide)
-* [Spring Framework 6.0](../../spring-framework/6.x/6.0.md)
-* [2.x → 3.x 마이그레이션 가이드](../../migration-guides/spring-boot-2to3.md)
-* [OpenRewrite Spring Boot 3 마이그레이션 레시피](https://docs.openrewrite.org/recipes/java/spring/boot3/upgradespringboot_3_0)
-* [GraalVM 네이티브 이미지 가이드](https://docs.spring.io/spring-boot/docs/3.0.x/reference/html/native-image.html)
+* [Spring Boot 3.0 공식 릴리즈 노트|https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.0-Release-Notes]
+* [Spring Boot 3.0 마이그레이션 가이드|https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.0-Migration-Guide]
+* [Spring Framework 6.0|../../spring-framework/6.x/6.0.md]
+* [2.x → 3.x 마이그레이션 가이드|../../migration-guides/spring-boot-2to3.md]
+* [OpenRewrite Spring Boot 3 마이그레이션 레시피|https://docs.openrewrite.org/recipes/java/spring/boot3/upgradespringboot_3_0]
+* [GraalVM 네이티브 이미지 가이드|https://docs.spring.io/spring-boot/docs/3.0.x/reference/html/native-image.html]

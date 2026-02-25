@@ -6,7 +6,7 @@ h1. Spring Boot 2.3 릴리즈 노트
 
 h2. 개요
 
-Spring Boot 2.3은 **컨테이너 환경(Docker, Kubernetes)**에 대한 지원을 대폭 강화한 버전입니다.
+Spring Boot 2.3은 *컨테이너 환경(Docker, Kubernetes)*에 대한 지원을 대폭 강화한 버전입니다.
 *Cloud Native Buildpacks*를 통한 Docker 이미지 빌드, *Layered JAR*을 이용한 효율적인 이미지 캐싱,
 *Graceful Shutdown(우아한 종료)*, 그리고 *Kubernetes Liveness/Readiness 프로브*가 핵심 기능으로 추가되었습니다.
 
@@ -29,9 +29,9 @@ h2. 주요 변경사항
 
 h3. 1. Validation 스타터 분리
 
-{{spring-boot-starter-web}}과 {{spring-boot-starter-webflux}}에 더 이상 {{spring-boot-starter-validation}}이 포함되지 않습니다. Bean Validation({{@Valid}}, {{@NotNull}} 등)을 사용하려면 *명시적으로 의존성을 추가*해야 합니다.
+{{spring\-boot\-starter\-web}}과 {{spring\-boot\-starter\-webflux}}에 더 이상 {{spring\-boot\-starter\-validation}}이 포함되지 않습니다. Bean Validation({{@Valid}}, {{@NotNull}} 등)을 사용하려면 *명시적으로 의존성을 추가*해야 합니다.
 
-{code:language=xml}
+{code:language=xml|theme=Emacs}
 <!-- 유효성 검증이 필요한 경우 직접 추가 -->
 <dependency>
     <groupId>org.springframework.boot</groupId>
@@ -39,7 +39,7 @@ h3. 1. Validation 스타터 분리
 </dependency>
 {code}
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // @Valid를 사용하려면 validation 스타터가 필요
 @PostMapping("/users")
 public ResponseEntity<User> createUser(@Valid @RequestBody UserRequest request) {
@@ -52,7 +52,7 @@ h3. 2. DataSource 고유 이름 자동 생성
 
 자동 설정된 DataSource가 시작할 때마다 *고유한 이름*을 생성합니다. 이로 인해 H2 콘솔에서 사용하던 고정 URL이 달라질 수 있습니다.
 
-{code:language=properties}
+{code:language=properties|theme=Emacs}
 # 이전 동작(고정 이름)으로 되돌리려면
 spring.datasource.generate-unique-name=false
 {code}
@@ -69,7 +69,7 @@ h3. 3. Spring Data Neumann 업그레이드
 
 h3. 4. Spring Cloud Connectors 완전 제거
 
-2.2에서 Deprecated되었던 {{spring-boot-starter-cloud-connectors}}가 제거되었습니다.
+2.2에서 Deprecated되었던 {{spring\-boot\-starter\-cloud\-connectors}}가 제거되었습니다.
 
 ----
 
@@ -79,7 +79,7 @@ h3. 1. Docker 이미지 빌드 (Cloud Native Buildpacks)
 
 Dockerfile 없이 Maven/Gradle 플러그인으로 *최적화된 Docker 이미지*를 빌드할 수 있습니다. Cloud Native Buildpacks(클라우드 네이티브 빌드팩)은 소스 코드를 분석하여 자동으로 컨테이너 이미지를 생성하는 기술입니다.
 
-{code:language=bash}
+{code:language=bash|theme=Emacs}
 # Maven으로 Docker 이미지 빌드
 ./mvnw spring-boot:build-image
 
@@ -87,7 +87,7 @@ Dockerfile 없이 Maven/Gradle 플러그인으로 *최적화된 Docker 이미지
 ./gradlew bootBuildImage
 {code}
 
-{code:language=text|title=mermaid|collapse=true}
+{code:language=text|title=mermaid|collapse=true|theme=Emacs}
 graph LR
     SRC["소스 코드 / JAR"] --> BP["Cloud Native<br/>Buildpacks"]
     BP --> DETECT["자동 감지<br/>(Java, 의존성)"]
@@ -102,7 +102,7 @@ h3. 2. Layered JAR (계층형 JAR)
 
 JAR 파일을 *변경 빈도에 따라 계층(Layer)으로 분리*하여, Docker 이미지 빌드 시 캐싱 효율을 극대화합니다.
 
-{code:language=text|title=mermaid|collapse=true}
+{code:language=text|title=mermaid|collapse=true|theme=Emacs}
 graph TB
     subgraph "Layered JAR 구조"
         L1["dependencies<br/>(외부 라이브러리 - 거의 안 바뀜)"]
@@ -117,7 +117,7 @@ graph TB
     style L4 fill:#FF9800,color:#fff
 {code}
 
-{code:language=dockerfile}
+{code:language=dockerfile|theme=Emacs}
 # Layered JAR을 활용한 효율적인 Dockerfile
 FROM eclipse-temurin:11-jre as builder
 WORKDIR /app
@@ -139,7 +139,7 @@ h3. 3. Graceful Shutdown (우아한 종료)
 
 4개의 내장 웹 서버(Tomcat, Jetty, Reactor Netty, Undertow) 모두 *우아한 종료*를 지원합니다. 종료 신호를 받으면 새 요청은 거부하고, 처리 중인 요청이 완료될 때까지 기다린 후 종료됩니다.
 
-{code:language=properties}
+{code:language=properties|theme=Emacs}
 # 우아한 종료 활성화
 server.shutdown=graceful
 
@@ -147,7 +147,7 @@ server.shutdown=graceful
 spring.lifecycle.timeout-per-shutdown-phase=30s
 {code}
 
-{code:language=text|title=mermaid|collapse=true}
+{code:language=text|title=mermaid|collapse=true|theme=Emacs}
 sequenceDiagram
     participant Client as 클라이언트
     participant Server as 서버
@@ -164,9 +164,9 @@ sequenceDiagram
 
 h3. 4. Kubernetes Liveness / Readiness 프로브
 
-Kubernetes(컨테이너 오케스트레이션 플랫폼) 환경에서 애플리케이션의 **생존 상태(Liveness)**와 **요청 수신 준비 상태(Readiness)**를 자동으로 보고합니다. Kubernetes 환경에서 실행되면 자동으로 활성화됩니다.
+Kubernetes(컨테이너 오케스트레이션 플랫폼) 환경에서 애플리케이션의 *생존 상태(Liveness)*와 *요청 수신 준비 상태(Readiness)*를 자동으로 보고합니다. Kubernetes 환경에서 실행되면 자동으로 활성화됩니다.
 
-{code:language=properties}
+{code:language=properties|theme=Emacs}
 # Kubernetes가 아닌 환경에서 수동 활성화
 management.health.probes.enabled=true
 {code}
@@ -179,7 +179,7 @@ h3. 5. R2DBC 지원
 
 R2DBC(Reactive Relational Database Connectivity)는 관계형 DB를 *리액티브(비동기/논블로킹)* 방식으로 접근하는 기술입니다. {{ConnectionFactory}} 자동 설정, Repository 자동 설정, 헬스 인디케이터, {{@DataR2dbcTest}} 슬라이스 테스트를 지원합니다.
 
-{code:language=xml}
+{code:language=xml|theme=Emacs}
 <dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-data-r2dbc</artifactId>
@@ -188,9 +188,9 @@ R2DBC(Reactive Relational Database Connectivity)는 관계형 DB를 *리액티�
 
 h3. 6. 설정 파일 와일드카드 위치
 
-설정 파일 경로에 **와일드카드({{*}})**를 사용할 수 있습니다. Kubernetes에서 여러 ConfigMap/Secret을 마운트할 때 유용합니다.
+설정 파일 경로에 *와일드카드({{\*}})*를 사용할 수 있습니다. Kubernetes에서 여러 ConfigMap/Secret을 마운트할 때 유용합니다.
 
-{code:language=properties}
+{code:language=properties|theme=Emacs}
 # Kubernetes에서 여러 설정 소스를 한 번에 로드
 spring.config.additional-location=config/*/
 {code}
@@ -199,10 +199,10 @@ spring.config.additional-location=config/*/
 
 h2. 개선사항
 
-* **WebFlux 기본 경로 설정**: `spring.webflux.base-path` 프로퍼티로 기본 경로 지정 가능
-* **설정 프로퍼티 출처 추적**: Actuator에서 설정값의 원본 정보(origin) 확인 가능
-* **DataSource 헬스 체크 개선**: `Connection#isValid` 사용으로 쿼리 없이 연결 확인
-* **메트릭 엔드포인트**: 메트릭 이름이 알파벳순 정렬로 표시
+* *WebFlux 기본 경로 설정*: \{\{spring.webflux.base\-path\}\} 프로퍼티로 기본 경로 지정 가능
+* *설정 프로퍼티 출처 추적*: Actuator에서 설정값의 원본 정보(origin) 확인 가능
+* *DataSource 헬스 체크 개선*: \{\{Connection#isValid\}\} 사용으로 쿼리 없이 연결 확인
+* *메트릭 엔드포인트*: 메트릭 이름이 알파벳순 정렬로 표시
 
 ----
 
@@ -211,14 +211,14 @@ h2. Deprecated 및 제거 항목
 h3. Deprecated
 
 || 항목 || 대체 방법 ||
-| {{spring.http.encoding.*}} | {{server.servlet.encoding.*}} |
-| {{spring.http.log-request-details}} | {{spring.mvc.log-request-details}} |
-| {{spring.codec.log-request-details}} | {{spring.codec.log-request-details}} (위치 변경) |
-| {{ON_TRACE_PARAM}} (에러 페이지 스택트레이스) | {{ON_PARAM}} |
+| {{spring.http.encoding.\*}} | {{server.servlet.encoding.\*}} |
+| {{spring.http.log\-request\-details}} | {{spring.mvc.log\-request\-details}} |
+| {{spring.codec.log\-request\-details}} | {{spring.codec.log\-request\-details}} (위치 변경) |
+| {{ON\_TRACE\_PARAM}} (에러 페이지 스택트레이스) | {{ON\_PARAM}} |
 
 h3. 제거됨
 
-* `spring-boot-starter-cloud-connectors` (Spring Cloud Connectors)
+* \{\{spring\-boot\-starter\-cloud\-connectors\}\} (Spring Cloud Connectors)
 * Elasticsearch Native Transport 지원
 * Elasticsearch Jest 지원
 
@@ -226,7 +226,7 @@ h3. 제거됨
 
 h2. 호환성
 
-{code:language=text|title=mermaid|collapse=true}
+{code:language=text|title=mermaid|collapse=true|theme=Emacs}
 graph LR
     SB23["Spring Boot 2.3"]
 
@@ -288,7 +288,7 @@ h3. 주요 의존성 버전
 
 h2. 참고 자료
 
-* [Spring Boot 2.3 공식 릴리즈 노트](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.3-Release-Notes)
-* [Spring Framework 5.2](../../spring-framework/5.x/5.2.md)
-* [Spring Boot 2.2 릴리즈 노트](2.2.md) (이전 버전)
-* [Spring Boot 2.4 릴리즈 노트](2.4.md) (다음 버전)
+* [Spring Boot 2.3 공식 릴리즈 노트|https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.3-Release-Notes]
+* [Spring Framework 5.2|../../spring-framework/5.x/5.2.md]
+* [Spring Boot 2.2 릴리즈 노트|2.2.md] (이전 버전)
+* [Spring Boot 2.4 릴리즈 노트|2.4.md] (다음 버전)

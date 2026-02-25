@@ -7,11 +7,11 @@ Spring Boot 2는 Spring Framework 5를 기반으로, 리액티브 웹(WebFlux)�
 
 h2. 핵심 테마
 
-* **리액티브 웹 지원**: Spring WebFlux를 통한 비동기/논블로킹 웹 개발
-* **Actuator 재설계**: 운영 모니터링 엔드포인트 전면 개편
-* **Micrometer 통합**: 다양한 모니터링 시스템(Prometheus, Datadog 등)과의 메트릭 통합
-* **Auto-Configuration 발전**: 자동 설정의 지속적 확장 및 개선
-* **Kotlin 지원**: Kotlin 기반 Spring 개발 공식 지원
+* *리액티브 웹 지원*: Spring WebFlux를 통한 비동기/논블로킹 웹 개발
+* *Actuator 재설계*: 운영 모니터링 엔드포인트 전면 개편
+* *Micrometer 통합*: 다양한 모니터링 시스템(Prometheus, Datadog 등)과의 메트릭 통합
+* *Auto-Configuration 발전*: 자동 설정의 지속적 확장 및 개선
+* *Kotlin 지원*: Kotlin 기반 Spring 개발 공식 지원
 
 ----
 
@@ -31,11 +31,11 @@ h2. 버전 목록
 
 h2. 요구사항
 
-* **Java**: 8+ (2.0~2.7 모두 Java 8을 최소 지원)
-* **Spring Framework**: 5.0 ~ 5.3
-* **Servlet API**: 3.1+ (`javax.*` 패키지)
-* **Gradle**: 4.0+ ~ 7.x (버전에 따라 상이)
-* **Maven**: 3.2+ ~ 3.5+
+* *Java*: 8+ (2.0~2.7 모두 Java 8을 최소 지원)
+* *Spring Framework*: 5.0 ~ 5.3
+* *Servlet API*: 3.1+ (\{\{javax.\*\}\} 패키지)
+* *Gradle*: 4.0+ ~ 7.x (버전에 따라 상이)
+* *Maven*: 3.2+ ~ 3.5+
 
 {quote}
 *주의:* 2.x 시리즈는 OSS 지원이 종료되었습니다.
@@ -46,6 +46,6 @@ h2. 요구사항
 
 h2. 관련 링크
 
-* [Spring Boot 전체 버전 히스토리](../README.md)
-* [2.x → 3.x 마이그레이션 가이드](../../migration-guides/spring-boot-2to3.md)
-* [Spring Framework 5.x](../../spring-framework/5.x/) (기반 프레임워크)
+* [Spring Boot 전체 버전 히스토리|../README.md]
+* [2.x → 3.x 마이그레이션 가이드|../../migration-guides/spring-boot-2to3.md]
+* [Spring Framework 5.x|../../spring-framework/5.x/] (기반 프레임워크)

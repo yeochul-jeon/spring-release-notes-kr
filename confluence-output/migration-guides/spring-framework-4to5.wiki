@@ -18,8 +18,8 @@ Spring Framework 5.0은 *Java 8을 최소 기준선*으로 채택한 첫 번째 
 
 h2. 사전 준비 체크리스트
 
-* 현재 프로젝트가 Spring Framework **4.3 최신 버전**인지 확인
-* 모든 `@Deprecated` 경고를 해결
+* 현재 프로젝트가 Spring Framework *4.3 최신 버전*인지 확인
+* 모든 \{\{@Deprecated\}\} 경고를 해결
 * Java 8 이상 설치 및 소스/타겟 레벨 변경
 * 제거 대상 모듈(Portlet, Velocity 등) 사용 여부 확인
 * Guava Cache 사용 여부 확인 (Caffeine으로 전환 필요)
@@ -32,7 +32,7 @@ h2. 호환되지 않는 변경사항
 
 h3. 1. Java 8 필수 — 람다/스트림 활용
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // Before (Java 6/7 스타일)
 List<String> names = new ArrayList<>();
 for (User user : users) {
@@ -52,7 +52,7 @@ h3. 2. Guava Cache → Caffeine Cache
 
 Spring 5.0에서 Guava Cache 지원이 제거되었습니다. Caffeine은 Guava Cache의 후속 라이브러리입니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // Before (Guava Cache)
 @Bean
 public CacheManager cacheManager() {
@@ -74,7 +74,7 @@ public CacheManager cacheManager() {
 }
 {code}
 
-{code:language=groovy}
+{code:language=groovy|theme=Emacs}
 // build.gradle 의존성 변경
 // Before
 implementation 'com.google.guava:guava:x.x'
@@ -83,9 +83,9 @@ implementation 'com.google.guava:guava:x.x'
 implementation 'com.github.ben-manes.caffeine:caffeine:2.6+'
 {code}
 
-h3. 3. {{commons-logging}} → {{spring-jcl}} 자동 브릿지
+h3. 3. {{commons\-logging}} → {{spring\-jcl}} 자동 브릿지
 
-{code:language=xml}
+{code:language=xml|theme=Emacs}
 <!-- Before (Spring 4.x) — 수동 exclude + bridge 필요 -->
 <dependency>
     <groupId>org.springframework</groupId>
@@ -112,7 +112,7 @@ h3. 3. {{commons-logging}} → {{spring-jcl}} 자동 브릿지
 
 h3. 4. CORS 설정 기본값 변경
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // Before (4.x) — allowCredentials 기본값 true
 @CrossOrigin
 @GetMapping("/api/data")
@@ -141,7 +141,7 @@ h2. 설정 변경사항
 
 h3. build.gradle 의존성 변경
 
-{code:language=groovy}
+{code:language=groovy|theme=Emacs}
 // Before (Spring 4.x)
 dependencies {
     implementation 'org.springframework:spring-webmvc:4.3.x'
@@ -159,7 +159,7 @@ h3. FreeMarker 설정 변경
 
 Spring 5.0에서 FreeMarker는 HTML 출력 포맷팅이 필수입니다.
 
-{code:language=properties}
+{code:language=properties|theme=Emacs}
 # application.properties
 spring.freemarker.settings.output_format=HTMLOutputFormat
 {code}
@@ -183,7 +183,7 @@ h2. 폐기 및 제거 항목
 
 h2. 단계별 마이그레이션 절차
 
-{code:language=text|title=mermaid|collapse=true}
+{code:language=text|title=mermaid|collapse=true|theme=Emacs}
 flowchart TD
     A["1단계: Spring 4.3 최신으로\n업그레이드"] --> B["2단계: Deprecated 경고\n모두 해결"]
     B --> C["3단계: Java 8로\n업그레이드"]
@@ -198,14 +198,14 @@ flowchart TD
     style H fill:#4CAF50,color:#fff
 {code}
 
-# **Spring 4.3 최신 업그레이드**: 4.3은 4.x의 마지막 마이너 버전으로, 5.0 마이그레이션 준비에 최적입니다.
-# **Deprecated 해결**: 4.3에서 deprecated된 API는 5.0에서 제거됩니다.
-# **Java 8 업그레이드**: JDK 8 이상 설치 후 소스/타겟 레벨을 1.8로 설정합니다.
-# **제거 모듈 대체**: Portlet, Velocity, Guava Cache 등 사용 여부를 확인하고 대체합니다.
-# **서블릿 컨테이너 업그레이드**: Tomcat 8.5+, Jetty 9.4+ 등으로 업그레이드합니다.
-# **Spring 5.0 의존성 변경**: `build.gradle`/`pom.xml`에서 Spring 버전을 5.0으로 변경합니다.
-# **로깅 설정 정리**: `commons-logging` exclude와 `jcl-over-slf4j` 설정을 제거합니다(spring-jcl이 자동 처리).
-# **테스트 실행**: 전체 빌드 및 테스트를 실행하여 문제를 확인합니다.
+# *Spring 4.3 최신 업그레이드*: 4.3은 4.x의 마지막 마이너 버전으로, 5.0 마이그레이션 준비에 최적입니다.
+# *Deprecated 해결*: 4.3에서 deprecated된 API는 5.0에서 제거됩니다.
+# *Java 8 업그레이드*: JDK 8 이상 설치 후 소스/타겟 레벨을 1.8로 설정합니다.
+# *제거 모듈 대체*: Portlet, Velocity, Guava Cache 등 사용 여부를 확인하고 대체합니다.
+# *서블릿 컨테이너 업그레이드*: Tomcat 8.5+, Jetty 9.4+ 등으로 업그레이드합니다.
+# *Spring 5.0 의존성 변경*: \{\{build.gradle\}\}/\{\{pom.xml\}\}에서 Spring 버전을 5.0으로 변경합니다.
+# *로깅 설정 정리*: \{\{commons\-logging\}\} exclude와 \{\{jcl\-over\-slf4j\}\} 설정을 제거합니다(spring-jcl이 자동 처리).
+# *테스트 실행*: 전체 빌드 및 테스트를 실행하여 문제를 확인합니다.
 
 ----
 
@@ -214,8 +214,8 @@ h2. 자주 발생하는 문제 및 해결
 *Q: Velocity 템플릿 엔진을 사용 중입니다. 어떻게 전환하나요?*
 A: Thymeleaf 또는 FreeMarker로 전환하세요. Velocity는 5.0에서 완전히 제거되었으며, 대체 모듈이 제공되지 않습니다.
 
-*Q: {{commons-logging}} 관련 설정은 어떻게 하나요?*
-A: Spring 5.0부터 {{spring-jcl}}이 {{spring-core}}에 포함되어 SLF4J, Log4j 2, JUL을 자동 감지합니다. 기존의 {{commons-logging}} exclude 설정과 {{jcl-over-slf4j}} 의존성을 제거하면 됩니다.
+*Q: {{commons\-logging}} 관련 설정은 어떻게 하나요?*
+A: Spring 5.0부터 {{spring\-jcl}}이 {{spring\-core}}에 포함되어 SLF4J, Log4j 2, JUL을 자동 감지합니다. 기존의 {{commons\-logging}} exclude 설정과 {{jcl\-over\-slf4j}} 의존성을 제거하면 됩니다.
 
 *Q: WebFlux로 반드시 전환해야 하나요?*
 A: 아닙니다. WebFlux는 *선택사항*입니다. 기존 Spring MVC 기반 프로젝트는 그대로 사용할 수 있습니다. WebFlux는 높은 동시성이 필요한 새로운 프로젝트에서 고려하세요.
@@ -227,8 +227,8 @@ A: 즉시 바꿀 필요는 없습니다. Spring 5.x는 JUnit 4와 5를 모두 �
 
 h2. 참고 자료
 
-* [Upgrading to Spring Framework 5.x (공식 위키)](https://github.com/spring-projects/spring-framework/wiki/Upgrading-to-Spring-Framework-5.x)
-* [What's New in Spring Framework 5.x](https://github.com/spring-projects/spring-framework/wiki/What%27s-New-in-Spring-Framework-5.x)
-* [Spring Framework 4.x 릴리즈 노트](../spring-framework/4.x/)
-* [Spring Framework 5.x 릴리즈 노트](../spring-framework/5.x/)
-* [Spring Framework 5→6 마이그레이션 가이드](spring-framework-5to6.md) (다음 단계)
+* [Upgrading to Spring Framework 5.x (공식 위키)|https://github.com/spring-projects/spring-framework/wiki/Upgrading-to-Spring-Framework-5.x]
+* [What's New in Spring Framework 5.x|https://github.com/spring-projects/spring-framework/wiki/What%27s-New-in-Spring-Framework-5.x]
+* [Spring Framework 4.x 릴리즈 노트|../spring-framework/4.x/]
+* [Spring Framework 5.x 릴리즈 노트|../spring-framework/5.x/]
+* [Spring Framework 5→6 마이그레이션 가이드|spring-framework-5to6.md] (다음 단계)

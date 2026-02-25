@@ -12,7 +12,7 @@ h3. 2.1 @JmsListener - 어노테이션 기반 JMS 메시지 리스너
 
 기존에는 JMS 메시지를 수신하려면 XML 설정에서 {{MessageListenerContainer}}를 등록해야 했습니다. 4.1부터는 {{@JmsListener}} 어노테이션만 붙이면 간단하게 메시지 리스너를 구성할 수 있습니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 @Configuration
 @EnableJms  // JMS 리스너 자동 감지 활성화
 public class JmsConfig {
@@ -27,7 +27,7 @@ public class JmsConfig {
 }
 {code}
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 @Component
 public class OrderListener {
     // "order.queue" 큐에서 메시지를 수신합니다
@@ -59,7 +59,7 @@ JSR-107은 자바 표준 캐시 API입니다. 4.1부터 Spring 고유의 {{@Cach
 | {{@CacheEvict(allEntries=true)}} | {{@CacheRemoveAll}} | 캐시 전체 제거 |
 | - | {{@CacheDefaults}} | 클래스 레벨 기본 캐시 설정 |
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 import javax.cache.annotation.CacheResult;
 import javax.cache.annotation.CacheRemove;
 
@@ -88,7 +88,7 @@ SpEL(Spring Expression Language) 표현식을 *JIT(Just-In-Time) 컴파일*하�
 | {{IMMEDIATE}} | 첫 평가 시 즉시 컴파일 |
 | {{MIXED}} | 여러 번 평가 후 안정적이면 컴파일 (권장) |
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // SpEL 컴파일러를 MIXED 모드로 활성화
 SpelParserConfiguration config =
         new SpelParserConfiguration(SpelCompilerMode.MIXED, null);
@@ -100,7 +100,7 @@ Expression expr = parser.parseExpression("name.toUpperCase()");
 
 또는 시스템 프로퍼티로 전역 설정할 수 있습니다:
 
-{code:language=properties}
+{code:language=properties|theme=Emacs}
 spring.expression.compiler.mode=MIXED
 {code}
 
@@ -108,7 +108,7 @@ h3. 2.4 정적 리소스 처리 개선
 
 정적 리소스(CSS, JS, 이미지 등)를 처리하는 *ResourceResolver / ResourceTransformer 체인* 구조가 도입되었습니다. 이를 통해 버전 관리, 압축, 캐싱 등을 유연하게 구성할 수 있습니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 @Configuration
 @EnableWebMvc
 public class WebConfig extends WebMvcConfigurerAdapter {
@@ -128,7 +128,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 {code}
 
 {quote}
-*초보자 팁:* {{VersionResourceResolver}}는 파일이 변경되면 URL도 바뀌게 만들어, 브라우저가 오래된 캐시를 사용하는 문제를 방지합니다. 예를 들어 {{style.css}}가 {{style-abc123.css}}처럼 제공됩니다.
+*초보자 팁:* {{VersionResourceResolver}}는 파일이 변경되면 URL도 바뀌게 만들어, 브라우저가 오래된 캐시를 사용하는 문제를 방지합니다. 예를 들어 {{style.css}}가 {{style\-abc123.css}}처럼 제공됩니다.
 {quote}
 
 ----
@@ -139,7 +139,7 @@ h3. 3.1 Jackson @JsonView 통합
 
 컨트롤러 메서드에서 {{@JsonView}}를 사용하여 *같은 객체를 상황에 따라 다르게 직렬화*할 수 있습니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 // 뷰(View) 인터페이스 정의
 public class Views {
     public interface Summary {}      // 요약 정보
@@ -173,7 +173,7 @@ h3. 3.2 ResponseEntity Builder API
 
 {{ResponseEntity}}를 빌더 패턴으로 더 깔끔하게 생성할 수 있습니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 @GetMapping("/users/{id}")
 public ResponseEntity<User> getUser(@PathVariable Long id) {
     User user = userService.findById(id);
@@ -199,7 +199,7 @@ h3. 3.3 java.util.Optional 지원
 
 Java 8의 {{Optional}}을 의존성 주입(DI)과 MVC에서 사용할 수 있습니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 @RestController
 public class SearchController {
     // 필수가 아닌 요청 파라미터를 Optional로 받을 수 있습니다
@@ -214,7 +214,7 @@ public class SearchController {
 }
 {code}
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 @Service
 public class NotificationService {
     // 해당 빈이 없어도 에러 없이 주입됩니다 (Optional.empty())
@@ -228,13 +228,13 @@ public class NotificationService {
 
 h3. 3.4 Protocol Buffers HTTP 메시지 컨버터
 
-Google의 직렬화 포맷인 **Protocol Buffers(Protobuf)**를 Spring MVC에서 바로 사용할 수 있는 {{ProtobufHttpMessageConverter}}가 추가되었습니다. JSON보다 더 작고 빠른 데이터 전송이 필요한 경우에 유용합니다.
+Google의 직렬화 포맷인 *Protocol Buffers(Protobuf)*를 Spring MVC에서 바로 사용할 수 있는 {{ProtobufHttpMessageConverter}}가 추가되었습니다. JSON보다 더 작고 빠른 데이터 전송이 필요한 경우에 유용합니다.
 
 h3. 3.5 @Sql / @SqlConfig - 선언적 테스트 SQL 실행
 
 테스트에서 SQL 스크립트를 어노테이션으로 간편하게 실행할 수 있습니다.
 
-{code:language=java}
+{code:language=java|theme=Emacs}
 @SpringJUnit4ClassRunner.class
 @ContextConfiguration
 @Sql("/test-data.sql")  // 테스트 실행 전 SQL 스크립트를 자동 실행
@@ -255,11 +255,11 @@ public class UserRepositoryTest {
 
 h2. 4. 개선사항
 
-* **Groovy 기반 Bean 정의 개선:** Groovy DSL을 통한 Bean 설정이 더 유연해졌습니다.
-* **메시지 변환기 자동 감지:** 클래스패스에 Jackson, JAXB 등이 있으면 자동으로 메시지 컨버터가 등록됩니다.
-* **MVC 뷰 리졸버 개선:** 콘텐츠 협상(Content Negotiation) 기반의 뷰 리졸버가 개선되었습니다.
-* **WebSocket STOMP 개선:** STOMP 프로토콜 지원이 안정화되고 성능이 향상되었습니다.
-* **테스트 프레임워크:** `TestContext` 프레임워크에서 조건부 테스트 실행, SQL 스크립트 실행 등이 추가되었습니다.
+* *Groovy 기반 Bean 정의 개선:* Groovy DSL을 통한 Bean 설정이 더 유연해졌습니다.
+* *메시지 변환기 자동 감지:* 클래스패스에 Jackson, JAXB 등이 있으면 자동으로 메시지 컨버터가 등록됩니다.
+* *MVC 뷰 리졸버 개선:* 콘텐츠 협상(Content Negotiation) 기반의 뷰 리졸버가 개선되었습니다.
+* *WebSocket STOMP 개선:* STOMP 프로토콜 지원이 안정화되고 성능이 향상되었습니다.
+* *테스트 프레임워크:* \{\{TestContext\}\} 프레임워크에서 조건부 테스트 실행, SQL 스크립트 실행 등이 추가되었습니다.
 
 ----
 
@@ -296,7 +296,7 @@ h2. 6. 호환성
 
 h2. 7. 참고 자료
 
-* [Spring Framework 4.1 Release Notes (GitHub Wiki)](https://github.com/spring-projects/spring-framework/wiki/What%27s-New-in-Spring-Framework-4.x#spring-framework-41)
-* [Spring Blog - Spring Framework 4.1 GA](https://spring.io/blog/2014/09/04/spring-framework-4-1-ga-is-here)
-* [Spring Framework 4.1 Reference Documentation](https://docs.spring.io/spring-framework/docs/4.1.x/spring-framework-reference/)
-* [Spring Framework 4.0 릴리즈 노트](./4.0.md)
+* [Spring Framework 4.1 Release Notes (GitHub Wiki)|https://github.com/spring-projects/spring-framework/wiki/What%27s-New-in-Spring-Framework-4.x#spring-framework-41]
+* [Spring Blog - Spring Framework 4.1 GA|https://spring.io/blog/2014/09/04/spring-framework-4-1-ga-is-here]
+* [Spring Framework 4.1 Reference Documentation|https://docs.spring.io/spring-framework/docs/4.1.x/spring-framework-reference/]
+* [Spring Framework 4.0 릴리즈 노트|./4.0.md]

@@ -10,22 +10,22 @@ h2. 개선사항
 
 h3. 성능 및 모듈화
 
-* **모듈 구조 개편**: 더 세분화된 모듈 구조로 메모리 사용량 감소
-* **MongoDB Health Indicator**: Spring Data MongoDB 의존성 없이도 동작하도록 개선
+* *모듈 구조 개편*: 더 세분화된 모듈 구조로 메모리 사용량 감소
+* *MongoDB Health Indicator*: Spring Data MongoDB 의존성 없이도 동작하도록 개선
 
 h3. 관찰 가능성(Observability)
 
-* Redis 관찰 가능성이 `MicrometerTracing` 기반으로 개선
-* `management.tracing.enabled` → `management.tracing.export.enabled`로 프로퍼티 변경
+* Redis 관찰 가능성이 \{\{MicrometerTracing\}\} 기반으로 개선
+* \{\{management.tracing.enabled\}\} → \{\{management.tracing.export.enabled\}\}로 프로퍼티 변경
 
 h3. 빌드 도구
 
-* **Gradle 9** 공식 지원 (Gradle 8.14+도 계속 호환)
+* *Gradle 9* 공식 지원 (Gradle 8.14+도 계속 호환)
 * Spring Boot 마일스톤이 Maven Central에도 게시
 
 h3. 콘솔 로깅
 
-* 새로운 `logging.console.enabled` 프로퍼티로 콘솔 출력 제어 가능
+* 새로운 \{\{logging.console.enabled\}\} 프로퍼티로 콘솔 출력 제어 가능
 
 ----
 
@@ -39,8 +39,8 @@ h3. 제거된 항목
 | Undertow 지원 | Tomcat 또는 Jetty 사용 |
 | {{@AutoConfigureObservability}} | {{@AutoConfigureMetrics}} + {{@AutoConfigureTracing}} |
 | Reactive Pulsar 자동 구성 | Spring Pulsar Reactor 지원 제거에 따름 |
-| {{hibernate-jpamodelgen}} | {{hibernate-processor}}로 대체 |
-| SSL 인증서 만료 임박 상태({{WILL_EXPIRE_SOON}}) | {{expiringChains}} 엔트리로 대체 |
+| {{hibernate\-jpamodelgen}} | {{hibernate\-processor}}로 대체 |
+| SSL 인증서 만료 임박 상태({{WILL\_EXPIRE\_SOON}}) | {{expiringChains}} 엔트리로 대체 |
 | {{OperationMethod(Method, OperationType)}} 생성자 | 새로운 생성자 사용 |
 | {{javax.annotation}} / {{javax.inject}} 지원 | {{jakarta.annotation}} / {{jakarta.inject}} 사용 |
 
@@ -59,18 +59,18 @@ h3. 이름이 변경된 프로퍼티
 || 이전 || 변경 후 ||
 | {{management.tracing.enabled}} | {{management.tracing.export.enabled}} |
 | {{spring.dao.exceptiontranslation.enabled}} | {{spring.persistence.exceptiontranslation.enabled}} |
-| {{spring.jackson.read.*}} | {{spring.jackson.json.read.*}} |
-| {{spring.jackson.write.*}} | {{spring.jackson.json.write.*}} |
+| {{spring.jackson.read.\*}} | {{spring.jackson.json.read.\*}} |
+| {{spring.jackson.write.\*}} | {{spring.jackson.json.write.\*}} |
 
 h3. 새로 추가된 프로퍼티
 
 || 프로퍼티 || 설명 ||
 | {{spring.data.redis.masterreplica.nodes}} | Redis 마스터/레플리카 노드 목록 |
-| {{spring.data.mongodb.representation.big-decimal}} | MongoDB BigDecimal 표현 방식 |
-| {{server.tomcat.resource.cache-max-size}} | Tomcat 리소스 캐시 최대 크기 |
+| {{spring.data.mongodb.representation.big\-decimal}} | MongoDB BigDecimal 표현 방식 |
+| {{server.tomcat.resource.cache\-max\-size}} | Tomcat 리소스 캐시 최대 크기 |
 | {{logging.console.enabled}} | 콘솔 로깅 활성화 여부 |
-| {{spring.elasticsearch.api-key}} | Elasticsearch API 키 |
-| {{spring.mvc.apiversion.*}} | MVC API 버전 관리 설정 |
-| {{spring.webflux.apiversion.*}} | WebFlux API 버전 관리 설정 |
-| {{spring.jackson.use-jackson2-defaults}} | Jackson 2 호환 모드 활성화 |
-| {{spring.kotlinx.serialization.json.*}} | Kotlin Serialization JSON 설정 |
+| {{spring.elasticsearch.api\-key}} | Elasticsearch API 키 |
+| {{spring.mvc.apiversion.\*}} | MVC API 버전 관리 설정 |
+| {{spring.webflux.apiversion.\*}} | WebFlux API 버전 관리 설정 |
+| {{spring.jackson.use\-jackson2\-defaults}} | Jackson 2 호환 모드 활성화 |
+| {{spring.kotlinx.serialization.json.\*}} | Kotlin Serialization JSON 설정 |
